@@ -1,7 +1,9 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
+// @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
+// @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
 // @author       Mario_D#7052
 // @match        https://music.youtube.com/*
