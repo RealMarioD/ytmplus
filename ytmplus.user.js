@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.1.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -20,12 +20,13 @@
     let pageDiv; // The player "overlay"
     let upgradeText;
     let clockFunc;
+    let noAfk;
     let GM_config = new GM_configStruct({
         'id': 'ytmPlusCfg',
         'title': 'Settings',
         'fields': {
-            'clock': {
-                'label': 'Change "Upgrade" text to digital clock',
+            'noAfk': {
+                'label': 'Never AFK',
                 'section': 'Utilities',
                 'type': 'checkbox',
                 'default': true
@@ -36,7 +37,7 @@
                 'default': true
             },
             'visualizer': {
-                'label': 'Enable Music Visualizer (refresh for changes)',
+                'label': 'Enable Music Visualizer (Refresh for changes)',
                 'type': 'checkbox',
                 'default': true
             },
@@ -58,7 +59,7 @@
             },
             'bg': {
                 'label': 'Change Background',
-                'section': 'Background Colors',
+                'section': 'Background Settings',
                 'type': 'checkbox',
                 'default': true
             },
@@ -77,9 +78,15 @@
                 'type': 'color',
                 'default': '#0000AA'
             },
+            'clock': {
+                'label': 'Change "Upgrade" Button',
+                'section': 'Upgrade Button / Digital Clock',
+                'type': 'select',
+                'options': ['Original', 'Remove Button', 'Digital Clock'],
+                'default': 'Digital Clock'
+            },
             'clockColor': {
                 'label': 'Color',
-                'section': 'Digital Clock',
                 'type': 'color',
                 'default': '#AA3333'
             },
@@ -117,22 +124,25 @@
                 title.style.marginBottom = '20px';
 
                 let fieldLabels = doc.getElementsByClassName('field_label');
-                for (let field of fieldLabels) {
-                    field.style.fontSize = '16px'
-                };
+                for (let field of fieldLabels) field.style.fontSize = '16px'
 
                 let options = doc.getElementsByClassName('config_var');
-                for (let o of options) {
-                    o.style.textAlign = 'center';
-                }
+                for (let o of options) o.style.textAlign = 'center';
 
                 let buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
                 buttons.style.textAlign = 'center';
+                for (let i = 0; i < buttons.children.length - 1; i++) applyTnC(buttons.children[i]);
 
-                doc.getElementById('ytmPlusCfg_field_bgColor').type = 'color';
-                doc.getElementById('ytmPlusCfg_field_bgGradient').type = 'color';
-                doc.getElementById('ytmPlusCfg_field_clockColor').type = 'color';
-                doc.getElementById('ytmPlusCfg_field_clockGradientColor').type = 'color';
+                let iH = doc.getElementById('ytmPlusCfg_field_bgColor');
+                applyTnC(iH, true);
+                iH = doc.getElementById('ytmPlusCfg_field_bgGradient');
+                applyTnC(iH, true);
+                iH = doc.getElementById('ytmPlusCfg_field_clockColor');
+                applyTnC(iH, true);
+                iH = doc.getElementById('ytmPlusCfg_field_clockGradientColor');
+                applyTnC(iH, true);
+                iH = doc.getElementById('ytmPlusCfg_field_clock');
+                applyTnC(iH);
 
                 open = true;
             },
@@ -152,10 +162,12 @@
                     addFancy(pageDiv.style);
                 }
 
-                if (GM_config.get('clock') == true) {
-                    clockEnable();
-                }
-                else clockEnable(true);
+                if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
+                else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+                else clockEnable('Remove Button')
+
+                if (GM_config.get('noAfk' == true)) afkEnable();
+                else afkEnable(true);
             }
         }
     })
@@ -205,6 +217,9 @@
         pageDiv = document.getElementsByClassName("content style-scope ytmusic-player-page")[0];
         const nbb = document.getElementById('nav-bar-background');
 
+        // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+        if (GM_config.get('noAfk') == true) afkEnable();
+
         if (GM_config.get('bg') == true) {
             addFancy(document.body.style, true);
             addFancy(pageDiv.style);
@@ -233,9 +248,9 @@
         */
 
         // Rewrites the "Upgrade" button at the top to say the time with fancy colors YEP
-        if (GM_config.get('clock') == true) {
-            clockEnable();
-        }
+        if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
+        else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+        else clockEnable('Remove Button')
 
         if (GM_config.get('visualizer') == true) {
             // Creating a canvas in nav-bar-background as that's the only div where you can create an element without the site breaking lmao
@@ -260,25 +275,45 @@
     }
     */
 
-    function clockEnable(off) {
-        if (off == true) {
-            console.log('hello??')
+    function applyTnC(iH, modType) {
+        if(modType) iH.type = 'color';
+        iH.style.backgroundColor = 'rgba(66, 66, 66, 0.8)'
+    }
+
+    function afkEnable(off) {
+        if (off == true) clearInterval(noAfk);
+        else {
+            clearInterval(noAfk);
+            noAfk = setInterval(function () {
+                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+            }, 60000);
+        }
+    }
+
+    function clockEnable(mode) {
+        if (mode == 'Original') {
             clearTimeout(clockFunc);
             upgradeText.textContent = 'Upgrade'
+            upgradeText.parentElement.style.margin = '0px 24px';
         }
-        else {
+        else if(mode == 'Digital Clock') {
             clearTimeout(clockFunc);
             updTime(upgradeText);
+            upgradeText.parentElement.style.margin = '0px 24px';
+        }
+        else {
+            upgradeText.textContent = ''
+            upgradeText.parentElement.style.margin = '0px';
         }
         const a = upgradeText.style;
-        a.background = off == true ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
-        a.backgroundSize = off == true ? '' : '200% auto';
-        a.backgroundClip = off == true ? '' : 'text';
-        a.textFillColor = off == true ? '' : 'transparent';
-        a.webkitBackgroundClip = off == true ? '' : 'text';
-        a.webkitTextFillColor = off == true ? '' : 'transparent';
-        a.fontSize = off == true ? '20px' : '50px';
-        a.animation = off == true ? '' : 'effect 2s linear infinite normal';
+        a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+        a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
+        a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
+        a.textFillColor = mode != 'Digital Clock' ? '' : 'transparent';
+        a.webkitBackgroundClip = mode != 'Digital Clock' ? '' : 'text';
+        a.webkitTextFillColor = mode != 'Digital Clock' ? '' : 'transparent';
+        a.fontSize = mode != 'Digital Clock' ? '20px' : '50px';
+        a.animation = mode != 'Digital Clock' ? '' : 'effect 2s linear infinite normal';
     }
 
     function addFancy(e, overflow) {
@@ -302,9 +337,7 @@
     let v;
     function getVideo() {
         v = document.querySelector('video');
-        if (v) {
-            visualizer()
-        }
+        if (v) visualizer()
         else {
             console.warn('Warning: Query "video" not found, retrying in 100ms.');
             setTimeout(() => { getVideo() }, 100);
