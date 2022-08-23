@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
-// @description  Gives the YTM site a better look.
+// @version      1.0.1
+// @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
 // @author       Mario_D#7052
 // @match        https://music.youtube.com/*
 // @icon         https://imgur.com/gfg6VLJ.png
