@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.1.0
+// @version      1.2.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -21,6 +21,7 @@
     let upgradeText;
     let clockFunc;
     let noAfk;
+    let noPromo;
     let GM_config = new GM_configStruct({
         'id': 'ytmPlusCfg',
         'title': 'Settings',
@@ -28,6 +29,11 @@
             'noAfk': {
                 'label': 'Never AFK',
                 'section': 'Utilities',
+                'type': 'checkbox',
+                'default': true
+            },
+            'noPromo': {
+                'label': 'No Promotions ("Try premium for free!")',
                 'type': 'checkbox',
                 'default': true
             },
@@ -163,11 +169,14 @@
                 }
 
                 if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-                else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+                else if (GM_config.get('clock') == 'Original') clockEnable('Original');
                 else clockEnable('Remove Button')
 
-                if (GM_config.get('noAfk' == true)) afkEnable();
+                if (GM_config.get('noAfk') == true) afkEnable();
                 else afkEnable(true);
+
+                if(GM_config.get('noPromo') == true) promoEnable();
+                else promoEnable(true);
             }
         }
     })
@@ -249,7 +258,7 @@
 
         // Rewrites the "Upgrade" button at the top to say the time with fancy colors YEP
         if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-        else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+        else if (GM_config.get('clock') == 'Original') clockEnable('Original');
         else clockEnable('Remove Button')
 
         if (GM_config.get('visualizer') == true) {
@@ -275,8 +284,23 @@
     }
     */
 
+    let popup;
+    function promoEnable(off) {
+        if (off) clearInterval(noPromo);
+        else {
+            clearInterval(noPromo);
+            noPromo = setInterval(() => {
+                popup = document.getElementsByTagName('ytmusic-popup-container');
+                if (popup.length > 0) {
+                    popup[0].remove();
+                    console.log('YTM+: Removed a promotion.');
+                }
+            }, 1000);
+        }
+    }
+
     function applyTnC(iH, modType) {
-        if(modType) iH.type = 'color';
+        if (modType) iH.type = 'color';
         iH.style.backgroundColor = 'rgba(66, 66, 66, 0.8)'
     }
 
@@ -286,6 +310,7 @@
             clearInterval(noAfk);
             noAfk = setInterval(function () {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('YTM+: Nudged the page so user is not AFK.')
             }, 60000);
         }
     }
@@ -296,12 +321,13 @@
             upgradeText.textContent = 'Upgrade'
             upgradeText.parentElement.style.margin = '0px 24px';
         }
-        else if(mode == 'Digital Clock') {
+        else if (mode == 'Digital Clock') {
             clearTimeout(clockFunc);
             updTime(upgradeText);
             upgradeText.parentElement.style.margin = '0px 24px';
         }
         else {
+            clearTimeout(clockFunc);
             upgradeText.textContent = ''
             upgradeText.parentElement.style.margin = '0px';
         }
