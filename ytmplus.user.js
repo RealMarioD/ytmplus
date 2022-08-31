@@ -225,6 +225,8 @@
 
         pageDiv = document.getElementsByClassName("content style-scope ytmusic-player-page")[0];
         const nbb = document.getElementById('nav-bar-background');
+	    
+	if(GM_config.get('noPromo') == true) promoEnable();
 
         // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
         if (GM_config.get('noAfk') == true) afkEnable();
