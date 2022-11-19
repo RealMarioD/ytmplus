@@ -1,0 +1,63 @@
+{
+	"extends": "eslint:recommended",
+	"env": {
+		"node": true,
+		"es6": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 2019
+	},
+	"rules": {
+		"arrow-spacing": ["error", { "before": true, "after": true }],
+		"brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+		"comma-dangle": ["error", "only-multiline"],
+		"comma-spacing": ["error", { "before": false, "after": true }],
+		"comma-style": "error",
+		"curly": ["error", "multi-or-nest"],
+		"dot-location": ["error", "property"],
+		"handle-callback-err": "off",
+		"indent": ["error", 4, {"SwitchCase": 1}],
+		"key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+		"keyword-spacing": ["error", { "overrides": {
+			"if": { "after": false },
+			"for": { "after": false },
+			"while": { "after": false },
+			"catch": { "after": false },
+			"switch": { "after": false }
+		} }],
+		"max-nested-callbacks": ["error", { "max": 4 }],
+		"max-statements-per-line": ["error", { "max": 2 }],
+		"no-console": "off",
+		"no-empty-function": "error",
+		"no-floating-decimal": "error",
+		"no-lonely-if": "error",
+		"no-multi-spaces": "error",
+		"no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1, "maxBOF": 0 }],
+		"no-shadow": ["error", { "allow": ["err", "resolve", "reject"] }],
+		"no-trailing-spaces": ["error"],
+		"no-unreachable": "error",
+		"no-var": "error",
+		"object-curly-spacing": ["error", "always"],
+		"padded-blocks": ["error", "never"],
+		"padding-line-between-statements": ["error",
+			{ "blankLine": "always", "prev": "const", "next": "cjs-export" },
+			{ "blankLine": "always", "prev": "cjs-export", "next": "cjs-export" }
+		],
+		"prefer-const": "error",
+		"quotes": ["error", "single"],
+		"require-atomic-updates": "off",
+		"semi": ["error", "always"],
+		"semi-spacing": ["error", { "before": false, "after": true }],
+		"space-before-blocks": "error",
+		"space-before-function-paren": ["error", {
+			"anonymous": "never",
+			"named": "never",
+			"asyncArrow": "always"
+		}],
+		"space-in-parens": "error",
+		"space-infix-ops": "error",
+		"space-unary-ops": "error",
+		"spaced-comment": "error",
+		"yoda": "error"
+	}
+}
