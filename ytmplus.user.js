@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
@@ -13,7 +14,7 @@
 // @grant        GM_setValue
 // ==/UserScript==
 
-(function () {
+(function() {
     'use strict';
 
     let open = false; // Used to track if config window is open or not
@@ -22,9 +23,10 @@
     let clockFunc;
     let noAfk;
     let noPromo;
-    let GM_config = new GM_configStruct({
+    // 'type': 'color'; just results in a text input, they are later converted to actual color input
+    const GM_config = new GM_configStruct({
         'id': 'ytmPlusCfg',
-        'title': 'Settings',
+        'title': 'ytmPlus',
         'fields': {
             'noAfk': {
                 'label': 'Never AFK',
@@ -108,47 +110,55 @@
             }
         },
         'events': {
+            // open function is mostly customizing settings UI
             'open': (doc, win, frame) => {
-                // Customizing settings UI
                 frame.style.width = '550px';
-                // frame.style.height = '500px';
+                frame.style.height = '740px';
                 frame.style.display = 'block';
                 frame.style.margin = 'auto';
                 frame.style.inset = '0';
-                frame.style.boxShadow = '20px 20px 40px rgba(10, 10, 10, 0.8)'
+                frame.style.boxShadow = '20px 20px 40px rgba(10, 10, 10, 0.8)';
                 frame.style.border = '';
-                frame.style.borderRadius = '25px'
+                frame.style.borderRadius = '25px';
                 doc.querySelectorAll('*').forEach((node) => {
                     node.style.fontFamily = 'monospace';
-                    node.style.color = 'rgba(0, 204, 0, 0.8)';
+                    node.style.color = 'rgba(255, 255, 255, 0.8)';
                 });
-                doc.body.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                doc.body.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
 
 
-                let title = doc.getElementById('ytmPlusCfg_header');
+                const title = doc.getElementById('ytmPlusCfg_header');
                 title.style.fontSize = '69px';
                 title.style.marginBottom = '20px';
 
-                let fieldLabels = doc.getElementsByClassName('field_label');
-                for (let field of fieldLabels) field.style.fontSize = '16px'
+                const fieldTitles = doc.getElementsByClassName('section_header center');
+                for(let i = 0; i < fieldTitles.length; i++) {
+                    const e = fieldTitles[i];
+                    e.style.marginBottom = '4px';
+                    e.style.fontSize = '24px';
+                }
 
-                let options = doc.getElementsByClassName('config_var');
-                for (let o of options) o.style.textAlign = 'center';
+                const fieldLabels = doc.getElementsByClassName('field_label');
+                for(const field of fieldLabels) {
+                    field.style.fontSize = '19px';
+                    field.style.verticalAlign = 'middle';
+                }
 
-                let buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
+                const options = doc.getElementsByClassName('config_var');
+                for(const o of options) o.style.textAlign = 'center';
+
+                const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
                 buttons.style.textAlign = 'center';
-                for (let i = 0; i < buttons.children.length - 1; i++) applyTnC(buttons.children[i]);
+                for(let i = 0; i < buttons.children.length - 1; i++) applyTypeAndColor(buttons.children[i]);
 
-                let iH = doc.getElementById('ytmPlusCfg_field_bgColor');
-                applyTnC(iH, true);
-                iH = doc.getElementById('ytmPlusCfg_field_bgGradient');
-                applyTnC(iH, true);
-                iH = doc.getElementById('ytmPlusCfg_field_clockColor');
-                applyTnC(iH, true);
-                iH = doc.getElementById('ytmPlusCfg_field_clockGradientColor');
-                applyTnC(iH, true);
-                iH = doc.getElementById('ytmPlusCfg_field_clock');
-                applyTnC(iH);
+                const inputs = doc.getElementsByTagName('input');
+                for(let i = 0; i < inputs.length; i++) if(inputs[i].type == 'checkbox') inputs[i].style.verticalAlign = 'middle';
+
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_bgColor'), true);
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_bgGradient'), true);
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockColor'), true);
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockGradientColor'), true);
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clock'));
 
                 open = true;
             },
@@ -157,7 +167,7 @@
             },
             'save': () => {
                 // Updates updateable stuff on save
-                if (GM_config.get('bg') == false) {
+                if(GM_config.get('bg') == false) {
                     document.body.style.backgroundColor = '#000000';
                     document.body.style.backgroundImage = '';
                     pageDiv.style.backgroundColor = '#000000';
@@ -168,25 +178,25 @@
                     addFancy(pageDiv.style);
                 }
 
-                if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-                else if (GM_config.get('clock') == 'Original') clockEnable('Original');
-                else clockEnable('Remove Button')
+                if(GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
+                else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+                else clockEnable('Remove Button');
 
-                if (GM_config.get('noAfk') == true) afkEnable();
+                if(GM_config.get('noAfk') == true) afkEnable();
                 else afkEnable(true);
 
                 if(GM_config.get('noPromo') == true) promoEnable();
                 else promoEnable(true);
             }
         }
-    })
+    });
 
     // window.addEventListener('resize', () => fixCover());
 
     // Code that opens/closes settings UI
     window.addEventListener('keydown', (ev) => {
-        if (ev.code == 'Backslash' && ev.ctrlKey == true) {
-            if (open === false) {
+        if(ev.code == 'Backslash' && ev.ctrlKey == true) {
+            if(open === false) {
                 GM_config.open();
                 open = true;
             }
@@ -195,10 +205,9 @@
                 open = false;
             }
         }
-    })
+    });
 
     window.addEventListener('load', () => {
-
         // Setting up CSS and initial stuff for later use
         upgradeText = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
         const animation = `@keyframes gradient {
@@ -217,29 +226,29 @@
             to {
                 background-position: 200% center;
             }
-        }`
+        }`;
         const node = document.createElement('style');
         const textNode = document.createTextNode(animation);
         node.appendChild(textNode);
         document.head.appendChild(node);
 
-        pageDiv = document.getElementsByClassName("content style-scope ytmusic-player-page")[0];
-        const nbb = document.getElementById('nav-bar-background');
-	    
-	if(GM_config.get('noPromo') == true) promoEnable();
+        pageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
+        const navBarBg = document.getElementById('nav-bar-background');
+
+        if(GM_config.get('noPromo') == true) promoEnable();
 
         // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
-        if (GM_config.get('noAfk') == true) afkEnable();
+        if(GM_config.get('noAfk') == true) afkEnable();
 
-        if (GM_config.get('bg') == true) {
+        if(GM_config.get('bg') == true) {
             addFancy(document.body.style, true);
             addFancy(pageDiv.style);
         }
 
         // Tries to removes weird padding between and above album cover and navbar
-        if (GM_config.get('padding') == true) {
+        if(GM_config.get('padding') == true) {
             pageDiv.style.paddingTop = '0px';
-            const mainPanel = document.getElementById("main-panel");
+            const mainPanel = document.getElementById('main-panel');
             mainPanel.style.marginTop = '8vh';
             mainPanel.style.marginBottom = '8vh';
         }
@@ -258,18 +267,18 @@
         buttons.remove();
         */
 
-        // Rewrites the "Upgrade" button at the top to say the time with fancy colors YEP
-        if (GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-        else if (GM_config.get('clock') == 'Original') clockEnable('Original');
-        else clockEnable('Remove Button')
+        // Rewrites or removes the "Upgrade" button at the top
+        if(GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
+        else if(GM_config.get('clock') == 'Original') clockEnable('Original');
+        else clockEnable('Remove Button');
 
-        if (GM_config.get('visualizer') == true) {
+        if(GM_config.get('visualizer') == true) {
             // Creating a canvas in nav-bar-background as that's the only div where you can create an element without the site breaking lmao
-            nbb.innerHTML = `<canvas id="canvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>`;
-            nbb.style.opacity = 1;
+            navBarBg.innerHTML = '<canvas id="canvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
+            navBarBg.style.opacity = 1;
             getVideo();
         }
-    })
+    });
 
     // Functions for code
     /*
@@ -286,14 +295,15 @@
     }
     */
 
+    // ytmusic-popup-container actually includes right-click menus and other stuff too so this function actually breaks the site
     let popup;
-    function promoEnable(off) {
-        if (off) clearInterval(noPromo);
+    function promoEnable(turnOff) {
+        if(turnOff) clearInterval(noPromo);
         else {
             clearInterval(noPromo);
             noPromo = setInterval(() => {
                 popup = document.getElementsByTagName('ytmusic-popup-container');
-                if (popup.length > 0) {
+                if(popup.length > 0) {
                     popup[0].remove();
                     console.log('YTM+: Removed a promotion.');
                 }
@@ -301,36 +311,37 @@
         }
     }
 
-    function applyTnC(iH, modType) {
-        if (modType) iH.type = 'color';
-        iH.style.backgroundColor = 'rgba(66, 66, 66, 0.8)'
+    function applyTypeAndColor(iH, applyType) {
+        if(applyType) iH.type = 'color';
+        iH.style.verticalAlign = 'middle';
+        iH.style.backgroundColor = 'rgba(66, 66, 66, 0.8)';
     }
 
-    function afkEnable(off) {
-        if (off == true) clearInterval(noAfk);
+    function afkEnable(turnOff) {
+        if(turnOff == true) clearInterval(noAfk);
         else {
             clearInterval(noAfk);
-            noAfk = setInterval(function () {
+            noAfk = setInterval(function() {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('YTM+: Nudged the page so user is not AFK.')
+                console.log('YTM+: Nudged the page so user is not AFK.');
             }, 60000);
         }
     }
 
     function clockEnable(mode) {
-        if (mode == 'Original') {
+        if(mode == 'Original') {
             clearTimeout(clockFunc);
-            upgradeText.textContent = 'Upgrade'
+            upgradeText.textContent = 'Upgrade';
             upgradeText.parentElement.style.margin = '0px 24px';
         }
-        else if (mode == 'Digital Clock') {
+        else if(mode == 'Digital Clock') {
             clearTimeout(clockFunc);
-            updTime(upgradeText);
+            updateTime(upgradeText);
             upgradeText.parentElement.style.margin = '0px 24px';
         }
         else {
             clearTimeout(clockFunc);
-            upgradeText.textContent = ''
+            upgradeText.textContent = '';
             upgradeText.parentElement.style.margin = '0px';
         }
         const a = upgradeText.style;
@@ -344,43 +355,43 @@
         a.animation = mode != 'Digital Clock' ? '' : 'effect 2s linear infinite normal';
     }
 
-    function addFancy(e, overflow) {
+    function addFancy(e, overflowOn) {
         e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
         e.animation = 'gradient 5s linear infinite alternate';
         e.backgroundSize = '150% 150%';
         e.backgroundAttachment = 'fixed';
         // e.height = '100vh';
-        if (!overflow) e.overflow = 'hidden';
+        if(!overflowOn) e.overflow = 'hidden';
     }
 
-    let cT;
-    function updTime(uT) {
-        cT = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        uT.textContent = cT;
-        clockFunc = setTimeout(function () {
-            updTime(uT)
-        }, 1000)
+    let currentTime;
+    function updateTime(updateText) {
+        currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        updateText.textContent = currentTime;
+        clockFunc = setTimeout(function() {
+            updateTime(updateText);
+        }, 1000);
     }
 
     let v;
     function getVideo() {
         v = document.querySelector('video');
-        if (v) visualizer()
+        if(v) visualizer();
         else {
             console.warn('Warning: Query "video" not found, retrying in 100ms.');
-            setTimeout(() => { getVideo() }, 100);
+            setTimeout(() => { getVideo(); }, 100);
         }
     }
 
     function visualizer() {
-        var context = new AudioContext();
-        var src = context.createMediaElementSource(v);
-        var analyser = context.createAnalyser();
+        const context = new AudioContext();
+        const src = context.createMediaElementSource(v);
+        const analyser = context.createAnalyser();
 
-        var canvas = document.getElementById("canvas");
+        const canvas = document.getElementById('canvas');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight / 2;
-        var ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
 
         src.connect(analyser);
         analyser.connect(context.destination);
@@ -388,17 +399,17 @@
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.5;
 
-        var bufferLength = analyser.frequencyBinCount;
+        const bufferLength = analyser.frequencyBinCount;
         console.log(bufferLength);
 
-        var dataArray = new Uint8Array(bufferLength);
+        const dataArray = new Uint8Array(bufferLength);
 
-        var WIDTH = canvas.width;
-        var HEIGHT = canvas.height;
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
 
-        var barWidth = (WIDTH / bufferLength) * 2.5;
-        var barHeight;
-        var x = 0;
+        const barWidth = (WIDTH / bufferLength) * 2.5;
+        let barHeight;
+        let x = 0;
 
         function renderFrame() {
             requestAnimationFrame(renderFrame);
@@ -407,15 +418,15 @@
 
             analyser.getByteFrequencyData(dataArray);
 
-            ctx.fillStyle = "#000";
+            ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-            for (var i = 0; i < bufferLength; i++) {
+            for(let i = 0; i < bufferLength; i++) {
                 barHeight = dataArray[i] * 2;
 
-                var r = GM_config.get('visR') == true ? barHeight / 2 : 0;
-                var g = GM_config.get('visG') == true ? barHeight / 2 : 0;
-                var b = GM_config.get('visB') == true ? barHeight / 2 : 0;
+                const r = GM_config.get('visR') == true ? barHeight / 2 : 0;
+                const g = GM_config.get('visG') == true ? barHeight / 2 : 0;
+                const b = GM_config.get('visB') == true ? barHeight / 2 : 0;
 
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b}, 0.5)`; // "rgb(" + r + "," + g + "," + b + ")";
                 ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
