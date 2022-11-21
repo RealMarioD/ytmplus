@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.4.0
+// @version      1.4.1
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -26,6 +26,7 @@
     let noPromoFunction; // Holds the no promotions function
     let skipFunction; // Holds the skip disliked songs function
     let dumbFix = 0; // idek what to type here, DOMSubtreeModified fires twice, this helps code run only once lmao
+    let visualizerColor; // Moved out of renderFrame() so we don't ask for colors every frame
 
     // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
     const GM_config = new GM_configStruct({
@@ -58,21 +59,10 @@
                 'type': 'checkbox',
                 'default': true
             },
-            'visR': {
-                'label': 'Red',
-                'section': 'Visualizer Colors (Currently Limited)',
-                'type': 'checkbox',
-                'default': true
-            },
-            'visG': {
-                'label': 'Green',
-                'type': 'checkbox',
-                'default': false
-            },
-            'visB': {
-                'label': 'Blue',
-                'type': 'checkbox',
-                'default': true
+            'visualizerColor': {
+                'label': 'Visualizer Color',
+                'type': 'color',
+                'default': '#8C008C'
             },
             'bg': {
                 'label': 'Change Background',
@@ -167,6 +157,7 @@
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_bgGradient'), true);
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockColor'), true);
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockGradientColor'), true);
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_visualizerColor'), true);
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clock'));
 
                 open = true;
@@ -210,6 +201,8 @@
                         undefined;
                     }
                 }, 2000);
+
+                visualizerColor = GM_config.get('visualizerColor');
             }
         }
     });
@@ -282,6 +275,7 @@
         else clockEnable('Remove Button');
 
         if(GM_config.get('visualizer') == true) {
+            visualizerColor = GM_config.get('visualizerColor');
             // Creating a canvas in nav-bar-background as that's the only div where you can create an element without the site breaking lmao
             navBarBg.innerHTML = '<canvas id="canvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
             navBarBg.style.opacity = 1;
@@ -409,14 +403,28 @@
         analyser.smoothingTimeConstant = 0.5;
 
         const bufferLength = analyser.frequencyBinCount;
-        console.log(bufferLength);
 
         const dataArray = new Uint8Array(bufferLength);
 
-        const WIDTH = canvas.width;
-        const HEIGHT = canvas.height;
+        let WIDTH = canvas.width;
+        let HEIGHT = canvas.height;
 
-        const barWidth = (WIDTH / bufferLength) * 2.5;
+        let barWidth = (WIDTH / bufferLength) * 2.5;
+
+        function visualizerResizeFix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight / 2;
+
+            WIDTH = canvas.width;
+            HEIGHT = canvas.height;
+
+            barWidth = (WIDTH / bufferLength) * 2.5;
+
+            console.log('okay bro');
+        }
+
+        window.addEventListener('resize', visualizerResizeFix);
+
         let barHeight;
         let x = 0;
 
@@ -431,13 +439,8 @@
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
             for(let i = 0; i < bufferLength; i++) {
-                barHeight = dataArray[i] * 2;
-
-                const r = GM_config.get('visR') == true ? barHeight / 2 : 0;
-                const g = GM_config.get('visG') == true ? barHeight / 2 : 0;
-                const b = GM_config.get('visB') == true ? barHeight / 2 : 0;
-
-                ctx.fillStyle = `rgb(${r}, ${g}, ${b}, 0.5)`; // "rgb(" + r + "," + g + "," + b + ")";
+                barHeight = dataArray[i] * 1.85;
+                ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
                 ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
 
                 x += barWidth + 1;
@@ -447,10 +450,7 @@
     }
 
     function track() {
-        if(dumbFix == 0) {
-            console.log('track f0 dud');
-            return dumbFix++;
-        }
+        if(dumbFix == 0) return dumbFix++;
         clearTimeout(skipFunction);
         skipFunction = setTimeout(() => {
             if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
