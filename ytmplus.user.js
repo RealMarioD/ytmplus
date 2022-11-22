@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         YTM+
 // @namespace    http://tampermonkey.net/
-// @version      1.4.1
+// @version      1.4.2
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -27,6 +27,7 @@
     let skipFunction; // Holds the skip disliked songs function
     let dumbFix = 0; // idek what to type here, DOMSubtreeModified fires twice, this helps code run only once lmao
     let visualizerColor; // Moved out of renderFrame() so we don't ask for colors every frame
+    let visualizerStyle; // ^^ Same but style
 
     // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
     const GM_config = new GM_configStruct({
@@ -55,9 +56,16 @@
                 'default': true
             },
             'visualizer': {
-                'label': 'Enable Music Visualizer (Refresh for changes)',
+                'label': 'Enable (Refresh for changes)',
+                'section': 'Music Visualizer',
                 'type': 'checkbox',
                 'default': true
+            },
+            'visualizerStyle': {
+                'label': 'Visualizer Style',
+                'type': 'select',
+                'options': ['Left', 'Inside', 'Right', 'Outside'],
+                'default': 'Left'
             },
             'visualizerColor': {
                 'label': 'Visualizer Color',
@@ -159,6 +167,7 @@
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockGradientColor'), true);
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_visualizerColor'), true);
                 applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clock'));
+                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_visualizerStyle'));
 
                 open = true;
             },
@@ -203,6 +212,7 @@
                 }, 2000);
 
                 visualizerColor = GM_config.get('visualizerColor');
+                visualizerStyle = GM_config.get('visualizerStyle');
             }
         }
     });
@@ -276,6 +286,7 @@
 
         if(GM_config.get('visualizer') == true) {
             visualizerColor = GM_config.get('visualizerColor');
+            visualizerStyle = GM_config.get('visualizerStyle');
             // Creating a canvas in nav-bar-background as that's the only div where you can create an element without the site breaking lmao
             navBarBg.innerHTML = '<canvas id="canvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
             navBarBg.style.opacity = 1;
@@ -403,13 +414,14 @@
         analyser.smoothingTimeConstant = 0.5;
 
         const bufferLength = analyser.frequencyBinCount;
-
+        console.log(`bufferL: ${bufferLength}`);
         const dataArray = new Uint8Array(bufferLength);
 
         let WIDTH = canvas.width;
         let HEIGHT = canvas.height;
+        const barWidthMultiplier = 2;
 
-        let barWidth = (WIDTH / bufferLength) * 2.5;
+        let barWidth = (WIDTH / bufferLength) * barWidthMultiplier;
 
         function visualizerResizeFix() {
             canvas.width = window.innerWidth;
@@ -418,35 +430,89 @@
             WIDTH = canvas.width;
             HEIGHT = canvas.height;
 
-            barWidth = (WIDTH / bufferLength) * 2.5;
-
-            console.log('okay bro');
+            barWidth = (WIDTH / bufferLength) * barWidthMultiplier;
         }
 
         window.addEventListener('resize', visualizerResizeFix);
 
         let barHeight;
-        let x = 0;
+        let x = barWidth / barWidthMultiplier * 0.1;
+        const xMod = barWidth / barWidthMultiplier * 0.1;
 
         function renderFrame() {
-            requestAnimationFrame(renderFrame);
-
-            x = 0;
-
             analyser.getByteFrequencyData(dataArray);
 
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-            for(let i = 0; i < bufferLength; i++) {
-                barHeight = dataArray[i] * 1.85;
-                ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
-                ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-
-                x += barWidth + 1;
-            }
+            visualizerEffect(visualizerStyle);
+            requestAnimationFrame(renderFrame);
         }
         renderFrame();
+
+        // If you wanna shit on me for making kréta level bullshit code here's the compact version: https://pastebin.com/U0HhRTyY
+        function visualizerEffect(effect) {
+            switch(effect) {
+                default: case 'Left':
+                    x = 0;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(x > WIDTH + 2) break;
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+                        x += barWidth + xMod; // i
+                    }
+                    break;
+                case 'Inside':
+                    x = xMod * 4;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(WIDTH / 2 - x < -2) {
+                            x += xMod * 3;
+                            break;
+                        }
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(WIDTH / 2 - x, HEIGHT - barHeight, 0 - barWidth, barHeight);
+                        x += barWidth + xMod; // want it
+                    }
+                    x -= barWidth;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(x > WIDTH) break;
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+                        x += barWidth + xMod; // that
+                    }
+                    break;
+                case 'Right':
+                    x = 0;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(x > WIDTH + 2) break;
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(WIDTH - x, HEIGHT - barHeight, 0 - barWidth, barHeight);
+                        x += barWidth + xMod; // way
+                    }
+                    break;
+                case 'Outside':
+                    x = 0;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(x > WIDTH / 2 * 0.98) break;
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+                        x += barWidth + xMod; // i
+                    }
+                    x = 0;
+                    for(let i = 0; i < bufferLength / 2; i++) {
+                        if(x > WIDTH / 2 * 0.99) break;
+                        barHeight = dataArray[i] * 1.85;
+                        ctx.fillStyle = `${visualizerColor}${(barHeight / 1.85).toString(16)}`;
+                        ctx.fillRect(WIDTH - x, HEIGHT - barHeight, 0 - barWidth, barHeight);
+                        x += barWidth + xMod; // way
+                    }
+            }
+        }
     }
 
     function track() {
