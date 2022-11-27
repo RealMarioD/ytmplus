@@ -55,6 +55,11 @@
                 'type': 'checkbox',
                 'default': true
             },
+            'extraButtons': {
+                'label': 'Extra Playback Buttons',
+                'type': 'checkbox',
+                'default': false
+            },
             'visualizer': {
                 'label': 'Enable (Refresh for changes)',
                 'section': 'Music Visualizer',
@@ -95,13 +100,13 @@
             },
             'clock': {
                 'label': 'Change "Upgrade" Button',
-                'section': 'Upgrade Button / Digital Clock',
+                'section': 'Upgrade Button',
                 'type': 'select',
                 'options': ['Original', 'Remove Button', 'Digital Clock'],
                 'default': 'Digital Clock'
             },
             'clockColor': {
-                'label': 'Color',
+                'label': 'Clock Color',
                 'type': 'color',
                 'default': '#AA3333'
             },
@@ -116,58 +121,105 @@
                 'default': '#3333AA'
             }
         },
+        'css':
+            `input[type="color"] {
+	            -webkit-appearance: none;
+	            border: 0;
+                padding: 0;
+	            width: 2.5vh;
+	            height: 2.5vh;
+            }
+            input[type="color"]::-webkit-color-swatch-wrapper {
+	            padding: 0;
+            }
+            input[type="color"]::-webkit-color-swatch {
+	            border: 0;
+            }
+            input[type="color"], input[type="checkbox"] {
+                width: 2vh;
+                height: 2vh;
+            }
+            input {
+                vertical-align: middle;
+            }
+            #ytmPlusCfg .config_var {
+                margin: 0 0 0.5vh;
+                text-align: center;
+            }
+            #ytmPlusCfg * {
+                font-family: monospace;
+                color: rgba(255, 255, 255, 0.8);
+            }
+            #ytmPlusCfg {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+            #ytmPlusCfg #ytmPlusCfg_header {
+                font-size: 7vh;
+                background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin: 0.5vh 0;
+            }
+            #ytmPlusCfg .section_header_holder {
+                margin-top: 0;
+            }
+            #ytmPlusCfg .section_header {
+                margin-bottom: 0.5vh;
+                font-size: 2.5vh;
+            }
+            #ytmPlusCfg .field_label {
+                font-size: 2.5vh;
+                vertical-align: middle;
+            }
+            #ytmPlusCfg select {
+                vertical-align: middle;
+                background-color: rgba(66, 66, 66, 0.8);
+                font-size: 2vh
+            }
+            #ytmPlusCfg .reset {
+                color: rgba(255, 255, 255, 0.8);
+            }`,
         'events': {
             // open function is mostly customizing settings UI
             'open': (doc, win, frame) => {
-                frame.style.width = '550px';
-                frame.style.height = '780px';
+                doc.body.style.overflow = 'hidden';
+                frame.style.width = '25vw';
+                // frame.style.height = // '80vh';
+                frame.style.maxHeight = '85vh';
                 frame.style.display = 'block';
                 frame.style.margin = 'auto';
                 frame.style.inset = '0';
                 frame.style.boxShadow = '20px 20px 40px rgba(10, 10, 10, 0.8)';
                 frame.style.border = '';
-                frame.style.borderRadius = '25px';
-                doc.querySelectorAll('*').forEach((node) => {
-                    node.style.fontFamily = 'monospace';
-                    node.style.color = 'rgba(255, 255, 255, 0.8)';
-                });
-                doc.body.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-
-
-                const title = doc.getElementById('ytmPlusCfg_header');
-                title.style.fontSize = '69px';
-                title.style.marginBottom = '20px';
-
-                const fieldTitles = doc.getElementsByClassName('section_header center');
-                for(let i = 0; i < fieldTitles.length; i++) {
-                    const e = fieldTitles[i];
-                    e.style.marginBottom = '4px';
-                    e.style.fontSize = '24px';
-                }
-
-                const fieldLabels = doc.getElementsByClassName('field_label');
-                for(const field of fieldLabels) {
-                    field.style.fontSize = '19px';
-                    field.style.verticalAlign = 'middle';
-                }
-
-                const options = doc.getElementsByClassName('config_var');
-                for(const o of options) o.style.textAlign = 'center';
+                frame.style.borderRadius = '1.5vw';
 
                 const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
                 buttons.style.textAlign = 'center';
-                for(let i = 0; i < buttons.children.length - 1; i++) applyTypeAndColor(buttons.children[i]);
+                for(let i = 0; i < buttons.children.length; i++) {
+                    const e = buttons.children[i];
+                    if(i + 1 != buttons.children.length) {
+                        applyTypeAndColor(e);
+                        e.style.fontSize = '2vh';
+                    }
+                    else e.firstChild.style.fontSize = '2vh';
+                    e.style.margin = '0.5vh';
+                }
 
-                const inputs = doc.getElementsByTagName('input');
-                for(let i = 0; i < inputs.length; i++) if(inputs[i].type == 'checkbox') inputs[i].style.verticalAlign = 'middle';
+                doc.getElementById('ytmPlusCfg_field_bgColor').type = 'color';
+                doc.getElementById('ytmPlusCfg_field_bgGradient').type = 'color';
+                doc.getElementById('ytmPlusCfg_field_clockColor').type = 'color';
+                doc.getElementById('ytmPlusCfg_field_clockGradientColor').type = 'color';
+                doc.getElementById('ytmPlusCfg_field_visualizerColor').type = 'color';
 
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_bgColor'), true);
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_bgGradient'), true);
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockColor'), true);
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clockGradientColor'), true);
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_visualizerColor'), true);
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_clock'));
-                applyTypeAndColor(doc.getElementById('ytmPlusCfg_field_visualizerStyle'));
+                const node = doc.createElement('div');
+                node.id = 'cfgHolder';
+                node.style.overflowY = 'auto';
+                node.style.maxHeight = '80vh';
+                node.style.display = 'block';
+                const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+                wrapper.appendChild(node);
+                for(let i = 0; i < wrapper.childNodes.length; i++) node.appendChild(wrapper.childNodes[1]);
+                wrapper.appendChild(wrapper.childNodes[1]);
 
                 open = true;
             },
@@ -187,18 +239,13 @@
                     addFancy(pageDiv.style);
                 }
 
-                if(GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-                else if(GM_config.get('clock') == 'Original') clockEnable('Original');
-                else clockEnable('Remove Button');
+                clockEnable(GM_config.get('clock'));
 
-                if(GM_config.get('noAfk') == true) afkEnable();
-                else afkEnable(true);
+                afkEnable(GM_config.get('noAfk'));
 
-                if(GM_config.get('noPromo') == true) promoEnable();
-                else promoEnable(true);
+                promoEnable(GM_config.get('noPromo'));
 
-                if(GM_config.get('skipDisliked') == true) skipDisliked();
-                else skipDisliked(true);
+                skipDisliked(GM_config.get('skipDisliked'));
 
                 const saveBtn = document.getElementById('ytmPlusCfg').contentWindow.document.getElementById('ytmPlusCfg_saveBtn');
                 saveBtn.innerText = 'Saved!';
@@ -213,6 +260,8 @@
 
                 visualizerColor = GM_config.get('visualizerColor');
                 visualizerStyle = GM_config.get('visualizerStyle');
+
+                extraButtons(GM_config.get('extraButtons'));
             }
         }
     });
@@ -261,10 +310,10 @@
         pageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
         const navBarBg = document.getElementById('nav-bar-background');
 
-        if(GM_config.get('noPromo') == true) promoEnable();
+        promoEnable(GM_config.get('noPromo'));
 
         // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
-        if(GM_config.get('noAfk') == true) afkEnable();
+        afkEnable(GM_config.get('noAfk'));
 
         if(GM_config.get('bg') == true) {
             addFancy(document.body.style, true);
@@ -280,9 +329,7 @@
         }
 
         // Rewrites or removes the "Upgrade" button at the top
-        if(GM_config.get('clock') == 'Digital Clock') clockEnable('Digital Clock');
-        else if(GM_config.get('clock') == 'Original') clockEnable('Original');
-        else clockEnable('Remove Button');
+        clockEnable(GM_config.get('clock'));
 
         if(GM_config.get('visualizer') == true) {
             visualizerColor = GM_config.get('visualizerColor');
@@ -293,7 +340,9 @@
             getVideo();
         }
 
-        if(GM_config.get('skipDisliked') == true) skipDisliked();
+        skipDisliked(GM_config.get('skipDisliked'));
+
+        extraButtons(GM_config.get('extraButtons'));
 
         // Adds a settings button on the navbar
         node = document.createElement('iframe');
@@ -311,8 +360,8 @@
 
     // ytmusic-popup-container actually includes right-click menus and other stuff too, might break site, not tested because popups dont come when i need them
     let popup;
-    function promoEnable(turnOff) {
-        if(turnOff) clearInterval(noPromoFunction);
+    function promoEnable(turnOn) {
+        if(!turnOn) clearInterval(noPromoFunction);
         else {
             clearInterval(noPromoFunction);
             noPromoFunction = setInterval(() => {
@@ -331,8 +380,8 @@
         iH.style.backgroundColor = 'rgba(66, 66, 66, 0.8)';
     }
 
-    function afkEnable(turnOff) {
-        if(turnOff == true) clearInterval(noAfkFunction);
+    function afkEnable(turnOn) {
+        if(!turnOn) clearInterval(noAfkFunction);
         else {
             clearInterval(noAfkFunction);
             noAfkFunction = setInterval(function() {
@@ -451,8 +500,8 @@
         renderFrame();
 
         // If you wanna shit on me for making kréta level bullshit code here's the compact version: https://pastebin.com/U0HhRTyY
-        function visualizerEffect(effect) {
-            switch(effect) {
+        function visualizerEffect() {
+            switch(visualizerStyle) {
                 default: case 'Left':
                     x = 0;
                     for(let i = 0; i < bufferLength / 2; i++) {
@@ -524,10 +573,21 @@
         dumbFix = 0;
     }
 
-    function skipDisliked(turnOff) {
+    function skipDisliked(turnOn) {
         const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
-        if(turnOff == true) return titleHolder.removeEventListener('DOMSubtreeModified', track, false);
+        if(!turnOn) return titleHolder.removeEventListener('DOMSubtreeModified', track, false);
         titleHolder.removeEventListener('DOMSubtreeModified', track, false);
         titleHolder.addEventListener('DOMSubtreeModified', track, false);
+    }
+
+    function extraButtons(turnOn) {
+        const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+        if(!turnOn) {
+            playbackButtons[1].hidden = true;
+            playbackButtons[4].hidden = true;
+            return;
+        }
+        playbackButtons[1].hidden = false;
+        playbackButtons[4].hidden = false;
     }
 })();
