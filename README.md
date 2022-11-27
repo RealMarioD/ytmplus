@@ -1,18 +1,26 @@
-# ytmplus
+# ytmPlus
 Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
 ## How to Install:
-1. Download and install [Tampermonkey](https://www.tampermonkey.net) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey), depends on what browser you have.
+1. Download and install [Tampermonkey](https://www.tampermonkey.net) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey), depends on what browser you have. (Script is kinda broken on Firefox but it's a WIP, sorry!)
 2. [Click here to install the script!](https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js)
-## What does YTM+ offer?
-With YTM+, you can:
-> Change the background to a color scheme you like.
->
-> Change the Upgrade button at the top to show the time (with fancy colors if you want to!)
->
-> Fix some weird padding that I can see in 1080p, but can't in 4k, you should check it out, maybe you don't need this.
->
-> Put an audio visualizer *(you know, the bars that react to sound!)* at the top of the site and kinda customize its colors.
+## What is ytmPlus?
+The script originally started off as a simple background changer, that now offers multiple visual customizations for https://music.youtube.com
 
-![promo](https://user-images.githubusercontent.com/35196073/186242165-132184d7-5d77-461c-b28d-8dbe115f1200.png)
-## Customize
-You can easily bring up the settings by pressing **Ctrl + Backslash**. (**Ctrl + Ű** on a Hungarian layout.) I'll probably change this later.
+## Customizations include:
+- Changing background color (with optional gradient)
+- Adding a customizable audio visualizer in the top navigation bar
+- Anti-AFK feature, meaning music playback won't stop after a while if you don't interact with the site
+- Disabling YouTube Premium promotions in the bottom left
+- Skipping disliked songs
+- Fixing weird padding with playlist
+- Enabling hidden playback buttons
+- Changing or removing the "Upgrade" button in the top navigation bar
+
+## Settings
+You can bring up the settings by clicking on the cog in the top left, or by pressing **Ctrl + Backslash**. (**Ctrl + Ű** on a Hungarian layout.)
+
+## Discord
+If you find bugs or have ideas or just want to discuss the script, feel free to [join the ytmPlus Discord server!](https://discord.com/68Waxa4Qxz)
+
+## Screenshots:
+![newPromo2](https://user-images.githubusercontent.com/35196073/204159508-c82a3279-d4f2-438f-8632-4b68514eee40.png)
