@@ -141,6 +141,7 @@
             }
             input {
                 vertical-align: middle;
+                background-color: rgba(66, 66, 66, 0.8);
             }
             #ytmPlusCfg .config_var {
                 margin: 0 0 0.5vh;
@@ -266,8 +267,6 @@
         }
     });
 
-    // window.addEventListener('resize', () => fixCover());
-
     // Code that opens/closes settings UI
     window.addEventListener('keydown', (ev) => {
         if(ev.code == 'Backslash' && ev.ctrlKey == true) {
@@ -365,7 +364,7 @@
         else {
             clearInterval(noPromoFunction);
             noPromoFunction = setInterval(() => {
-                popup = document.getElementsByTagName('ytmusic-popup-container');
+                popup = document.getElementsByTagName('tp-yt-paper-dialog');
                 if(popup.length > 1) {
                     popup[1].remove();
                     console.log('YTM+: Removed a promotion.');
