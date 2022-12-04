@@ -375,7 +375,7 @@
             noPromoFunction = setInterval(() => {
                 popup = document.getElementsByTagName('tp-yt-paper-dialog');
                 if(popup.length > 0) {
-                    popup[1].remove();
+                    popup[0].remove();
                     console.log('YTM+: Removed a promotion.');
                 }
             }, 1000);
