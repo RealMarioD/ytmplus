@@ -22,12 +22,15 @@
 			"if": { "after": false },
 			"for": { "after": false },
 			"while": { "after": false },
-			"catch": { "after": false },
+			"catch": { "after": true },
 			"switch": { "after": false }
 		} }],
 		"max-nested-callbacks": ["error", { "max": 4 }],
 		"max-statements-per-line": ["error", { "max": 2 }],
 		"no-console": "off",
+		"no-empty": ["error", {
+			"allowEmptyCatch": true
+		}],
 		"no-empty-function": "error",
 		"no-floating-decimal": "error",
 		"no-lonely-if": "error",
