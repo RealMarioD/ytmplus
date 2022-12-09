@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 // ==UserScript==
-// @name         YTM+
+// @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.5.3
+// @version      1.6.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -43,7 +43,7 @@
                 'default': true
             },
             'noPromo': {
-                'label': 'No Promotions',
+                'label': 'No Promotions (works but breaks site)',
                 'type': 'checkbox',
                 'default': true
             },
@@ -83,6 +83,12 @@
                 'label': 'Enable Bar Fade',
                 'type': 'checkbox',
                 'default': true
+            },
+            'visualizerFft': {
+                'label': 'Bar Intensity (Refresh for changes)',
+                'type': 'select',
+                'options': ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+                'default': '256'
             },
             'bg': {
                 'label': 'Change Background',
@@ -243,6 +249,11 @@
                     pageDiv.style.backgroundImage = '';
                 }
                 else {
+                    try {
+                        document.getElementsByClassName('ytmusic-immersive-background style-scope ytmusic-browse-response-response')[0].children[0].remove();
+                    }
+                    catch {}
+                    document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
                     addFancy(document.body.style, true);
                     addFancy(pageDiv.style);
                 }
@@ -261,9 +272,7 @@
                     try {
                         saveBtn.innerText = 'Save';
                     }
-                    catch{
-                        undefined;
-                    }
+                    catch {}
                 }, 2000);
 
                 visualizerColor = GM_config.get('visualizerColor');
@@ -323,6 +332,8 @@
         afkEnable(GM_config.get('noAfk'));
 
         if(GM_config.get('bg') == true) {
+            document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
+            document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
             addFancy(document.body.style, true);
             addFancy(pageDiv.style);
         }
@@ -376,7 +387,7 @@
                 popup = document.getElementsByTagName('tp-yt-paper-dialog');
                 if(popup.length > 0) {
                     popup[0].remove();
-                    console.log('YTM+: Removed a promotion.');
+                    console.log('ytmPlus: Removed a promotion.');
                 }
             }, 1000);
         }
@@ -388,8 +399,8 @@
             clearInterval(noAfkFunction);
             noAfkFunction = setInterval(function() {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('YTM+: Nudged the page so user is not AFK.');
-            }, 60000);
+                console.log('ytmPlus: Nudged the page so user is not AFK.');
+            }, 15000);
         }
     }
 
@@ -397,12 +408,12 @@
         if(mode == 'Original') {
             clearTimeout(clockFunction);
             upgradeText.textContent = 'Upgrade';
-            upgradeText.parentElement.style.margin = '0px 24px';
+            // upgradeText.parentElement.style.margin = '0px 24px';
         }
         else if(mode == 'Digital Clock') {
             clearTimeout(clockFunction);
             updateTime(upgradeText);
-            upgradeText.parentElement.style.margin = '0px 24px';
+            // upgradeText.parentElement.style.margin = '0px 24px';
         }
         else {
             clearTimeout(clockFunction);
@@ -461,7 +472,7 @@
         src.connect(analyser);
         analyser.connect(context.destination);
 
-        analyser.fftSize = 256;
+        analyser.fftSize = GM_config.get('visualizerFft');
         analyser.smoothingTimeConstant = 0.5;
 
         const bufferLength = analyser.frequencyBinCount;
