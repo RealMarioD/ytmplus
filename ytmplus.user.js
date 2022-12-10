@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.6.0
+// @version      1.6.1
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -30,6 +30,9 @@
     let visualizerStyle; // Stores config
     let visualizerFade; // Stores config
     let navBarBg; // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
+    let analyser;
+    let bufferLength;
+    let dataArray;
 
     // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event (because GM_config wiki over fucking engineered the custom field type stuff so i dont really understand it and cba to set it up correctly)
     const GM_config = new GM_configStruct({
@@ -85,7 +88,7 @@
                 'default': true
             },
             'visualizerFft': {
-                'label': 'Bar Intensity (Refresh for changes)',
+                'label': 'Bar Intensity',
                 'type': 'select',
                 'options': ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
                 'default': '256'
@@ -278,6 +281,8 @@
                 visualizerColor = GM_config.get('visualizerColor');
                 visualizerStyle = GM_config.get('visualizerStyle');
                 visualizerFade = GM_config.get('visualizerFade');
+                getBufferData();
+                window.dispatchEvent(new Event('resize'));
 
                 extraButtons(GM_config.get('extraButtons'));
             }
@@ -459,10 +464,15 @@
         }
     }
 
+    function getBufferData() {
+        analyser.fftSize = GM_config.get('visualizerFft');
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+    }
     function visualizer() {
         const context = new AudioContext();
         const src = context.createMediaElementSource(v);
-        const analyser = context.createAnalyser();
+        analyser = context.createAnalyser();
 
         const canvas = document.getElementById('canvas');
         canvas.width = navBarBg.offsetWidth;
@@ -472,11 +482,8 @@
         src.connect(analyser);
         analyser.connect(context.destination);
 
-        analyser.fftSize = GM_config.get('visualizerFft');
+        getBufferData();
         analyser.smoothingTimeConstant = 0.5;
-
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
 
         let WIDTH = canvas.width;
         let HEIGHT = canvas.height;
@@ -514,7 +521,11 @@
         renderFrame();
 
         function visualizerEffect() {
-            x = visualizerStyle == 'Inside' ? barWidth / 2 : 0;
+            switch(visualizerStyle) {
+                case 'Inside': x = barWidth / 2; break;
+                case 'Outside': x = barSpace / 2; break;
+                default: x = 0; break;
+            }
 
             for(let i = 0; i < bufferLength; i++) {
                 barHeight = dataArray[i] * (HEIGHT / 255);
@@ -533,26 +544,26 @@
                     x += barWidth + barSpace;
                 }
                 else if(visualizerStyle == 'Outside') {
-                    if(x > WIDTH / 2) break;
+                    if(x > WIDTH / 2) break; // || x + barWidth + barSpace > WIDTH / 2
                     ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
                     x += barWidth + barSpace;
                 }
             }
             if(visualizerStyle == 'Inside') x = WIDTH / 2 + barWidth / 2 + barSpace;
-            else if(visualizerStyle == 'Outside') x = 0;
+            else if(visualizerStyle == 'Outside') x = barWidth + (barSpace / 2);
             else return;
-            for(let i = 1; i < bufferLength; i++) {
+            for(let i = 0; i < bufferLength; i++) {
                 barHeight = dataArray[i] * (HEIGHT / 255);
                 ctx.fillStyle = `${visualizerColor}${visualizerFade ? (barHeight / (HEIGHT / 255)).toString(16) : ''}`;
                 if(visualizerStyle == 'Inside') {
                     if(x > WIDTH) break;
-                    else {
+                    else if(i != 0) {
                         ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
                         x += barWidth + barSpace;
                     }
                 }
                 else if(visualizerStyle == 'Outside') {
-                    if(x > WIDTH / 2 || x + barWidth + barSpace > WIDTH / 2) break;
+                    if(x > WIDTH / 2) break;
                     ctx.fillRect(WIDTH - x, HEIGHT - barHeight, barWidth, barHeight);
                     x += barWidth + barSpace;
                 }
