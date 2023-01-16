@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.7.0
+// @version      1.8.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -25,27 +25,57 @@
     let noPromoFunction; // Holds the no promotions function
     let skipDislikedFunction; // Holds the skip disliked songs function
     let dumbFix = 0; // idek what to type here, DOMSubtreeModified fires twice, this helps code run only once lmao
-    const visualizer = {
-        place: null,
-        startsFrom: null,
-        color: null,
-        fade: null,
-        rotate: null,
-        rotateDirection: null,
-        analyser: null,
-        bufferLength: null,
-        dataArray: null,
-        move: null,
-        getBufferData() {
-            this.analyser.fftSize = GM_config.get('visualizerFft');
-            this.bufferLength = this.analyser.frequencyBinCount - Math.floor(this.analyser.frequencyBinCount * 0.15); // We cut off the end because data is 0, making visualizer's end flat
-            this.dataArray = new Uint8Array(this.bufferLength);
-        }
-    };
     let navBarBg; // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
     let mainPanel; // Holds something from around the album cover, - - | | - -
+    const visualizer = {
+        place: undefined,
+        startsFrom: undefined,
+        color: undefined,
+        fade: undefined,
+        rotate: undefined,
+        rotateDirection: undefined,
+        move: undefined,
+        cutOff: 0.1625,
+        bassBounce: {
+            enabled: null,
+            sensitivityStart: null,
+            sensitivityEnd: null,
+            debug: null
+        },
+        analyser: undefined,
+        bufferLength: null,
+        dataArray: null,
+        getBufferData() {
+            this.analyser.fftSize = GM_config.get('visualizerFft');
+            this.bufferLength = this.analyser.frequencyBinCount - Math.floor(this.analyser.frequencyBinCount * this.cutOff); // We cut off the end because data is 0, making visualizer's end flat
+            this.dataArray = new Uint8Array(this.bufferLength);
+        },
+        initValues() {
+            for(const key in this) {
+                if(Object.hasOwnProperty.call(this, key)) {
+                    let gmName = `visualizer${key[0].toUpperCase()}${key.slice(1, key.length)}`;
+                    if(typeof this[key] == 'object') {
+                        for(const key2 in this[key]) {
+                            if(Object.hasOwnProperty.call(this[key], key2)) {
+                                gmName = `visualizer${key[0].toUpperCase() + key.slice(1, key.length) + key2[0].toUpperCase() + key2.slice(1, key2.length)}`;
+                                this[key][key2] = GM_config.get(gmName);
+                            }
+                        }
+                        if(this.analyser !== undefined) {
+                            this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
+                            this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
+                            this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
+                        }
+                        return;
+                    }
+                    else this[key] = GM_config.get(gmName);
+                }
+            }
+        }
 
-    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event (because GM_config wiki over fucking engineered the custom field type stuff so i dont really understand it and cba to set it up correctly)
+    };
+
+    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event (because GM_config wiki over-fucking-engineered the custom field type stuff so i dont really understand it and cba to set it up correctly)
     // eslint-disable-next-line no-undef
     const GM_config = new GM_configStruct({
         'id': 'ytmPlusCfg',
@@ -76,7 +106,7 @@
             'extraButtons': {
                 'label': 'Extra Playback Buttons',
                 'type': 'checkbox',
-                'default': false
+                'default': true
             },
             'section0': {
                 'type': 'hidden',
@@ -137,7 +167,7 @@
                 'default': 'open'
             },
             'visualizerPlace': {
-                'label': 'Visualizer (Refresh for changes)',
+                'label': 'Visualizer Place',
                 'section': 'Music Visualizer',
                 'type': 'select',
                 'options': ['Disabled', 'Navbar', 'Album Cover'],
@@ -149,12 +179,6 @@
                 'options': ['Left', 'Center', 'Right', 'Edges'],
                 'default': 'Center'
             },
-            'visualizerFft': {
-                'label': 'Bar Intensity',
-                'type': 'select',
-                'options': ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-                'default': '256'
-            },
             'visualizerColor': {
                 'label': 'Visualizer Color',
                 'type': 'color',
@@ -163,7 +187,17 @@
             'visualizerFade': {
                 'label': 'Enable Bar Fade',
                 'type': 'checkbox',
-                'default': true
+                'default': false
+            },
+            'visualizerFft': {
+                'label': 'Bar Amount',
+                'type': 'select',
+                'options': ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+                'default': '1024',
+            },
+            'attention0': {
+                'label': 'High values affect performance and<br>can break circle visualizer.',
+                'type': 'hidden'
             },
             'section3': {
                 'type': 'hidden',
@@ -174,7 +208,7 @@
                 'label': 'Rotate Circle Vis.',
                 'section': 'Circle Visualizer',
                 'type': 'select',
-                'options': ['Disabled', 'On', 'Reactive'],
+                'options': ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
                 'default': 'Disabled'
             },
             'visualizerRotateDirection': {
@@ -187,12 +221,74 @@
                 'label': 'Bars Move',
                 'type': 'select',
                 'options': ['Inside', 'Outside', 'Both Sides'],
-                'default': 'Outside'
+                'default': 'Both Sides'
+            },
+            'visualizerBassBounceEnabled': {
+                'label': 'Bass Bounce',
+                'type': 'checkbox',
+                'default': true
             },
             'section4': {
                 'type': 'hidden',
                 'value': 'open',
                 'default': 'open'
+            },
+            'attention1': {
+                'label': 'Changes here can cause glitches!',
+                'section': 'Advanced Visualizer Settings',
+                'type': 'hidden'
+            },
+            'visualizerMinDecibels': {
+                'label': 'Min Decibels',
+                'type': 'int',
+                'min': -100,
+                'max': 0,
+                'default': -85
+            },
+            'visualizerMaxDecibels': {
+                'label': 'Max Decibels',
+                'type': 'int',
+                'min': -100,
+                'max': 0,
+                'default': 0
+            },
+            'visualizerSmoothing': {
+                'label': 'Smoothing Time Constant',
+                'type': 'float',
+                'min': 0.0,
+                'max': 1.0,
+                'default': 0.5
+            },
+            'visualizerCutOff': {
+                'label': 'AudioData End Cutoff',
+                'type': 'float',
+                'min': 0,
+                'max': 0.9999,
+                'default': 0.1625
+            },
+            'visualizerBassBounceSensitivityStart': {
+                'label': 'Bass Bounce Sensitivity Start',
+                'type': 'float',
+                'min': 0,
+                'max': 1,
+                'default': 0
+            },
+            'visualizerBassBounceSensitivityEnd': {
+                'label': 'Bass Bounce Sensitivity End',
+                'type': 'float',
+                'min': 0.00001,
+                'max': 1,
+                'default': 0.004
+            },
+            'visualizerBassBounceDebug': {
+                'label': 'Bass Bounce Debug Color',
+                'type': 'checkbox',
+                'default': false
+            },
+            'section5': {
+                'type': 'hidden',
+                'value': 'closed',
+                'default': 'closed'
             }
         },
         'css':
@@ -213,9 +309,13 @@
                 width: 2vh;
                 height: 2vh;
             }
+            input[type="text"] {
+                width: 8vh;
+            }
             input {
                 vertical-align: middle;
                 background-color: rgba(66, 66, 66, 0.8);
+                font-size: 2vh;
             }
             #ytmPlusCfg .config_var {
                 margin: 0 0 0.5vh;
@@ -249,7 +349,7 @@
             #ytmPlusCfg select {
                 vertical-align: middle;
                 background-color: rgba(66, 66, 66, 0.8);
-                font-size: 2vh
+                font-size: 2vh;
             }
             #ytmPlusCfg .reset {
                 color: rgba(255, 255, 255, 0.8);
@@ -267,6 +367,27 @@
             }
             ::-webkit-scrollbar-thumb:hover {
                 background: #555;
+            }
+            svg text {
+                font-size: 17vw;
+                animation: stroke 10s infinite alternate linear;
+                stroke-width: 2;
+                stroke: #aa0000;
+            }
+            @keyframes stroke {
+                0%   {
+                    fill: rgba(200,0,85,0.25); stroke: rgba(170,0,85,1);
+                    stroke-dashoffset: 25%; stroke-dasharray: 10%; stroke-width: 3;
+                }
+                100% {
+                    fill: rgba(200,0,85,0.25); stroke: rgba(170,0,85,1); 
+                    stroke-dashoffset: -25%; stroke-dasharray: 10%;
+                }
+            }
+            #cfgHolder {
+                overflow-y: overlay;
+                max-height: 80vh;
+                display: block;
             }`,
         'events': {
             'open': (doc, win, frame) => { // open function is mostly customizing settings UI
@@ -301,29 +422,50 @@
                 doc.getElementById('ytmPlusCfg_field_clockGradientColor').type = 'color';
                 doc.getElementById('ytmPlusCfg_field_visualizerColor').type = 'color';
 
+                // Putting the sections and settings into a scrollable div, so that the whole window won't become scrollable
                 const node = doc.createElement('div');
                 node.id = 'cfgHolder';
-                node.style.overflowY = 'overlay';
-                node.style.maxHeight = '80vh';
-                node.style.display = 'block';
                 const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
                 wrapper.appendChild(node);
-                for(let i = 0; i <= wrapper.childNodes.length; i++) node.appendChild(wrapper.childNodes[1]);
+                for(let i = 0; i <= wrapper.childNodes.length + 1; i++) node.appendChild(wrapper.childNodes[1]); // Not sure how this works, but I somehow skip the header and the buttons at the end
                 wrapper.appendChild(wrapper.childNodes[1]);
 
+                // Live change + Adding info to advanced visualizer settings
                 const inputs = doc.getElementsByTagName('input');
+                for(let i = 0; i < inputs.length; i++) {
+                    inputs[i].addEventListener('change', () => GM_config.save());
+                    if(!isNaN(parseInt(inputs[i].value))) {
+                        const fieldSettings = GM_config.fields[inputs[i].id.split('_')[2]].settings;
+                        inputs[i].title = `type: ${fieldSettings.type} | default: ${fieldSettings.default} | ${fieldSettings.min} . . ${fieldSettings.max}`;
+                    }
+                }
                 const selects = doc.getElementsByTagName('select');
-                for(let i = 0; i < inputs.length; i++) inputs[i].addEventListener('change', () => GM_config.save());
                 for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => GM_config.save());
 
+                // Header title svg
                 const title = doc.getElementById('ytmPlusCfg_header');
-                title.innerHTML = `<a href="https://github.com/RealMarioD/ytmplus" target="_blank">${title.innerHTML}</a>`;
+                title.innerHTML = `
+                <svg viewBox="0 0 613 99">
+                    <g style="overflow:hidden; text-anchor: middle;">
+                        <defs>
+                            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feGaussianBlur stdDeviation="10" result="glow"/>
+                                <feMerge>
+                                <feMergeNode in="glow"/>
+                                <feMergeNode in="glow"/>
+                                <feMergeNode in="glow"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
+                        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
+                    </g>
+                </svg>`;
 
                 // Handles opening/closing categories
                 const categories = doc.getElementsByClassName('section_header_holder');
                 for(let i = 0; i < categories.length; i++) {
                     categories[i].style.overflowY = 'hidden';
-                    console.log(GM_config.get(`section${i}`));
                     if(GM_config.get(`section${i}`) == 'open') {
                         categories[i].children[0].innerHTML = '▲ ' + categories[i].children[0].innerHTML + ' ▲';
                         categories[i].style.height = 'auto';
@@ -349,6 +491,10 @@
                     });
                 }
 
+                doc.addEventListener('keydown', event => {
+                    if(event.key == 'Escape') GM_config.close();
+                });
+
                 open = true;
             },
             'close': () => {
@@ -364,7 +510,7 @@
                 }
                 else {
                     try {
-                        document.getElementsByClassName('ytmusic-immersive-background style-scope ytmusic-browse-response-response')[0].children[0].remove();
+                        document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
                     }
                     catch { }
                     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
@@ -382,13 +528,13 @@
 
                 extraButtons(GM_config.get('extraButtons'));
 
-                visualizer.color = GM_config.get('visualizerColor');
-                visualizer.startsFrom = GM_config.get('visualizerStartsFrom');
-                visualizer.fade = GM_config.get('visualizerFade');
-                visualizer.rotate = GM_config.get('visualizerRotate');
-                visualizer.rotateDirection = GM_config.get('visualizerRotateDirection');
-                visualizer.move = GM_config.get('visualizerMove');
-                visualizer.getBufferData();
+                if(GM_config.get('visualizerPlace') != 'Disabled') {
+                    if(visualizer.analyser === undefined) getVideo();
+                    else {
+                        visualizer.initValues();
+                        visualizer.getBufferData();
+                    }
+                }
                 window.dispatchEvent(new Event('resize'));
             }
         }
@@ -436,14 +582,13 @@
         playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
         navBarBg = document.getElementById('nav-bar-background');
 
-        // ==V== Checking whether functions are turned on, enabling them if yes ==V==
-
+        // Checking whether functions are turned on, enabling them if yes
         promoEnable(GM_config.get('noPromo'));
 
         afkEnable(GM_config.get('noAfk')); // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
 
         if(GM_config.get('bg') == true) {
-            // Remove weird bg gradient div stuff ytm added early december 2022
+            // Remove weird bg gradient div stuff that ytm added early december 2022
             document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
             document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
 
@@ -462,20 +607,11 @@
 
         clockEnable(GM_config.get('clock'));
 
-        visualizer.place = GM_config.get('visualizerPlace');
-        if(visualizer.place != 'Disabled') {
-            visualizer.color = GM_config.get('visualizerColor');
-            visualizer.startsFrom = GM_config.get('visualizerStartsFrom');
-            visualizer.fade = GM_config.get('visualizerFade');
-
-            // Injecting canvas
-            if(visualizer.place == 'Navbar') {
-                navBarBg.innerHTML = '<canvas id="visualizerCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
-                navBarBg.style.opacity = 1;
-            }
-            else if(visualizer.place == 'Album Cover') mainPanel.innerHTML += '<canvas id="visualizerCanvas" style="position: absolute; left: 50; top: 50;"></canvas>';
-            getVideo();
-        }
+        // Injecting canvas
+        navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
+        navBarBg.style.opacity = 1;
+        mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none"></canvas>';
+        if(GM_config.get('visualizerPlace') != 'Disabled') getVideo();
 
         skipDisliked(GM_config.get('skipDisliked'));
 
@@ -613,36 +749,42 @@
         const src = context.createMediaElementSource(video);
         visualizer.analyser = context.createAnalyser();
 
-        const canvas = document.getElementById('visualizerCanvas');
-        const ctx = canvas.getContext('2d');
+        let canvas;
+        let ctx;
+        switch(visualizer.place) {
+            case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
+            case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
+        }
+        ctx = canvas.getContext('2d');
 
         src.connect(visualizer.analyser);
         visualizer.analyser.connect(context.destination);
 
+        visualizer.initValues();
         visualizer.getBufferData();
-        visualizer.analyser.smoothingTimeConstant = 0.5;
 
-        let WIDTH, HEIGHT, barWidth, barSpace, radius;
+        let WIDTH, HEIGHT = 1, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1;
 
-        if(visualizer.place == 'Album Cover') {
-            setInterval(() => { // Needed because album covers dont load instantly (wow) and while they are loading their size is 0, meaning canvas size is also 0
-                visualizerResizeFix();
-            }, 1000);
-        }
-        else visualizerResizeFix();
+        const heightModifier = () => (HEIGHT - radius) / (255 * 3);
 
+        // Interval is mainly for album cover vis.: album cover changes size based on song (square) / video (rectangle)
+        setInterval(() => {
+            visualizerResizeFix();
+        }, 1000);
         function visualizerResizeFix() {
             switch(visualizer.place) {
-                case 'Navbar':
+                case 'Navbar': default:
                     canvas.width = navBarBg.offsetWidth;
                     canvas.height = navBarBg.offsetHeight;
+                    canvas.style.width = '';
+                    canvas.style.height = '';
                     WIDTH = canvas.width;
                     HEIGHT = canvas.height;
 
-                    if(['Center', 'Edges'].includes(visualizer.startsFrom)) barWidth = WIDTH / 2 / visualizer.bufferLength;
-                    else barWidth = WIDTH / visualizer.bufferLength;
-                    barSpace = barWidth * 0.05;
-                    barWidth *= 0.95;
+                    if(['Center', 'Edges'].includes(visualizer.startsFrom)) barTotal = WIDTH / 2 / visualizer.bufferLength;
+                    else barTotal = WIDTH / visualizer.bufferLength;
+                    barSpace = barTotal * 0.05;
+                    barWidth = barTotal * 0.95;
                     break;
                 case 'Album Cover':
                     canvas.style.width = player.offsetWidth + 'px';
@@ -651,17 +793,13 @@
                     canvas.height = player.offsetHeight;
                     WIDTH = canvas.width;
                     HEIGHT = canvas.height;
-                    radius = Math.min(WIDTH, HEIGHT) / 4;
+                    if(!visualizer.bassBounce.enabled) radius = HEIGHT / 4;
                     break;
+                case 'Disabled': break;
             }
         }
 
         window.addEventListener('resize', visualizerResizeFix);
-
-        let barHeight, x, angle, rotato = 0;
-        visualizer.rotate = GM_config.get('visualizerRotate');
-        visualizer.rotateDirection = GM_config.get('visualizerRotateDirection');
-        visualizer.move = GM_config.get('visualizerMove');
 
         function renderFrame() {
             visualizer.analyser.getByteFrequencyData(visualizer.dataArray);
@@ -669,8 +807,21 @@
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
             switch(visualizer.place) {
-                case 'Navbar': visualizerNavbar(); break;
-                case 'Album Cover': visualizerCircle(); break;
+                case 'Navbar': default:
+                    if(canvas.id != 'visualizerNavbarCanvas') {
+                        canvas = document.getElementById('visualizerNavbarCanvas');
+                        ctx = canvas.getContext('2d');
+                    }
+                    visualizerNavbar();
+                    break;
+                case 'Album Cover':
+                    if(canvas.id != 'visualizerAlbumCoverCanvas') {
+                        canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                        ctx = canvas.getContext('2d');
+                    }
+                    visualizerCircle();
+                    break;
+                case 'Disabled': break;
             }
 
             requestAnimationFrame(renderFrame);
@@ -679,99 +830,121 @@
 
         function visualizerNavbar() {
             switch(visualizer.startsFrom) {
-                case 'Center': x = barWidth / 2; break;
-                case 'Edges': x = barSpace / 2; break;
-                default: x = 0; break;
+                case 'Center': xPosOffset = barWidth / 2; break;
+                case 'Edges': xPosOffset = barSpace / 2; break;
+                default: xPosOffset = 0; break;
             }
+
+            if(!visualizer.fade) ctx.fillStyle = visualizer.color;
 
             for(let i = 0; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
-                ctx.fillStyle = `${visualizer.color}${visualizer.fade ? (barHeight / (HEIGHT / 255)).toString(16) : ''}`;
+                if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
                 if(visualizer.startsFrom == 'Left') {
-                    ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-                    x += barWidth + barSpace;
+                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                    xPosOffset += barWidth + barSpace;
                 }
                 else if(visualizer.startsFrom == 'Center') {
-                    if(WIDTH / 2 - x < 0 - barWidth) break;
-                    ctx.fillRect(WIDTH / 2 - x, HEIGHT - barHeight, barWidth, barHeight);
-                    x += barWidth + barSpace;
+                    if(WIDTH / 2 - xPosOffset < 0 - barWidth) break;
+                    ctx.fillRect(WIDTH / 2 - xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                    xPosOffset += barWidth + barSpace;
                 }
                 else if(visualizer.startsFrom == 'Right') {
-                    ctx.fillRect(WIDTH - x, HEIGHT - barHeight, 0 - barWidth, barHeight);
-                    x += barWidth + barSpace;
+                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, 0 - barWidth, barHeight);
+                    xPosOffset += barWidth + barSpace;
                 }
                 else if(visualizer.startsFrom == 'Edges') {
-                    if(x > WIDTH / 2) break;
-                    ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-                    x += barWidth + barSpace;
+                    if(xPosOffset > WIDTH / 2) break;
+                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                    xPosOffset += barWidth + barSpace;
                 }
             }
 
-            if(visualizer.startsFrom == 'Center') x = WIDTH / 2 + barWidth / 2 + barSpace;
-            else if(visualizer.startsFrom == 'Edges') x = barWidth + (barSpace / 2);
+            if(visualizer.startsFrom == 'Center') xPosOffset = WIDTH / 2 + barWidth / 2 + barSpace;
+            else if(visualizer.startsFrom == 'Edges') xPosOffset = barWidth + (barSpace / 2);
             else return;
 
             for(let i = 0; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
-                ctx.fillStyle = `${visualizer.color}${visualizer.fade ? (barHeight / (HEIGHT / 255)).toString(16) : ''}`;
+                if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
                 if(visualizer.startsFrom == 'Center') {
-                    if(x > WIDTH) break;
+                    if(xPosOffset > WIDTH) break;
                     else if(i != 0) {
-                        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-                        x += barWidth + barSpace;
+                        ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                        xPosOffset += barTotal;
                     }
                 }
                 else if(visualizer.startsFrom == 'Edges') {
-                    if(x > WIDTH / 2) break;
-                    ctx.fillRect(WIDTH - x, HEIGHT - barHeight, barWidth, barHeight);
-                    x += barWidth + barSpace;
+                    if(xPosOffset > WIDTH / 2) break;
+                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                    xPosOffset += barTotal;
                 }
             }
         }
 
-        function visualizerCircle() {
-            const circleSize = ['Left', 'Right'].includes(visualizer.startsFrom) ? 2 : 1; // 2PI = full, 1PI = half
+        function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
+            if(visualizer.startsFrom == 'Left' || visualizer.startsFrom == 'Right') circleSize = 2; // 2PI = full, 1PI = half;
+            else circleSize = 1;
 
-            barWidth = circleSize * Math.PI * radius / visualizer.bufferLength;
-
-            // clear the canvas
-            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            if(visualizer.bassBounce.enabled || visualizer.rotate == 'Reactive (Bass)') {
+                bass = visualizer.dataArray.slice(~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart), ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1);
+                bassSmoothRadius = ~~((bassSmoothRadius + (bass.reduce((a, b) => a + b, 0) / bass.length) / 2) / 2);
+                if(visualizer.bassBounce.enabled) radius = HEIGHT / 6 + bassSmoothRadius;
+            }
 
             switch(visualizer.rotate) {
                 case 'On':
-                    if(visualizer.rotateDirection == 'Clockwise') rotato += 0.005;
-                    else rotato -= 0.005;
+                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += 0.005;
+                    else rotationValue -= 0.005;
                     break;
                 case 'Reactive':
-                    if(visualizer.rotateDirection == 'Clockwise') rotato += Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.dataArray.length / 10000 + 1, 2) - 1;
-                    else rotato -= Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.dataArray.length / 10000 + 1, 2) - 1;
+                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.bufferLength / 10000 + 1, 2) - 1;
+                    else rotationValue -= Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.dataArray.length / 10000 + 1, 2) - 1;
                     break;
-                default: rotato = 0; break;
+                case 'Reactive (Bass)':
+                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(bassSmoothRadius * 2 / 10000 + 1, 2) - 1;
+                    else rotationValue -= Math.pow(bassSmoothRadius * 2 / 10000 + 1, 2) - 1;
+                    break;
+                default: rotationValue = 0; break;
             }
 
-            // draw the frequency data onto the canvas
-            function drawBars(backwards) {
-                for(let i = 0; i < visualizer.bufferLength; i++) {
-                    angle = circleSize * Math.PI * i / visualizer.bufferLength;
-                    if(backwards) angle = (angle + (Math.PI / 2) - rotato) * -1; // Moving starting point to the top with PI/2 (quarter of a circle)
-                    else angle -= (Math.PI / 2) - rotato;
-                    barHeight = visualizer.dataArray[i] / 4;
-                    ctx.fillStyle = `${visualizer.color}${visualizer.fade ? (visualizer.dataArray[i]).toString(16) : ''}`;
 
-                    // Calculate bar position
-                    const xP = WIDTH / 2 + radius * Math.cos(angle);
-                    const yP = HEIGHT / 2 + radius * Math.sin(angle);
+            barTotal = circleSize * Math.PI / visualizer.bufferLength;
+            barWidth = barTotal * 0.45;
 
-                    ctx.save();
-                    ctx.translate(xP, yP);
-                    ctx.rotate(angle + Math.PI / 2);
-                    if(['Outside', 'Both Sides'].includes(visualizer.move)) ctx.fillRect(0, 0, barWidth, -barHeight);
-                    if(['Inside', 'Both Sides'].includes(visualizer.move)) ctx.fillRect(0, 0, barWidth, barHeight);
-                    ctx.restore();
+            function drawArcs(backwards) {
+                ctx.save();
+                ctx.translate(WIDTH / 2, HEIGHT / 2); // move to center of circle
+                ctx.rotate(-(0.5 * Math.PI) + rotationValue);
+
+                for(let i = 0; i < visualizer.dataArray.length; ++i) {
+                    ctx.fillStyle = visualizer.color + (visualizer.fade ? visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF' : '');
+                    if(visualizer.bassBounce.debug && i < bass.length && i >= ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+                    barHeight = visualizer.dataArray[i] * heightModifier() * (visualizer.bassBounce.enabled ? (bassSmoothRadius / 128 + 0.25) : 1);
+
+                    if(visualizer.move == 'Outside' || visualizer.move == 'Both Sides') outerRadius = radius + barHeight;
+                    else outerRadius = radius;
+                    if(visualizer.move == 'Inside' || visualizer.move == 'Both Sides') innerRadius = radius - barHeight;
+                    else innerRadius = radius;
+                    if(outerRadius < 0) outerRadius = 0;
+                    if(innerRadius < 0) innerRadius = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
+                    ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
+                    ctx.fill();
+                    ctx.rotate(backwards ? -barTotal : barTotal); // rotate the coordinates by one block
                 }
+                ctx.restore();
             }
-            if(['Right', 'Center', 'Edges'].includes(visualizer.startsFrom)) drawBars();
-            if(['Left', 'Center', 'Edges'].includes(visualizer.startsFrom)) drawBars(true);
+
+            if(visualizer.startsFrom == 'Right' ||
+                visualizer.startsFrom == 'Center' ||
+                visualizer.startsFrom == 'Edges') drawArcs();
+
+            if(visualizer.startsFrom == 'Left' ||
+                visualizer.startsFrom == 'Center' ||
+                visualizer.startsFrom == 'Edges') drawArcs(true);
         }
     }
 })();
