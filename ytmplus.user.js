@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.8.0
+// @version      1.8.1
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -19,7 +19,8 @@
     // Some global variables
     let open = false; // Used to track if config window is open or not
     let playerPageDiv; // Set to the player "overlay" in window.onload
-    let upgradeText; // Set to the upgrade "button" in window.onload
+    let upgradeButton; // Set to the upgrade "button" in window.onload
+    let originalUpgradeText;
     let clockFunction; // Holds the interval function that updates the digital clock
     let noAfkFunction; // Holds the anti-afk interval function
     let noPromoFunction; // Holds the no promotions function
@@ -40,6 +41,7 @@
             enabled: null,
             sensitivityStart: null,
             sensitivityEnd: null,
+            smooth: null,
             debug: null
         },
         analyser: undefined,
@@ -51,6 +53,11 @@
             this.dataArray = new Uint8Array(this.bufferLength);
         },
         initValues() {
+            /**
+             * Visualizer keys must have identical names with their GM_config equivalent, e.g.: visualizer.place = 'visualizerPlace'
+             * Following this rule we can iterate through the visualizer object and automatically get all configs and their values.
+             * (bassBounce is the last thing it checks so any values that should be initialised/changed upon saving should be set above bassBounce)
+             */
             for(const key in this) {
                 if(Object.hasOwnProperty.call(this, key)) {
                     let gmName = `visualizer${key[0].toUpperCase()}${key.slice(1, key.length)}`;
@@ -75,12 +82,11 @@
 
     };
 
-    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event (because GM_config wiki over-fucking-engineered the custom field type stuff so i dont really understand it and cba to set it up correctly)
+    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
     // eslint-disable-next-line no-undef
     const GM_config = new GM_configStruct({
         'id': 'ytmPlusCfg',
         'title': 'ytmPlus',
-        'description': 'Testing',
         'fields': {
             'noAfk': {
                 'label': 'Never AFK',
@@ -205,7 +211,7 @@
                 'default': 'open'
             },
             'visualizerRotate': {
-                'label': 'Rotate Circle Vis.',
+                'label': 'Rotation',
                 'section': 'Circle Visualizer',
                 'type': 'select',
                 'options': ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
@@ -218,13 +224,18 @@
                 'default': 'Clockwise'
             },
             'visualizerMove': {
-                'label': 'Bars Move',
+                'label': 'Bars Movement Direction',
                 'type': 'select',
                 'options': ['Inside', 'Outside', 'Both Sides'],
                 'default': 'Both Sides'
             },
             'visualizerBassBounceEnabled': {
                 'label': 'Bass Bounce',
+                'type': 'checkbox',
+                'default': true
+            },
+            'visualizerBassBounceSmooth': {
+                'label': 'Smooth Bounce',
                 'type': 'checkbox',
                 'default': true
             },
@@ -535,6 +546,7 @@
                         visualizer.getBufferData();
                     }
                 }
+                else visualizer.place = 'Disabled';
                 window.dispatchEvent(new Event('resize'));
             }
         }
@@ -556,8 +568,7 @@
 
     window.addEventListener('load', () => {
         // Creating bg movement animation by injecting css into head
-        upgradeText = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
-        const animation = `@keyframes gradient {
+        const animation = `@keyframes backgroundGradient {
 			0% {
 				background-position: 0% 50%;
 			}
@@ -566,7 +577,7 @@
 				background-position: 100% 50%;
 			}
 		}
-        @keyframes effect {
+        @keyframes clockGradient {
             from {
                 background-position: 0% center;
             }
@@ -605,10 +616,12 @@
             mainPanel.style.marginBottom = '8vh';
         }
 
+        upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
+        originalUpgradeText = upgradeButton.textContent;
         clockEnable(GM_config.get('clock'));
 
-        // Injecting canvas
-        navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></canvas>';
+        // Injecting visualizer canvases
+        navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
         navBarBg.style.opacity = 1;
         mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none"></canvas>';
         if(GM_config.get('visualizerPlace') != 'Disabled') getVideo();
@@ -668,23 +681,23 @@
     function clockEnable(mode) {
         if(mode == 'Original') {
             clearInterval(clockFunction);
-            upgradeText.textContent = 'Upgrade';
-            upgradeText.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+            upgradeButton.textContent = originalUpgradeText;
+            upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
         }
         else if(mode == 'Digital Clock') {
             clearInterval(clockFunction);
             clockFunction = setInterval(() => {
                 currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                upgradeText.textContent = currentTime;
+                upgradeButton.textContent = currentTime;
             }, 1000);
-            upgradeText.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+            upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
         }
         else {
             clearInterval(clockFunction);
-            upgradeText.textContent = '';
-            upgradeText.parentElement.style.margin = '0px';
+            upgradeButton.textContent = '';
+            upgradeButton.parentElement.style.margin = '0px';
         }
-        const a = upgradeText.style;
+        const a = upgradeButton.style;
         a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
         a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
         a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
@@ -692,12 +705,12 @@
         a.webkitBackgroundClip = mode != 'Digital Clock' ? '' : 'text';
         a.webkitTextFillColor = mode != 'Digital Clock' ? '' : 'transparent';
         a.fontSize = mode != 'Digital Clock' ? '20px' : '50px';
-        a.animation = mode != 'Digital Clock' ? '' : 'effect 2s linear infinite normal';
+        a.animation = mode != 'Digital Clock' ? '' : 'clockGradient 2s linear infinite normal';
     }
 
     function addFancy(e, overflowOn) {
         e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
-        e.animation = 'gradient 5s linear infinite alternate';
+        e.animation = 'backgroundGradient 5s linear infinite alternate';
         e.backgroundSize = '150% 150%';
         e.backgroundAttachment = 'fixed';
         // e.height = '100vh';
@@ -765,9 +778,9 @@
 
         let WIDTH, HEIGHT = 1, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1;
 
-        const heightModifier = () => (HEIGHT - radius) / (255 * 3);
+        const heightModifier = (multiplier) => (HEIGHT - radius) / 2 / 255 * multiplier;
 
-        // Interval is mainly for album cover vis.: album cover changes size based on song (square) / video (rectangle)
+        // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
         setInterval(() => {
             visualizerResizeFix();
         }, 1000);
@@ -802,26 +815,25 @@
         window.addEventListener('resize', visualizerResizeFix);
 
         function renderFrame() {
-            visualizer.analyser.getByteFrequencyData(visualizer.dataArray);
-
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            switch(visualizer.place) {
-                case 'Navbar': default:
+            if(visualizer.place != 'Disabled') {
+                visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
+
+                if(visualizer.place == 'Navbar') {
                     if(canvas.id != 'visualizerNavbarCanvas') {
                         canvas = document.getElementById('visualizerNavbarCanvas');
                         ctx = canvas.getContext('2d');
                     }
                     visualizerNavbar();
-                    break;
-                case 'Album Cover':
+                }
+                else if(visualizer.place == 'Album Cover') {
                     if(canvas.id != 'visualizerAlbumCoverCanvas') {
                         canvas = document.getElementById('visualizerAlbumCoverCanvas');
                         ctx = canvas.getContext('2d');
                     }
                     visualizerCircle();
-                    break;
-                case 'Disabled': break;
+                }
             }
 
             requestAnimationFrame(renderFrame);
@@ -830,8 +842,8 @@
 
         function visualizerNavbar() {
             switch(visualizer.startsFrom) {
-                case 'Center': xPosOffset = barWidth / 2; break;
-                case 'Edges': xPosOffset = barSpace / 2; break;
+                case 'Center': xPosOffset = barWidth / 2; break; // Centers 1 bar
+                case 'Edges': xPosOffset = barSpace / 2; break; // Both sides are offset a bit for perfect centering
                 default: xPosOffset = 0; break;
             }
 
@@ -839,57 +851,64 @@
 
             for(let i = 0; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
+
                 if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
+
+                // To this day I don't get the Y and height values
                 if(visualizer.startsFrom == 'Left') {
-                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
-                    xPosOffset += barWidth + barSpace;
+                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right
+                    xPosOffset += barTotal;
                 }
                 else if(visualizer.startsFrom == 'Center') {
                     if(WIDTH / 2 - xPosOffset < 0 - barWidth) break;
-                    ctx.fillRect(WIDTH / 2 - xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
-                    xPosOffset += barWidth + barSpace;
+                    ctx.fillRect(WIDTH / 2 - xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, starting from center to left
+                    xPosOffset += barTotal;
                 }
                 else if(visualizer.startsFrom == 'Right') {
-                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, 0 - barWidth, barHeight);
-                    xPosOffset += barWidth + barSpace;
+                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, 0 - barWidth, barHeight); // Draws rect from right to left
+                    xPosOffset += barTotal;
                 }
                 else if(visualizer.startsFrom == 'Edges') {
                     if(xPosOffset > WIDTH / 2) break;
-                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
-                    xPosOffset += barWidth + barSpace;
+                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from left to center
+                    xPosOffset += barTotal;
                 }
             }
 
-            if(visualizer.startsFrom == 'Center') xPosOffset = WIDTH / 2 + barWidth / 2 + barSpace;
-            else if(visualizer.startsFrom == 'Edges') xPosOffset = barWidth + (barSpace / 2);
+            if(visualizer.startsFrom == 'Center') xPosOffset = WIDTH / 2 + barWidth / 2 + barSpace; // Reset pos to center + skip first bar
+            else if(visualizer.startsFrom == 'Edges') xPosOffset = barWidth + (barSpace / 2); // Reset pos to right + offset for perfect center
             else return;
 
-            for(let i = 0; i < visualizer.bufferLength; i++) {
+            for(let i = 1; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
                 if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
                 if(visualizer.startsFrom == 'Center') {
                     if(xPosOffset > WIDTH) break;
-                    else if(i != 0) {
-                        ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
-                        xPosOffset += barTotal;
-                    }
+                    ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from center to right
+                    xPosOffset += barTotal;
                 }
                 else if(visualizer.startsFrom == 'Edges') {
                     if(xPosOffset > WIDTH / 2) break;
-                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, barWidth, barHeight);
+                    ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from right to center
                     xPosOffset += barTotal;
                 }
             }
         }
 
         function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-            if(visualizer.startsFrom == 'Left' || visualizer.startsFrom == 'Right') circleSize = 2; // 2PI = full, 1PI = half;
-            else circleSize = 1;
+            if(visualizer.startsFrom == 'Left' || visualizer.startsFrom == 'Right') circleSize = 2; // 2(pi) = full
+            else circleSize = 1; // 1(pi) = half;
 
             if(visualizer.bassBounce.enabled || visualizer.rotate == 'Reactive (Bass)') {
-                bass = visualizer.dataArray.slice(~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart), ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1);
-                bassSmoothRadius = ~~((bassSmoothRadius + (bass.reduce((a, b) => a + b, 0) / bass.length) / 2) / 2);
-                if(visualizer.bassBounce.enabled) radius = HEIGHT / 6 + bassSmoothRadius;
+                bass = visualizer.dataArray.slice(
+                    ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart),
+                    ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1
+                );
+
+                if(visualizer.bassBounce.smooth) bassSmoothRadius = ~~((bassSmoothRadius + (averageOfArray(bass) / 2)) / 2);
+                else bassSmoothRadius = ~~(averageOfArray(bass) / 2);
+
+                if(visualizer.bassBounce.enabled) radius = ~~(HEIGHT / 8) + bassSmoothRadius * heightModifier(2);
             }
 
             switch(visualizer.rotate) {
@@ -898,12 +917,12 @@
                     else rotationValue -= 0.005;
                     break;
                 case 'Reactive':
-                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.bufferLength / 10000 + 1, 2) - 1;
-                    else rotationValue -= Math.pow(visualizer.dataArray.reduce((a, b) => a + b, 0) / visualizer.dataArray.length / 10000 + 1, 2) - 1;
+                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1;
+                    else rotationValue -= Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1;
                     break;
                 case 'Reactive (Bass)':
-                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(bassSmoothRadius * 2 / 10000 + 1, 2) - 1;
-                    else rotationValue -= Math.pow(bassSmoothRadius * 2 / 10000 + 1, 2) - 1;
+                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(bassSmoothRadius / 10000 + 1, 2) - 1;
+                    else rotationValue -= Math.pow(bassSmoothRadius / 10000 + 1, 2) - 1;
                     break;
                 default: rotationValue = 0; break;
             }
@@ -911,16 +930,18 @@
 
             barTotal = circleSize * Math.PI / visualizer.bufferLength;
             barWidth = barTotal * 0.45;
+            // No need for barSpace
 
             function drawArcs(backwards) {
                 ctx.save();
                 ctx.translate(WIDTH / 2, HEIGHT / 2); // move to center of circle
-                ctx.rotate(-(0.5 * Math.PI) + rotationValue);
+                ctx.rotate(-(0.5 * Math.PI) + rotationValue); // Set bar starting point to top + rotation
 
                 for(let i = 0; i < visualizer.dataArray.length; ++i) {
                     ctx.fillStyle = visualizer.color + (visualizer.fade ? visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF' : '');
                     if(visualizer.bassBounce.debug && i < bass.length && i >= ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
-                    barHeight = visualizer.dataArray[i] * heightModifier() * (visualizer.bassBounce.enabled ? (bassSmoothRadius / 128 + 0.25) : 1);
+
+                    barHeight = visualizer.dataArray[i] * heightModifier(visualizer.bassBounce.enabled ? (0.35 + bassSmoothRadius / 512) : 0.5); // 0.35 . . 0.60
 
                     if(visualizer.move == 'Outside' || visualizer.move == 'Both Sides') outerRadius = radius + barHeight;
                     else outerRadius = radius;
@@ -933,7 +954,7 @@
                     ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
                     ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
                     ctx.fill();
-                    ctx.rotate(backwards ? -barTotal : barTotal); // rotate the coordinates by one block
+                    ctx.rotate(backwards ? -barTotal : barTotal); // rotate the coordinates by one bar
                 }
                 ctx.restore();
             }
@@ -946,5 +967,11 @@
                 visualizer.startsFrom == 'Center' ||
                 visualizer.startsFrom == 'Edges') drawArcs(true);
         }
+    }
+
+    function averageOfArray(numbers) {
+        let result = 0;
+        for(let i = 0; i < numbers.length; i++) result += numbers[i];
+        return result / numbers.length;
     }
 })();
