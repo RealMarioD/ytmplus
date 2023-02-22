@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.8.1
+// @version      1.9.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -13,11 +13,53 @@
 // @grant        GM_setValue
 // ==/UserScript==
 
-(function() {
+(async function() {
     'use strict';
 
+    const fieldTexts = {
+        lang: { english: 'Language<span title="Refresh for changes">🔄</span>', hungarian: 'Nyelv<span title="Frissíts a változásokhoz">🔄</span>' },
+        langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
+        noAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
+        noPromo: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
+        skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
+        padding: { english: 'Fix Layout<span title="Refresh for changes">🔄</span>', hungarian: 'Elrendezés javítása<span title="Frissíts a változásokhoz">🔄</span>' },
+        extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
+        bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
+        bgSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
+        bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
+        bgEnableGradient: { english: 'Enable Gradient', hungarian: 'Háttér színátmenet engedélyezése' },
+        bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
+        clock: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
+        clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
+        clockColor: { english: 'Clock Color', hungarian: 'Óra Színe' },
+        clockGradient: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
+        clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
+        visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
+        visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
+        visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
+        visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+        visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
+        visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
+        visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="A magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+        visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
+        visualizerRotateSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
+        visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
+        visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
+        visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
+        visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
+        attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
+        attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
+        visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
+        visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
+        visualizerSmoothing: { english: 'Smoothing Time Constant', hungarian: 'Simítási időállandó' },
+        visualizerCutOff: { english: 'AudioData End Cutoff', hungarian: 'AudioData Vég Levágás' },
+        visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
+        visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
+        visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
+    };
+
     // Some global variables
-    let open = false; // Used to track if config window is open or not
+    let settingsOpen = false; // Used to track if config window is open or not
     let playerPageDiv; // Set to the player "overlay" in window.onload
     let upgradeButton; // Set to the upgrade "button" in window.onload
     let originalUpgradeText;
@@ -83,226 +125,232 @@
     };
 
     // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
-    // eslint-disable-next-line no-undef
+    let langOption = await GM_getValue('ytmPlusCfg', 'english');
+    if(langOption != 'english') {
+        langOption = JSON.parse(langOption).lang;
+        langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
+    }
     const GM_config = new GM_configStruct({
-        'id': 'ytmPlusCfg',
-        'title': 'ytmPlus',
-        'fields': {
-            'noAfk': {
-                'label': 'Never AFK',
-                'section': 'Utilities',
-                'type': 'checkbox',
-                'default': true
+        id: 'ytmPlusCfg',
+        title: 'ytmPlus',
+        fields: {
+            lang: {
+                label: fieldTexts.lang[langOption],
+                section: fieldTexts.langSection[langOption],
+                type: 'select',
+                options: ['English', 'Hungarian'],
+                default: 'English'
             },
-            'noPromo': {
-                'label': 'No Promotions',
-                'type': 'checkbox',
-                'default': true
+            noAfk: {
+                label: fieldTexts.noAfk[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'skipDisliked': {
-                'label': 'Skip Disliked Songs (Beta)',
-                'type': 'checkbox',
-                'default': false
+            noPromo: {
+                label: fieldTexts.noPromo[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'padding': {
-                'label': 'Change Padding (Refresh for changes)',
-                'type': 'checkbox',
-                'default': true
+            skipDisliked: {
+                label: fieldTexts.skipDisliked[langOption],
+                type: 'checkbox',
+                default: false
             },
-            'extraButtons': {
-                'label': 'Extra Playback Buttons',
-                'type': 'checkbox',
-                'default': true
+            padding: {
+                label: fieldTexts.padding[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'section0': {
-                'type': 'hidden',
-                'value': 'open',
-                'default': 'open'
+            extraButtons: {
+                label: fieldTexts.extraButtons[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'bg': {
-                'label': 'Change Background',
-                'section': 'Background Settings',
-                'type': 'checkbox',
-                'default': true
+            section0: {
+                type: 'hidden',
+                value: 'open',
+                default: 'open'
             },
-            'bgColor': {
-                'label': 'Background Color',
-                'type': 'color',
-                'default': '#AA0000'
+            bg: {
+                label: fieldTexts.bg[langOption],
+                section: fieldTexts.bgSection[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'bgEnableGradient': {
-                'label': 'Enable Gradient',
-                'type': 'checkbox',
-                'default': true
+            bgColor: {
+                label: fieldTexts.bgColor[langOption],
+                type: 'color',
+                default: '#AA0000'
             },
-            'bgGradient': {
-                'label': 'Background Gradient Color',
-                'type': 'color',
-                'default': '#0000AA'
+            bgEnableGradient: {
+                label: fieldTexts.bgEnableGradient[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'section1': {
-                'type': 'hidden',
-                'value': 'open',
-                'default': 'open'
+            bgGradient: {
+                label: fieldTexts.bgGradient[langOption],
+                type: 'color',
+                default: '#0000AA'
             },
-            'clock': {
-                'label': 'Change "Upgrade" Button',
-                'section': 'Upgrade Button',
-                'type': 'select',
-                'options': ['Original', 'Remove Button', 'Digital Clock'],
-                'default': 'Digital Clock'
+            section1: {
+                type: 'hidden',
+                value: 'open',
+                default: 'open'
             },
-            'clockColor': {
-                'label': 'Clock Color',
-                'type': 'color',
-                'default': '#AA3333'
+            clock: {
+                label: fieldTexts.clock[langOption],
+                section: fieldTexts.clockSection[langOption],
+                type: 'select',
+                options: ['Original', 'Remove Button', 'Digital Clock'],
+                default: 'Digital Clock'
             },
-            'clockGradient': {
-                'label': 'Enable Gradient',
-                'type': 'checkbox',
-                'default': true
+            clockColor: {
+                label: fieldTexts.clockColor[langOption],
+                type: 'color',
+                default: '#AA3333'
             },
-            'clockGradientColor': {
-                'label': 'Gradient Color',
-                'type': 'color',
-                'default': '#3333AA'
+            clockGradient: {
+                label: fieldTexts.clockGradient[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'section2': {
-                'type': 'hidden',
-                'value': 'open',
-                'default': 'open'
+            clockGradientColor: {
+                label: fieldTexts.clockGradientColor[langOption],
+                type: 'color',
+                default: '#3333AA'
             },
-            'visualizerPlace': {
-                'label': 'Visualizer Place',
-                'section': 'Music Visualizer',
-                'type': 'select',
-                'options': ['Disabled', 'Navbar', 'Album Cover'],
-                'default': 'Album Cover'
+            section2: {
+                type: 'hidden',
+                value: 'open',
+                default: 'open'
             },
-            'visualizerStartsFrom': {
-                'label': 'Visualizer Starts from',
-                'type': 'select',
-                'options': ['Left', 'Center', 'Right', 'Edges'],
-                'default': 'Center'
+            visualizerPlace: {
+                label: fieldTexts.visualizerPlace[langOption],
+                section: fieldTexts.visualizerPlaceSection[langOption],
+                type: 'select',
+                options: ['Disabled', 'Navbar', 'Album Cover'],
+                default: 'Album Cover'
             },
-            'visualizerColor': {
-                'label': 'Visualizer Color',
-                'type': 'color',
-                'default': '#8C008C'
+            visualizerStartsFrom: {
+                label: fieldTexts.visualizerStartsFrom[langOption],
+                type: 'select',
+                options: ['Left', 'Center', 'Right', 'Edges'],
+                default: 'Center'
             },
-            'visualizerFade': {
-                'label': 'Enable Bar Fade',
-                'type': 'checkbox',
-                'default': false
+            visualizerColor: {
+                label: fieldTexts.visualizerColor[langOption],
+                type: 'color',
+                default: '#C800C8'
             },
-            'visualizerFft': {
-                'label': 'Bar Amount',
-                'type': 'select',
-                'options': ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-                'default': '1024',
+            visualizerFade: {
+                label: fieldTexts.visualizerFade[langOption],
+                type: 'checkbox',
+                default: false
             },
-            'attention0': {
-                'label': 'High values affect performance and<br>can break circle visualizer.',
-                'type': 'hidden'
+            visualizerFft: {
+                label: fieldTexts.visualizerFft[langOption],
+                type: 'select',
+                options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+                default: '1024',
             },
-            'section3': {
-                'type': 'hidden',
-                'value': 'open',
-                'default': 'open'
+            section3: {
+                type: 'hidden',
+                value: 'open',
+                default: 'open'
             },
-            'visualizerRotate': {
-                'label': 'Rotation',
-                'section': 'Circle Visualizer',
-                'type': 'select',
-                'options': ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-                'default': 'Disabled'
+            visualizerRotate: {
+                label: fieldTexts.visualizerRotate[langOption],
+                section: fieldTexts.visualizerRotateSection[langOption],
+                type: 'select',
+                options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
+                default: 'Disabled'
             },
-            'visualizerRotateDirection': {
-                'label': 'Rotation Direction',
-                'type': 'select',
-                'options': ['Clockwise', 'Counter-Clockwise'],
-                'default': 'Clockwise'
+            visualizerRotateDirection: {
+                label: fieldTexts.visualizerRotateDirection[langOption],
+                type: 'select',
+                options: ['Clockwise', 'Counter-Clockwise'],
+                default: 'Clockwise'
             },
-            'visualizerMove': {
-                'label': 'Bars Movement Direction',
-                'type': 'select',
-                'options': ['Inside', 'Outside', 'Both Sides'],
-                'default': 'Both Sides'
+            visualizerMove: {
+                label: fieldTexts.visualizerMove[langOption],
+                type: 'select',
+                options: ['Inside', 'Outside', 'Both Sides'],
+                default: 'Both Sides'
             },
-            'visualizerBassBounceEnabled': {
-                'label': 'Bass Bounce',
-                'type': 'checkbox',
-                'default': true
+            visualizerBassBounceEnabled: {
+                label: fieldTexts.visualizerBassBounceEnabled[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'visualizerBassBounceSmooth': {
-                'label': 'Smooth Bounce',
-                'type': 'checkbox',
-                'default': true
+            visualizerBassBounceSmooth: {
+                label: fieldTexts.visualizerBassBounceSmooth[langOption],
+                type: 'checkbox',
+                default: true
             },
-            'section4': {
-                'type': 'hidden',
-                'value': 'open',
-                'default': 'open'
+            section4: {
+                type: 'hidden',
+                value: 'open',
+                default: 'open'
             },
-            'attention1': {
-                'label': 'Changes here can cause glitches!',
-                'section': 'Advanced Visualizer Settings',
-                'type': 'hidden'
+            attention1: {
+                label: fieldTexts.attention1[langOption],
+                section: fieldTexts.attention1Section[langOption],
+                type: 'hidden'
             },
-            'visualizerMinDecibels': {
-                'label': 'Min Decibels',
-                'type': 'int',
-                'min': -100,
-                'max': 0,
-                'default': -85
+            visualizerMinDecibels: {
+                label: fieldTexts.visualizerMinDecibels[langOption],
+                type: 'int',
+                min: -100,
+                max: 0,
+                default: -85
             },
-            'visualizerMaxDecibels': {
-                'label': 'Max Decibels',
-                'type': 'int',
-                'min': -100,
-                'max': 0,
-                'default': 0
+            visualizerMaxDecibels: {
+                label: fieldTexts.visualizerMaxDecibels[langOption],
+                type: 'int',
+                min: -100,
+                max: 0,
+                default: 0
             },
-            'visualizerSmoothing': {
-                'label': 'Smoothing Time Constant',
-                'type': 'float',
-                'min': 0.0,
-                'max': 1.0,
-                'default': 0.5
+            visualizerSmoothing: {
+                label: fieldTexts.visualizerSmoothing[langOption],
+                type: 'float',
+                min: 0.0,
+                max: 1.0,
+                default: 0.5
             },
-            'visualizerCutOff': {
-                'label': 'AudioData End Cutoff',
-                'type': 'float',
-                'min': 0,
-                'max': 0.9999,
-                'default': 0.1625
+            visualizerCutOff: {
+                label: fieldTexts.visualizerCutOff[langOption],
+                type: 'float',
+                min: 0,
+                max: 0.9999,
+                default: 0.1625
             },
-            'visualizerBassBounceSensitivityStart': {
-                'label': 'Bass Bounce Sensitivity Start',
-                'type': 'float',
-                'min': 0,
-                'max': 1,
-                'default': 0
+            visualizerBassBounceSensitivityStart: {
+                label: fieldTexts.visualizerBassBounceSensitivityStart[langOption],
+                type: 'float',
+                min: 0,
+                max: 1,
+                default: 0
             },
-            'visualizerBassBounceSensitivityEnd': {
-                'label': 'Bass Bounce Sensitivity End',
-                'type': 'float',
-                'min': 0.00001,
-                'max': 1,
-                'default': 0.004
+            visualizerBassBounceSensitivityEnd: {
+                label: fieldTexts.visualizerBassBounceSensitivityEnd[langOption],
+                type: 'float',
+                min: 0.00001,
+                max: 1,
+                default: 0.004
             },
-            'visualizerBassBounceDebug': {
-                'label': 'Bass Bounce Debug Color',
-                'type': 'checkbox',
-                'default': false
+            visualizerBassBounceDebug: {
+                label: fieldTexts.visualizerBassBounceDebug[langOption],
+                type: 'checkbox',
+                default: false
             },
-            'section5': {
-                'type': 'hidden',
-                'value': 'closed',
-                'default': 'closed'
+            section5: {
+                type: 'hidden',
+                value: 'closed',
+                default: 'closed'
             }
         },
-        'css':
+        css:
             `input[type="color"] {
 	            -webkit-appearance: none;
 	            border: 0;
@@ -400,8 +448,8 @@
                 max-height: 80vh;
                 display: block;
             }`,
-        'events': {
-            'open': (doc, win, frame) => { // open function is mostly customizing settings UI
+        events: {
+            open: (doc, win, frame) => { // open function is mostly customizing settings UI
                 doc.body.style.overflow = 'hidden';
                 frame.style.width = '25vw';
                 // frame.style.height = // '80vh';
@@ -506,13 +554,13 @@
                     if(event.key == 'Escape') GM_config.close();
                 });
 
-                open = true;
+                settingsOpen = true;
             },
-            'close': () => {
-                open = false;
+            close: () => {
+                settingsOpen = false;
             },
-            'save': () => {
-                // Updates updateable stuff on save
+            save: () => {
+            // Updates updateable stuff on save
                 if(GM_config.get('bg') == false) {
                     document.body.style.backgroundColor = '#000000';
                     document.body.style.backgroundImage = '';
@@ -555,19 +603,19 @@
     // Code that opens/closes settings UI
     window.addEventListener('keydown', (ev) => {
         if(ev.code == 'Backslash' && ev.ctrlKey == true) {
-            if(open === false) {
+            if(settingsOpen === false) {
                 GM_config.open();
-                open = true;
+                settingsOpen = true;
             }
             else {
                 GM_config.close();
-                open = false;
+                settingsOpen = false;
             }
         }
     });
 
     window.addEventListener('load', () => {
-        // Creating bg movement animation by injecting css into head
+    // Creating bg movement animation by injecting css into head
         const animation = `@keyframes backgroundGradient {
 			0% {
 				background-position: 0% 50%;
@@ -599,7 +647,7 @@
         afkEnable(GM_config.get('noAfk')); // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
 
         if(GM_config.get('bg') == true) {
-            // Remove weird bg gradient div stuff that ytm added early december 2022
+        // Remove weird bg gradient div stuff that ytm added early december 2022
             document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
             document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
 
@@ -640,13 +688,13 @@
         // I just stole the svg to youtube's settings logo so i ended up with this, sorry not sorry
         frameDoc.body.innerHTML = '<svg id="openSettings" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;"><g class="style-scope yt-icon"><path d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,8c-2.21,0-4,1.79-4,4s1.79,4,4,4s4-1.79,4-4 S14.21,8,12,8L12,8z M13.22,3l0.55,2.2l0.13,0.51l0.5,0.18c0.61,0.23,1.19,0.56,1.72,0.98l0.4,0.32l0.5-0.14l2.17-0.62l1.22,2.11 l-1.63,1.59l-0.37,0.36l0.08,0.51c0.05,0.32,0.08,0.64,0.08,0.98s-0.03,0.66-0.08,0.98l-0.08,0.51l0.37,0.36l1.63,1.59l-1.22,2.11 l-2.17-0.62l-0.5-0.14l-0.4,0.32c-0.53,0.43-1.11,0.76-1.72,0.98l-0.5,0.18l-0.13,0.51L13.22,21h-2.44l-0.55-2.2l-0.13-0.51 l-0.5-0.18C9,17.88,8.42,17.55,7.88,17.12l-0.4-0.32l-0.5,0.14l-2.17,0.62L3.6,15.44l1.63-1.59l0.37-0.36l-0.08-0.51 C5.47,12.66,5.44,12.33,5.44,12s0.03-0.66,0.08-0.98l0.08-0.51l-0.37-0.36L3.6,8.56l1.22-2.11l2.17,0.62l0.5,0.14l0.4-0.32 C8.42,6.45,9,6.12,9.61,5.9l0.5-0.18l0.13-0.51L10.78,3H13.22 M14,2h-4L9.26,4.96c-0.73,0.27-1.4,0.66-2,1.14L4.34,5.27l-2,3.46 l2.19,2.13C4.47,11.23,4.44,11.61,4.44,12s0.03,0.77,0.09,1.14l-2.19,2.13l2,3.46l2.92-0.83c0.6,0.48,1.27,0.87,2,1.14L10,22h4 l0.74-2.96c0.73-0.27,1.4-0.66,2-1.14l2.92,0.83l2-3.46l-2.19-2.13c0.06-0.37,0.09-0.75,0.09-1.14s-0.03-0.77-0.09-1.14l2.19-2.13 l-2-3.46L16.74,6.1c-0.6-0.48-1.27-0.87-2-1.14L14,2L14,2z" class="style-scope yt-icon"></path></g></svg>';
         frameDoc.getElementById('openSettings').addEventListener('click', () => {
-            if(open == false) {
+            if(settingsOpen == false) {
                 GM_config.open();
-                open = true;
+                settingsOpen = true;
             }
             else {
                 GM_config.close();
-                open = false;
+                settingsOpen = false;
             }
         });
     });

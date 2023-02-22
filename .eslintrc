@@ -7,6 +7,11 @@
 	"parserOptions": {
 		"ecmaVersion": 2019
 	},
+	"globals": {
+		"GM_getValue": "readonly",
+		"GM_configStruct": "readonly",
+		"GM_config": "readonly"
+	},
 	"rules": {
 		"arrow-spacing": ["error", { "before": true, "after": true }],
 		"brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
