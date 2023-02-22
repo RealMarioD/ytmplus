@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.9.0
+// @version      1.9.1
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -13,7 +13,7 @@
 // @grant        GM_setValue
 // ==/UserScript==
 
-(async function() {
+(function() {
     'use strict';
 
     const fieldTexts = {
@@ -125,10 +125,11 @@
     };
 
     // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
-    let langOption = await GM_getValue('ytmPlusCfg', 'english');
+    let langOption = GM_getValue('ytmPlusCfg', 'english');
     if(langOption != 'english') {
         langOption = JSON.parse(langOption).lang;
-        langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
+        if(!langOption) langOption = 'english';
+        else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
     }
     const GM_config = new GM_configStruct({
         id: 'ytmPlusCfg',
