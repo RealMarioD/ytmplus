@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.9.1
+// @version      1.10.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -41,8 +41,9 @@
         visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
         visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
         visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="A magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+        visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
+        visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
         visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
-        visualizerRotateSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
         visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
         visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
         visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
@@ -75,6 +76,7 @@
         startsFrom: undefined,
         color: undefined,
         fade: undefined,
+        circleEnabled: undefined,
         rotate: undefined,
         rotateDirection: undefined,
         move: undefined,
@@ -259,9 +261,14 @@
                 value: 'open',
                 default: 'open'
             },
+            visualizerCircleEnabled: {
+                label: fieldTexts.visualizerCircleEnabled[langOption],
+                section: fieldTexts.visualizerCircleEnabledSection[langOption],
+                type: 'checkbox',
+                default: true
+            },
             visualizerRotate: {
                 label: fieldTexts.visualizerRotate[langOption],
-                section: fieldTexts.visualizerRotateSection[langOption],
                 type: 'select',
                 options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
                 default: 'Disabled'
@@ -672,7 +679,7 @@
         // Injecting visualizer canvases
         navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
         navBarBg.style.opacity = 1;
-        mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none"></canvas>';
+        mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none; visibility: visible"></canvas>';
         if(GM_config.get('visualizerPlace') != 'Disabled') getVideo();
 
         skipDisliked(GM_config.get('skipDisliked'));
@@ -855,6 +862,20 @@
                     canvas.height = player.offsetHeight;
                     WIDTH = canvas.width;
                     HEIGHT = canvas.height;
+                    if(player.playerPageOpen_ == false) { // if miniplayer == true
+                        canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
+                        canvas.style.left = getComputedStyle(player).left;
+                    }
+                    else {
+                        canvas.style.removeProperty('bottom'); // else completely remove properties because html
+                        canvas.style.removeProperty('left');
+                    }
+                    if(!visualizer.circleEnabled) {
+                        if(['Center', 'Edges'].includes(visualizer.startsFrom)) barTotal = WIDTH / 2 / visualizer.bufferLength;
+                        else barTotal = WIDTH / visualizer.bufferLength;
+                        barSpace = barTotal * 0.05;
+                        barWidth = barTotal * 0.95;
+                    }
                     if(!visualizer.bassBounce.enabled) radius = HEIGHT / 4;
                     break;
                 case 'Disabled': break;
@@ -866,7 +887,7 @@
         function renderFrame() {
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            if(visualizer.place != 'Disabled') {
+            if(visualizer.place != 'Disabled' || !video.paused) {
                 visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
 
                 if(visualizer.place == 'Navbar') {
@@ -881,7 +902,8 @@
                         canvas = document.getElementById('visualizerAlbumCoverCanvas');
                         ctx = canvas.getContext('2d');
                     }
-                    visualizerCircle();
+                    if(visualizer.circleEnabled) visualizerCircle();
+                    else visualizerNavbar();
                 }
             }
 
