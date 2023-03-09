@@ -35,7 +35,7 @@ The script originally started off as a simple background changer, that now offer
 
 ## Discord
 
-If you find bugs or have ideas or just want to discuss the script, feel free to [join the ytmPlus Discord server!](https://discord.com/68Waxa4Qxz)
+If you find bugs or have ideas or just want to discuss the script, feel free to [join the ytmPlus Discord server!](https://discord.gg/68Waxa4Qxz)
 
 ## Screenshots
 
