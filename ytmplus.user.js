@@ -391,8 +391,8 @@
             @-moz-document url-prefix() {
               #cfgHolder {
                overflow-y: scroll;
+              }
             }
-        }
             #ytmPlusCfg * {
                 font-family: monospace;
                 color: rgba(255, 255, 255, 0.8);
@@ -676,7 +676,7 @@
             mainPanel.style.marginTop = '8vh';
             mainPanel.style.marginBottom = '8vh';
         }
-        setTimeout(() => { // This is line 681 if you add the CSS
+        setTimeout(() => { 
             upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
             originalUpgradeText = upgradeButton.textContent;
             clockEnable(GM_config.get('clock'));
