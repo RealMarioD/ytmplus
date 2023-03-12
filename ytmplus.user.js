@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.10.0
+// @version      1.12.0
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -39,6 +39,7 @@
         visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
         visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
         visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
+        visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
         visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
         visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="A magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
         visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
@@ -50,6 +51,9 @@
         visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
         attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
         attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
+        visualizerRgbRed: { english: 'RGB:Red Value', hungarian: 'RGB:Piros Érték' },
+        visualizerRgbGreen: { english: 'RGB:Green Value', hungarian: 'RGB:Zöld Érték' },
+        visualizerRgbBlue: { english: 'RGB:Blue Value', hungarian: 'RGB:Kék Érték' },
         visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
         visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
         visualizerSmoothing: { english: 'Smoothing Time Constant', hungarian: 'Simítási időállandó' },
@@ -81,6 +85,12 @@
         rotateDirection: undefined,
         move: undefined,
         cutOff: 0.1625,
+        rgb: {
+            enabled: undefined,
+            red: undefined,
+            green: undefined,
+            blue: undefined
+        },
         bassBounce: {
             enabled: null,
             sensitivityStart: null,
@@ -88,6 +98,7 @@
             smooth: null,
             debug: null
         },
+        rgbData: [],
         analyser: undefined,
         bufferLength: null,
         dataArray: null,
@@ -112,12 +123,12 @@
                                 this[key][key2] = GM_config.get(gmName);
                             }
                         }
+                        if(key == 'bassBounce') return;
                         if(this.analyser !== undefined) {
                             this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
                             this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
                             this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
                         }
-                        return;
                     }
                     else this[key] = GM_config.get(gmName);
                 }
@@ -245,6 +256,11 @@
                 type: 'color',
                 default: '#C800C8'
             },
+            visualizerRgbEnabled: {
+                label: fieldTexts.visualizerRgbEnabled[langOption],
+                type: 'checkbox',
+                default: false
+            },
             visualizerFade: {
                 label: fieldTexts.visualizerFade[langOption],
                 type: 'checkbox',
@@ -304,6 +320,27 @@
                 label: fieldTexts.attention1[langOption],
                 section: fieldTexts.attention1Section[langOption],
                 type: 'hidden'
+            },
+            visualizerRgbRed: {
+                label: fieldTexts.visualizerRgbRed[langOption],
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
+            },
+            visualizerRgbGreen: {
+                label: fieldTexts.visualizerRgbGreen[langOption],
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
+            },
+            visualizerRgbBlue: {
+                label: fieldTexts.visualizerRgbBlue[langOption],
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
             },
             visualizerMinDecibels: {
                 label: fieldTexts.visualizerMinDecibels[langOption],
@@ -608,6 +645,7 @@
                     }
                 }
                 else visualizer.place = 'Disabled';
+                if(visualizer.rgb.enabled) getRGB();
                 window.dispatchEvent(new Event('resize'));
             }
         }
@@ -820,13 +858,13 @@
     }
 
     function startVisualizer() {
+        // Init, connecting yt audio to canvas
         const player = document.getElementById('player');
         const context = new AudioContext();
         const src = context.createMediaElementSource(video);
         visualizer.analyser = context.createAnalyser();
 
-        let canvas;
-        let ctx;
+        let canvas, ctx;
         switch(visualizer.place) {
             case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
             case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
@@ -839,9 +877,8 @@
         visualizer.initValues();
         visualizer.getBufferData();
 
-        let WIDTH, HEIGHT = 1, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1;
-
-        const heightModifier = (multiplier) => (HEIGHT - radius) / 2 / 255 * multiplier;
+        let WIDTH, HEIGHT = 1, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, heightModifier = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1;
+        const startingPoint = -(0.5 * Math.PI);
 
         // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
         setInterval(() => {
@@ -857,7 +894,7 @@
                     WIDTH = canvas.width;
                     HEIGHT = canvas.height;
 
-                    if(['Center', 'Edges'].includes(visualizer.startsFrom)) barTotal = WIDTH / 2 / visualizer.bufferLength;
+                    if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = WIDTH / 2 / visualizer.bufferLength;
                     else barTotal = WIDTH / visualizer.bufferLength;
                     barSpace = barTotal * 0.05;
                     barWidth = barTotal * 0.95;
@@ -869,7 +906,7 @@
                     canvas.height = player.offsetHeight;
                     WIDTH = canvas.width;
                     HEIGHT = canvas.height;
-                    if(player.playerPageOpen_ == false) { // if miniplayer == true
+                    if(player.playerPageOpen_ === false) { // if miniplayer == true
                         canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
                         canvas.style.left = getComputedStyle(player).left;
                     }
@@ -877,39 +914,49 @@
                         canvas.style.removeProperty('bottom'); // else completely remove properties because html
                         canvas.style.removeProperty('left');
                     }
-                    if(!visualizer.circleEnabled) {
-                        if(['Center', 'Edges'].includes(visualizer.startsFrom)) barTotal = WIDTH / 2 / visualizer.bufferLength;
+                    if(visualizer.circleEnabled === false) {
+                        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = WIDTH / 2 / visualizer.bufferLength;
                         else barTotal = WIDTH / visualizer.bufferLength;
                         barSpace = barTotal * 0.05;
                         barWidth = barTotal * 0.95;
                     }
-                    if(!visualizer.bassBounce.enabled) radius = HEIGHT / 4;
+                    else if(visualizer.bassBounce.enabled === false) {
+                        radius = ~~(HEIGHT / 4);
+                        heightModifier = (HEIGHT - radius) / 2 / 255;
+                    }
+                    else heightModifier = (HEIGHT - ~~(HEIGHT / 8)) / 2 / 255;
                     break;
                 case 'Disabled': break;
             }
         }
 
         window.addEventListener('resize', visualizerResizeFix);
+        if(visualizer.rgb.enabled === true) getRGB();
 
         function renderFrame() {
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            if(visualizer.place != 'Disabled' || !video.paused) {
+            if(visualizer.place !== 'Disabled' || video.paused === false) {
                 visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
 
-                if(visualizer.place == 'Navbar') {
-                    if(canvas.id != 'visualizerNavbarCanvas') {
+                if(visualizer.rgb.enabled === true) { // Color cycle effect
+                    visualizer.rgbData.push(visualizer.rgbData[0]);
+                    visualizer.rgbData.shift();
+                }
+
+                if(visualizer.place === 'Navbar') {
+                    if(canvas.id !== 'visualizerNavbarCanvas') {
                         canvas = document.getElementById('visualizerNavbarCanvas');
                         ctx = canvas.getContext('2d');
                     }
                     visualizerNavbar();
                 }
-                else if(visualizer.place == 'Album Cover') {
-                    if(canvas.id != 'visualizerAlbumCoverCanvas') {
+                else if(visualizer.place === 'Album Cover') {
+                    if(canvas.id !== 'visualizerAlbumCoverCanvas') {
                         canvas = document.getElementById('visualizerAlbumCoverCanvas');
                         ctx = canvas.getContext('2d');
                     }
-                    if(visualizer.circleEnabled) visualizerCircle();
+                    if(visualizer.circleEnabled === true) visualizerCircle();
                     else visualizerNavbar();
                 }
             }
@@ -919,18 +966,19 @@
         renderFrame();
 
         function visualizerNavbar() {
-            switch(visualizer.startsFrom) {
-                case 'Center': xPosOffset = barWidth / 2; break; // Centers 1 bar
-                case 'Edges': xPosOffset = barSpace / 2; break; // Both sides are offset a bit for perfect centering
-                default: xPosOffset = 0; break;
-            }
-
-            if(!visualizer.fade) ctx.fillStyle = visualizer.color;
+            if(visualizer.startsFrom === 'Center') xPosOffset = barWidth / 2; // Centers 1 bar
+            else if(visualizer.startsFrom === 'Edges') xPosOffset = barSpace / 2; // Both sides are offset a bit for perfect centering
+            else xPosOffset = 0;
 
             for(let i = 0; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
 
-                if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
+                if(visualizer.rgb.enabled === true) {
+                    const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
+                    if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                    else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+                }
+                else ctx.fillStyle = visualizer.color;
 
                 // To this day I don't get the Y and height values
                 if(visualizer.startsFrom == 'Left') {
@@ -959,7 +1007,12 @@
 
             for(let i = 1; i < visualizer.bufferLength; i++) {
                 barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
-                if(visualizer.fade) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
+                if(visualizer.rgb.enabled === true) {
+                    const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
+                    if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                    else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+                }
+                else ctx.fillStyle = visualizer.color;
                 if(visualizer.startsFrom == 'Center') {
                     if(xPosOffset > WIDTH) break;
                     ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from center to right
@@ -974,32 +1027,32 @@
         }
 
         function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-            if(visualizer.startsFrom == 'Left' || visualizer.startsFrom == 'Right') circleSize = 2; // 2(pi) = full
+            if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') circleSize = 2; // 2(pi) = full
             else circleSize = 1; // 1(pi) = half;
 
-            if(visualizer.bassBounce.enabled || visualizer.rotate == 'Reactive (Bass)') {
+            if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') {
                 bass = visualizer.dataArray.slice(
                     ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart),
                     ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1
                 );
 
-                if(visualizer.bassBounce.smooth) bassSmoothRadius = ~~((bassSmoothRadius + (averageOfArray(bass) / 2)) / 2);
+                if(visualizer.bassBounce.smooth === true) bassSmoothRadius = ~~((bassSmoothRadius + (averageOfArray(bass) / 2)) / 2);
                 else bassSmoothRadius = ~~(averageOfArray(bass) / 2);
 
-                if(visualizer.bassBounce.enabled) radius = ~~(HEIGHT / 8) + bassSmoothRadius * heightModifier(2);
+                if(visualizer.bassBounce.enabled === true) radius = ~~(HEIGHT / 8) + bassSmoothRadius * heightModifier * 1.25;
             }
 
             switch(visualizer.rotate) {
                 case 'On':
-                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += 0.005;
+                    if(visualizer.rotateDirection === 'Clockwise') rotationValue += 0.005;
                     else rotationValue -= 0.005;
                     break;
                 case 'Reactive':
-                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1;
+                    if(visualizer.rotateDirection === 'Clockwise') rotationValue += Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1;
                     else rotationValue -= Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1;
                     break;
                 case 'Reactive (Bass)':
-                    if(visualizer.rotateDirection == 'Clockwise') rotationValue += Math.pow(bassSmoothRadius / 10000 + 1, 2) - 1;
+                    if(visualizer.rotateDirection === 'Clockwise') rotationValue += Math.pow(bassSmoothRadius / 10000 + 1, 2) - 1;
                     else rotationValue -= Math.pow(bassSmoothRadius / 10000 + 1, 2) - 1;
                     break;
                 default: rotationValue = 0; break;
@@ -1013,13 +1066,20 @@
             function drawArcs(backwards) {
                 ctx.save();
                 ctx.translate(WIDTH / 2, HEIGHT / 2); // move to center of circle
-                ctx.rotate(-(0.5 * Math.PI) + rotationValue); // Set bar starting point to top + rotation
+                ctx.rotate(startingPoint + rotationValue); // Set bar starting point to top + rotation
 
-                for(let i = 0; i < visualizer.dataArray.length; ++i) {
-                    ctx.fillStyle = visualizer.color + (visualizer.fade ? visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF' : '');
-                    if(visualizer.bassBounce.debug && i < bass.length && i >= ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+                for(let i = 0; i < visualizer.bufferLength; ++i) {
+                    if(visualizer.rgb.enabled === true) {
+                        const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
+                        if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                        else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+                    }
+                    else ctx.fillStyle = visualizer.color;
 
-                    barHeight = visualizer.dataArray[i] * heightModifier(visualizer.bassBounce.enabled ? (0.35 + bassSmoothRadius / 512) : 0.5); // 0.35 . . 0.60
+                    if(visualizer.bassBounce.debug === true && i < bass.length && i >= ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+
+                    if(visualizer.bassBounce.enabled === true) barHeight = visualizer.dataArray[i] * heightModifier * 0.5; // * (0.35 + bassSmoothRadius / 512); // 0.35 . . 0.60
+                    else barHeight = visualizer.dataArray[i] * heightModifier * 0.5;
 
                     if(visualizer.move == 'Outside' || visualizer.move == 'Both Sides') outerRadius = radius + barHeight;
                     else outerRadius = radius;
@@ -1045,6 +1105,11 @@
                 visualizer.startsFrom == 'Center' ||
                 visualizer.startsFrom == 'Edges') drawArcs(true);
         }
+    }
+
+    function getRGB() {
+        const piD3 = Math.PI / 3, piD3x2 = 2 * Math.PI / 3, hue = 2 * Math.PI / 1024;
+        for(let i = 0; i < 1024; i++) visualizer.rgbData[i] = { red: Math.abs(visualizer.rgb.red * Math.sin(i * hue)), green: Math.abs(visualizer.rgb.green * Math.sin(i * hue + piD3)), blue: Math.abs(visualizer.rgb.blue * Math.sin(i * hue + piD3x2)) };
     }
 
     function averageOfArray(numbers) {

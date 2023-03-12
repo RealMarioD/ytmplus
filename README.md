@@ -2,12 +2,14 @@
 
 Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
 
+Now with **Hungarian** support!
+
 ## How to Install
 
 1. Download and install [Tampermonkey](https://www.tampermonkey.net) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey), depends on what browser you have.
 2. [Click here to install the script!](https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js)
 
-*Note: Script has only been tested on Chrome, Firefox officially not supported **(yet)**.*
+Note: Script only tested on Chrome and Firefox *(thanks sl0thi3)*, other browsers are not officially supported, but may still work.
 
 ## Settings
 
