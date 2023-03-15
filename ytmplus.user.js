@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
 // @namespace    http://tampermonkey.net/
-// @version      1.12.0
+// @version      1.12.1
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
@@ -54,6 +54,7 @@
         visualizerRgbRed: { english: 'RGB:Red Value', hungarian: 'RGB:Piros Érték' },
         visualizerRgbGreen: { english: 'RGB:Green Value', hungarian: 'RGB:Zöld Érték' },
         visualizerRgbBlue: { english: 'RGB:Blue Value', hungarian: 'RGB:Kék Érték' },
+        visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
         visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
         visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
         visualizerSmoothing: { english: 'Smoothing Time Constant', hungarian: 'Simítási időállandó' },
@@ -89,7 +90,8 @@
             enabled: undefined,
             red: undefined,
             green: undefined,
-            blue: undefined
+            blue: undefined,
+            samples: undefined
         },
         bassBounce: {
             enabled: null,
@@ -341,6 +343,13 @@
                 min: 0,
                 max: 255,
                 default: 255
+            },
+            visualizerRgbSamples: {
+                label: fieldTexts.visualizerRgbSamples[langOption],
+                type: 'int',
+                min: 1,
+                max: 8192,
+                default: 512
             },
             visualizerMinDecibels: {
                 label: fieldTexts.visualizerMinDecibels[langOption],
@@ -877,7 +886,7 @@
         visualizer.initValues();
         visualizer.getBufferData();
 
-        let WIDTH, HEIGHT = 1, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, heightModifier = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1;
+        let WIDTH, HEIGHT = 1, halfWidth, halfHeight, xPosOffset, barTotal, barWidth, barSpace, barHeight, circleSize, radius = 1, heightModifier = 1, innerRadius, outerRadius, rotationValue = 0, bass, bassSmoothRadius = 1, reactiveBarHeightMultiplier;
         const startingPoint = -(0.5 * Math.PI);
 
         // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
@@ -892,9 +901,10 @@
                     canvas.style.width = '';
                     canvas.style.height = '';
                     WIDTH = canvas.width;
+                    halfWidth = WIDTH / 2;
                     HEIGHT = canvas.height;
 
-                    if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = WIDTH / 2 / visualizer.bufferLength;
+                    if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = halfWidth / visualizer.bufferLength;
                     else barTotal = WIDTH / visualizer.bufferLength;
                     barSpace = barTotal * 0.05;
                     barWidth = barTotal * 0.95;
@@ -905,7 +915,10 @@
                     canvas.width = player.offsetWidth;
                     canvas.height = player.offsetHeight;
                     WIDTH = canvas.width;
+                    halfWidth = WIDTH / 2;
                     HEIGHT = canvas.height;
+                    halfHeight = HEIGHT / 2;
+
                     if(player.playerPageOpen_ === false) { // if miniplayer == true
                         canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
                         canvas.style.left = getComputedStyle(player).left;
@@ -914,8 +927,9 @@
                         canvas.style.removeProperty('bottom'); // else completely remove properties because html
                         canvas.style.removeProperty('left');
                     }
+
                     if(visualizer.circleEnabled === false) {
-                        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = WIDTH / 2 / visualizer.bufferLength;
+                        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') barTotal = halfWidth / visualizer.bufferLength;
                         else barTotal = WIDTH / visualizer.bufferLength;
                         barSpace = barTotal * 0.05;
                         barWidth = barTotal * 0.95;
@@ -970,56 +984,57 @@
             else if(visualizer.startsFrom === 'Edges') xPosOffset = barSpace / 2; // Both sides are offset a bit for perfect centering
             else xPosOffset = 0;
 
+            const maxBarHeight = (HEIGHT / 255), colorDivergence = (visualizer.bufferLength / visualizer.rgbData.length);
             for(let i = 0; i < visualizer.bufferLength; i++) {
-                barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
+                barHeight = visualizer.dataArray[i] * maxBarHeight;
 
                 if(visualizer.rgb.enabled === true) {
-                    const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
+                    const color = ~~(i / colorDivergence);
                     if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
                     else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
                 }
                 else ctx.fillStyle = visualizer.color;
 
                 // To this day I don't get the Y and height values
-                if(visualizer.startsFrom == 'Left') {
+                if(visualizer.startsFrom === 'Left') {
                     ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right
                     xPosOffset += barTotal;
                 }
-                else if(visualizer.startsFrom == 'Center') {
-                    if(WIDTH / 2 - xPosOffset < 0 - barWidth) break;
-                    ctx.fillRect(WIDTH / 2 - xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, starting from center to left
+                else if(visualizer.startsFrom === 'Center') {
+                    if(halfWidth - xPosOffset < 0 - barWidth) break;
+                    ctx.fillRect(halfWidth - xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, starting from center to left
                     xPosOffset += barTotal;
                 }
-                else if(visualizer.startsFrom == 'Right') {
+                else if(visualizer.startsFrom === 'Right') {
                     ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, 0 - barWidth, barHeight); // Draws rect from right to left
                     xPosOffset += barTotal;
                 }
-                else if(visualizer.startsFrom == 'Edges') {
-                    if(xPosOffset > WIDTH / 2) break;
+                else if(visualizer.startsFrom === 'Edges') {
+                    if(xPosOffset > halfWidth) break;
                     ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from left to center
                     xPosOffset += barTotal;
                 }
             }
 
-            if(visualizer.startsFrom == 'Center') xPosOffset = WIDTH / 2 + barWidth / 2 + barSpace; // Reset pos to center + skip first bar
-            else if(visualizer.startsFrom == 'Edges') xPosOffset = barWidth + (barSpace / 2); // Reset pos to right + offset for perfect center
+            if(visualizer.startsFrom === 'Center') xPosOffset = halfWidth + barWidth / 2 + barSpace; // Reset pos to center + skip first bar
+            else if(visualizer.startsFrom === 'Edges') xPosOffset = barWidth + (barSpace / 2); // Reset pos to right + offset for perfect center
             else return;
 
             for(let i = 1; i < visualizer.bufferLength; i++) {
-                barHeight = visualizer.dataArray[i] * (HEIGHT / 255);
+                barHeight = visualizer.dataArray[i] * maxBarHeight;
                 if(visualizer.rgb.enabled === true) {
-                    const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
+                    const color = ~~(i / colorDivergence);
                     if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
                     else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
                 }
                 else ctx.fillStyle = visualizer.color;
-                if(visualizer.startsFrom == 'Center') {
+                if(visualizer.startsFrom === 'Center') {
                     if(xPosOffset > WIDTH) break;
                     ctx.fillRect(xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from center to right
                     xPosOffset += barTotal;
                 }
-                else if(visualizer.startsFrom == 'Edges') {
-                    if(xPosOffset > WIDTH / 2) break;
+                else if(visualizer.startsFrom === 'Edges') {
+                    if(xPosOffset > halfWidth) break;
                     ctx.fillRect(WIDTH - xPosOffset, HEIGHT - barHeight, barWidth, barHeight); // Draws rect from left to right, from right to center
                     xPosOffset += barTotal;
                 }
@@ -1062,54 +1077,64 @@
             barTotal = circleSize * Math.PI / visualizer.bufferLength;
             barWidth = barTotal * 0.45;
             // No need for barSpace
+            reactiveBarHeightMultiplier = 0.3 + bassSmoothRadius / 512; // 0.3 . . 0.55
 
             function drawArcs(backwards) {
                 ctx.save();
-                ctx.translate(WIDTH / 2, HEIGHT / 2); // move to center of circle
+                ctx.translate(halfWidth, halfHeight); // move to center of circle
                 ctx.rotate(startingPoint + rotationValue); // Set bar starting point to top + rotation
 
+                const colorDivergence = (visualizer.bufferLength / visualizer.rgb.samples);
                 for(let i = 0; i < visualizer.bufferLength; ++i) {
-                    if(visualizer.rgb.enabled === true) {
-                        const color = ~~(i / (visualizer.bufferLength / visualizer.rgbData.length));
-                        if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-                        else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+                    if(i === 0 && backwards === true) ctx.rotate(-barTotal);
+                    else {
+                        if(visualizer.rgb.enabled === true) {
+                            const color = ~~(i / colorDivergence);
+                            if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                            else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+                        }
+                        else ctx.fillStyle = visualizer.color;
+
+                        if(visualizer.bassBounce.debug === true && i < bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+
+                        if(visualizer.bassBounce.enabled === true) barHeight = visualizer.dataArray[i] * heightModifier * reactiveBarHeightMultiplier;
+                        else barHeight = visualizer.dataArray[i] * heightModifier * 0.5;
+
+                        if(visualizer.move == 'Outside' || visualizer.move == 'Both Sides') outerRadius = radius + barHeight;
+                        else outerRadius = radius;
+
+                        if(visualizer.move == 'Inside' || visualizer.move == 'Both Sides') innerRadius = radius - barHeight;
+                        else innerRadius = radius;
+
+                        if(outerRadius < 0) outerRadius = 0;
+                        if(innerRadius < 0) innerRadius = 0;
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
+                        ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
+                        ctx.fill();
+                        if(backwards === true) ctx.rotate(-barTotal); // rotate the coordinates by one bar
+                        else ctx.rotate(barTotal);
                     }
-                    else ctx.fillStyle = visualizer.color;
-
-                    if(visualizer.bassBounce.debug === true && i < bass.length && i >= ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
-
-                    if(visualizer.bassBounce.enabled === true) barHeight = visualizer.dataArray[i] * heightModifier * 0.5; // * (0.35 + bassSmoothRadius / 512); // 0.35 . . 0.60
-                    else barHeight = visualizer.dataArray[i] * heightModifier * 0.5;
-
-                    if(visualizer.move == 'Outside' || visualizer.move == 'Both Sides') outerRadius = radius + barHeight;
-                    else outerRadius = radius;
-                    if(visualizer.move == 'Inside' || visualizer.move == 'Both Sides') innerRadius = radius - barHeight;
-                    else innerRadius = radius;
-                    if(outerRadius < 0) outerRadius = 0;
-                    if(innerRadius < 0) innerRadius = 0;
-
-                    ctx.beginPath();
-                    ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
-                    ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
-                    ctx.fill();
-                    ctx.rotate(backwards ? -barTotal : barTotal); // rotate the coordinates by one bar
                 }
                 ctx.restore();
             }
 
-            if(visualizer.startsFrom == 'Right' ||
-                visualizer.startsFrom == 'Center' ||
-                visualizer.startsFrom == 'Edges') drawArcs();
+            if(visualizer.startsFrom === 'Right' ||
+                visualizer.startsFrom === 'Center' ||
+                visualizer.startsFrom === 'Edges') drawArcs();
 
-            if(visualizer.startsFrom == 'Left' ||
-                visualizer.startsFrom == 'Center' ||
-                visualizer.startsFrom == 'Edges') drawArcs(true);
+            if(visualizer.startsFrom === 'Left' ||
+                visualizer.startsFrom === 'Center' ||
+                visualizer.startsFrom === 'Edges') drawArcs(true);
         }
     }
 
+    const piD3 = Math.PI / 3, piD3x2 = 2 * Math.PI / 3;
     function getRGB() {
-        const piD3 = Math.PI / 3, piD3x2 = 2 * Math.PI / 3, hue = 2 * Math.PI / 1024;
-        for(let i = 0; i < 1024; i++) visualizer.rgbData[i] = { red: Math.abs(visualizer.rgb.red * Math.sin(i * hue)), green: Math.abs(visualizer.rgb.green * Math.sin(i * hue + piD3)), blue: Math.abs(visualizer.rgb.blue * Math.sin(i * hue + piD3x2)) };
+        const hue = 2 * Math.PI / visualizer.rgb.samples;
+        visualizer.rgbData = [];
+        for(let i = 0; i < visualizer.rgb.samples; i++) visualizer.rgbData[i] = { red: Math.abs(visualizer.rgb.red * Math.sin(i * hue)), green: Math.abs(visualizer.rgb.green * Math.sin(i * hue + piD3)), blue: Math.abs(visualizer.rgb.blue * Math.sin(i * hue + piD3x2)) };
     }
 
     function averageOfArray(numbers) {
