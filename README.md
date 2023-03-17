@@ -7,13 +7,17 @@ Now with **Hungarian** support!
 ## How to Install
 
 1. Download and install [Tampermonkey](https://www.tampermonkey.net) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey), depends on what browser you have.
-2. [Click here to install the script!](https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js)
+2. [Click here to install the script!](https://github.com/RealMarioD/ytmplus/raw/main/dist/ytmplus.user.js)
 
-Note: Script only tested on Chrome and Firefox *(thanks sl0thi3)*, other browsers are not officially supported, but may still work.
+*Note: Script only tested on Chrome and Firefox *(thanks sl0thi3)*, other browsers are not officially supported, but may still work.*
 
 ## Settings
 
 You can bring up the settings by clicking on the cog in the top left, or by pressing **Ctrl + Backslash**. (**Ctrl + Ű** on a Hungarian layout.)
+
+## What is ytmPlus?
+
+The script originally started off as a simple background changer, that now offers multiple visual customizations for <https://music.youtube.com>
 
 ## Customizations include
 
@@ -29,11 +33,8 @@ You can bring up the settings by clicking on the cog in the top left, or by pres
 ## Plans
 
 - Themes: Customize navbar, menu and font colors
-- REWRITE AND SPLIT MAIN FUNCTIONS INTO MULTIPLE FILES PLEASE MY EYES THIS WAS A MISTAKE
-
-## What is ytmPlus?
-
-The script originally started off as a simple background changer, that now offers multiple visual customizations for <https://music.youtube.com>
+- ~~REWRITE AND SPLIT MAIN FUNCTIONS INTO MULTIPLE FILES PLEASE MY EYES THIS WAS A MISTAKE~~ done 2023/03/17
+- Dev server for easier testing
 
 ## Discord
 
@@ -41,4 +42,6 @@ If you find bugs or have ideas or just want to discuss the script, feel free to 
 
 ## Screenshots
 
-![CoolToolbars](https://cdn.discordapp.com/attachments/1078021165139902515/1078021244563226696/promo23.jpg)
+![NoChanges](https://cdn.discordapp.com/attachments/859770660607229973/1086227358278746133/Disabled.png)
+![CircleVisualizer](https://cdn.discordapp.com/attachments/859770660607229973/1086227357695758336/CircleVisualizer.png)
+![ConfigMenu](https://cdn.discordapp.com/attachments/859770660607229973/1086227357989343303/ConfigMenu.png)
