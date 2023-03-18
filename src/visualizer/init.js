@@ -110,7 +110,6 @@ export function startVisualizer() {
     }
 
     window.addEventListener('resize', visualizerResizeFix);
-    if(globals.visualizer.rgb.enabled === true) globals.visualizer.getRGB();
 
     function renderFrame() {
         ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);

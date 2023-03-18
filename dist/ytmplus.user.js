@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.0.0
+// @version      2.0.1
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -77,28 +77,36 @@
                  * (bassBounce is the last thing it checks so any values that should be initialised/changed upon saving should be set above bassBounce)
                  */
                 for(const key in this) {
-                    if(Object.hasOwnProperty.call(this, key)) {
-                        let gmName = `visualizer${key[0].toUpperCase()}${key.slice(1, key.length)}`;
-                        if(typeof this[key] == 'object') {
-                            for(const key2 in this[key]) {
-                                if(Object.hasOwnProperty.call(this[key], key2)) {
-                                    gmName = `visualizer${key[0].toUpperCase() + key.slice(1, key.length) + key2[0].toUpperCase() + key2.slice(1, key2.length)}`;
-                                    this[key][key2] = GM_config.get(gmName);
-                                }
-                            }
-                            if(key == 'bassBounce') return;
-                            if(this.analyser !== undefined) {
-                                this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
-                                this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
-                                this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
-                            }
-                        }
-                        else this[key] = GM_config.get(gmName);
+                    let gmName;
+
+                    if(typeof this[key] !== 'object') {
+                        gmName = 'visualizer' + key[0].toUpperCase() + key.slice(1, key.length); // e.g.: visualizer + P + lace
+                        this[key] = GM_config.get(gmName);
+                        continue;
+                    }
+
+                    for(const key2 in this[key]) {
+                        gmName = 'visualizer' +
+                            key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
+                            key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
+
+                        this[key][key2] = GM_config.get(gmName);
+                    }
+
+                    if(key === 'bassBounce' && this.analyser !== undefined) {
+                        this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
+                        this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
+                        this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
+                        if(this.rgb.enabled === true && this.rgbData.length !== this.rgb.samples) this.getRGB();
+                        return;
                     }
                 }
             },
-            getRGB() {
-                const hue = 2 * Math.PI / this.rgb.samples, piD3 = Math.PI / 3, piD3x2 = 2 * Math.PI / 3;
+            getRGB() { // Pregenerates RGB colors so we don't have to calculate colors every frame
+                const hue = 2 * Math.PI / this.rgb.samples,
+                    piD3 = Math.PI / 3, // Offset
+                    piD3x2 = 2 * Math.PI / 3; // so that colors aren't totally mixed together
+
                 this.rgbData = [];
                 for(let i = 0; i < this.rgb.samples; i++) {
                     this.rgbData[i] = {
@@ -110,398 +118,6 @@
             }
         }
     };
-
-    function promoEnable(turnOn) {
-        let popup;
-        if(!turnOn) clearInterval(globals.noPromoFunction);
-        else {
-            clearInterval(globals.noPromoFunction);
-            globals.noPromoFunction = setInterval(() => {
-                popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
-                    popup[0].remove();
-                    console.log('ytmPlus: Removed a promotion.');
-                }
-            }, 1000);
-        }
-    }
-
-    function afkEnable(turnOn) {
-        if(!turnOn) clearInterval(globals.noAfkFunction);
-        else {
-            clearInterval(globals.noAfkFunction);
-            globals.noAfkFunction = setInterval(() => {
-                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('ytmPlus: Nudged the page so user is not AFK.');
-            }, 15000);
-        }
-    }
-
-    function clockEnable(mode) {
-        let currentTime;
-        if(mode == 'Original') {
-            clearInterval(globals.clockFunction);
-            globals.upgradeButton.textContent = globals.originalUpgradeText;
-            globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-        }
-        else if(mode == 'Digital Clock') {
-            clearInterval(globals.clockFunction);
-            globals.clockFunction = setInterval(() => {
-                currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                globals.upgradeButton.textContent = currentTime;
-            }, 1000);
-            globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-        }
-        else {
-            clearInterval(globals.clockFunction);
-            globals.upgradeButton.textContent = '';
-            globals.upgradeButton.parentElement.style.margin = '0px';
-        }
-        const a = globals.upgradeButton.style;
-        a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
-        a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
-        a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
-        a.textFillColor = mode != 'Digital Clock' ? '' : 'transparent';
-        a.webkitBackgroundClip = mode != 'Digital Clock' ? '' : 'text';
-        a.webkitTextFillColor = mode != 'Digital Clock' ? '' : 'transparent';
-        a.fontSize = mode != 'Digital Clock' ? '20px' : '50px';
-        a.animation = mode != 'Digital Clock' ? '' : 'clockGradient 2s linear infinite normal';
-    }
-
-    function addFancy(e, overflowOn) {
-        e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
-        e.animation = 'backgroundGradient 5s linear infinite alternate';
-        e.backgroundSize = '150% 150%';
-        e.backgroundAttachment = 'fixed';
-        // e.height = '100vh';
-        if(!overflowOn) e.overflow = 'hidden';
-    }
-
-    function checkDislike() {
-        if(globals.dumbFix == 0) return globals.dumbFix++;
-        clearTimeout(globals.skipDislikedFunction);
-        globals.skipDislikedFunction = setTimeout(() => {
-            if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
-        }, 5000);
-        globals.dumbFix = 0;
-    }
-
-    function skipDisliked(turnOn) {
-        const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
-        if(!turnOn) return titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
-        titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
-        titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
-    }
-
-    function extraButtons(turnOn) {
-        const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
-        if(!turnOn) {
-            playbackButtons[1].hidden = true;
-            playbackButtons[4].hidden = true;
-            return;
-        }
-        playbackButtons[1].hidden = false;
-        playbackButtons[4].hidden = false;
-    }
-
-    function averageOfArray(numbers) {
-        let result = 0;
-        for(let i = 0; i < numbers.length; i++) result += numbers[i];
-        return result / numbers.length;
-    }
-
-    function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-        if(globals.visualizer.startsFrom === 'Left' || globals.visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
-        else values.circleSize = 1; // 1(pi) = half;
-
-        if(globals.visualizer.bassBounce.enabled === true || globals.visualizer.rotate === 'Reactive (Bass)') {
-            values.bass = globals.visualizer.dataArray.slice(
-                ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityStart),
-                ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityEnd) + 1
-            );
-
-            if(globals.visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
-            else values.bassSmoothRadius = ~~(averageOfArray(values.bass) / 2);
-
-            if(globals.visualizer.bassBounce.enabled === true) values.radius = ~~(values.HEIGHT / 8) + values.bassSmoothRadius * values.heightModifier * 1.25;
-        }
-
-        switch(globals.visualizer.rotate) {
-            case 'On':
-                if(globals.visualizer.rotateDirection === 'Clockwise') values.rotationValue += 0.005;
-                else values.rotationValue -= 0.005;
-                break;
-            case 'Reactive':
-                if(globals.visualizer.rotateDirection === 'Clockwise') values.rotationValue += Math.pow(averageOfArray(globals.visualizer.dataArray) / 10000 + 1, 2) - 1;
-                else values.rotationValue -= Math.pow(averageOfArray(globals.visualizer.dataArray) / 10000 + 1, 2) - 1;
-                break;
-            case 'Reactive (Bass)':
-                if(globals.visualizer.rotateDirection === 'Clockwise') values.rotationValue += Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1;
-                else values.rotationValue -= Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1;
-                break;
-            default: values.rotationValue = 0; break;
-        }
-
-
-        values.barTotal = values.circleSize * Math.PI / globals.visualizer.bufferLength;
-        values.barWidth = values.barTotal * 0.45;
-        // No need for barSpace
-        values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
-
-        function drawArcs(backwards) {
-            ctx.save();
-            ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
-            ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
-
-            const colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgb.samples);
-            for(let i = 0; i < globals.visualizer.bufferLength; ++i) {
-                if(i === 0 && backwards === true) ctx.rotate(-values.barTotal);
-                else {
-                    if(globals.visualizer.rgb.enabled === true) {
-                        const color = ~~(i / colorDivergence);
-                        if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-                        else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
-                    }
-                    else ctx.fillStyle = globals.visualizer.color;
-
-                    if(globals.visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(globals.visualizer.bufferLength * globals.visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
-
-                    if(globals.visualizer.bassBounce.enabled === true) values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
-                    else values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * 0.5;
-
-                    if(globals.visualizer.move == 'Outside' || globals.visualizer.move == 'Both Sides') values.outerRadius = values.radius + values.barHeight;
-                    else values.outerRadius = values.radius;
-
-                    if(globals.visualizer.move == 'Inside' || globals.visualizer.move == 'Both Sides') values.innerRadius = values.radius - values.barHeight;
-                    else values.innerRadius = values.radius;
-
-                    if(values.outerRadius < 0) values.outerRadius = 0;
-                    if(values.innerRadius < 0) values.innerRadius = 0;
-
-                    ctx.beginPath();
-                    ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
-                    ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
-                    ctx.fill();
-                    if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
-                    else ctx.rotate(values.barTotal);
-                }
-            }
-            ctx.restore();
-        }
-
-        if(globals.visualizer.startsFrom === 'Right' ||
-            globals.visualizer.startsFrom === 'Center' ||
-            globals.visualizer.startsFrom === 'Edges') drawArcs();
-
-        if(globals.visualizer.startsFrom === 'Left' ||
-            globals.visualizer.startsFrom === 'Center' ||
-            globals.visualizer.startsFrom === 'Edges') drawArcs(true);
-    }
-
-    function visualizerNavbar(ctx) {
-        if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
-        else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
-        else values.xPosOffset = 0;
-
-        const maxBarHeight = (values.HEIGHT / 255), colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgbData.length);
-        for(let i = 0; i < globals.visualizer.bufferLength; i++) {
-            values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
-
-            if(globals.visualizer.rgb.enabled === true) {
-                const color = ~~(i / colorDivergence);
-                if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-                else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
-            }
-            else ctx.fillStyle = globals.visualizer.color;
-
-            // To this day I don't get the Y and values.HEIGHT values
-            if(globals.visualizer.startsFrom === 'Left') {
-                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right
-                values.xPosOffset += values.barTotal;
-            }
-            else if(globals.visualizer.startsFrom === 'Center') {
-                if(values.halfWidth - values.xPosOffset < 0 - values.barWidth) break;
-                ctx.fillRect(values.halfWidth - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, starting from center to left
-                values.xPosOffset += values.barTotal;
-            }
-            else if(globals.visualizer.startsFrom === 'Right') {
-                ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, 0 - values.barWidth, values.barHeight); // Draws rect from right to left
-                values.xPosOffset += values.barTotal;
-            }
-            else if(globals.visualizer.startsFrom === 'Edges') {
-                if(values.xPosOffset > values.halfWidth) break;
-                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from left to center
-                values.xPosOffset += values.barTotal;
-            }
-        }
-
-        if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
-        else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
-        else return;
-
-        for(let i = 1; i < globals.visualizer.bufferLength; i++) {
-            values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
-            if(globals.visualizer.rgb.enabled === true) {
-                const color = ~~(i / colorDivergence);
-                if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-                else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
-            }
-            else ctx.fillStyle = globals.visualizer.color;
-            if(globals.visualizer.startsFrom === 'Center') {
-                if(values.xPosOffset > values.WIDTH) break;
-                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from center to right
-                values.xPosOffset += values.barTotal;
-            }
-            else if(globals.visualizer.startsFrom === 'Edges') {
-                if(values.xPosOffset > values.halfWidth) break;
-                ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from right to center
-                values.xPosOffset += values.barTotal;
-            }
-        }
-    }
-
-    let video;
-    function getVideo() {
-        video = document.querySelector('video');
-        if(video) startVisualizer();
-        else {
-            console.warn('ytmPlus: Query "video" not found, retrying in 100ms.');
-            setTimeout(() => { getVideo(); }, 100);
-        }
-    }
-
-    const values = {
-        WIDTH: undefined,
-        HEIGHT: 1,
-        halfWidth: undefined,
-        halfHeight: undefined,
-        xPosOffset: undefined,
-        barTotal: undefined,
-        barWidth: undefined,
-        barSpace: undefined,
-        barHeight: undefined,
-        circleSize: undefined,
-        radius: 1,
-        heightModifier: 1,
-        innerRadius: undefined,
-        outerRadius: undefined,
-        rotationValue: 0,
-        bass: undefined,
-        bassSmoothRadius: 1,
-        reactiveBarHeightMultiplier: undefined,
-        startingPoint: -(0.5 * Math.PI)
-    };
-
-    function startVisualizer() {
-        // Init, connecting yt audio to canvas
-        const player = document.getElementById('player');
-        const context = new AudioContext();
-        const src = context.createMediaElementSource(video);
-        globals.visualizer.analyser = context.createAnalyser();
-
-        let canvas, ctx;
-        switch(globals.visualizer.place) {
-            case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
-            case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
-        }
-        ctx = canvas.getContext('2d');
-
-        src.connect(globals.visualizer.analyser);
-        globals.visualizer.analyser.connect(context.destination);
-
-        globals.visualizer.initValues();
-        globals.visualizer.getBufferData();
-
-        // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
-        setInterval(() => {
-            visualizerResizeFix();
-        }, 1000);
-        function visualizerResizeFix() {
-            switch(globals.visualizer.place) {
-                case 'Navbar': default:
-                    canvas.width = globals.navBarBg.offsetWidth;
-                    canvas.height = globals.navBarBg.offsetHeight;
-                    canvas.style.width = '';
-                    canvas.style.height = '';
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
-
-                    if(globals.visualizer.startsFrom === 'Center' || globals.visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / globals.visualizer.bufferLength;
-                    else values.barTotal = values.WIDTH / globals.visualizer.bufferLength;
-                    values.barSpace = values.barTotal * 0.05;
-                    values.barWidth = values.barTotal * 0.95;
-                    break;
-                case 'Album Cover':
-                    canvas.style.width = player.offsetWidth + 'px';
-                    canvas.style.height = player.offsetHeight + 'px';
-                    canvas.width = player.offsetWidth;
-                    canvas.height = player.offsetHeight;
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
-                    values.halfHeight = values.HEIGHT / 2;
-
-                    if(player.playerPageOpen_ === false) { // if miniplayer == true
-                        canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
-                        canvas.style.left = getComputedStyle(player).left;
-                    }
-                    else {
-                        canvas.style.removeProperty('bottom'); // else completely remove properties because html
-                        canvas.style.removeProperty('left');
-                    }
-
-                    if(globals.visualizer.circleEnabled === false) {
-                        if(globals.visualizer.startsFrom === 'Center' || globals.visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / globals.visualizer.bufferLength;
-                        else values.barTotal = values.WIDTH / globals.visualizer.bufferLength;
-                        values.barSpace = values.barTotal * 0.05;
-                        values.barWidth = values.barTotal * 0.95;
-                    }
-                    else if(globals.visualizer.bassBounce.enabled === false) {
-                        values.radius = ~~(values.HEIGHT / 4);
-                        values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
-                    }
-                    else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
-                    break;
-                case 'Disabled': break;
-            }
-        }
-
-        window.addEventListener('resize', visualizerResizeFix);
-        if(globals.visualizer.rgb.enabled === true) globals.visualizer.getRGB();
-
-        function renderFrame() {
-            ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
-
-            if(video.paused === false && globals.visualizer.place !== 'Disabled') { // If playback is not paused and visualizer is not off
-                globals.visualizer.analyser.getByteFrequencyData(globals.visualizer.dataArray); // Get audio data
-
-                if(globals.visualizer.rgb.enabled === true) { // Color cycle effect
-                    globals.visualizer.rgbData.push(globals.visualizer.rgbData[0]);
-                    globals.visualizer.rgbData.shift();
-                }
-
-                if(globals.visualizer.place === 'Navbar') {
-                    if(canvas.id !== 'visualizerNavbarCanvas') {
-                        canvas = document.getElementById('visualizerNavbarCanvas');
-                        ctx = canvas.getContext('2d');
-                    }
-                    visualizerNavbar(ctx);
-                }
-                else if(globals.visualizer.place === 'Album Cover') {
-                    if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-                        canvas = document.getElementById('visualizerAlbumCoverCanvas');
-                        ctx = canvas.getContext('2d');
-                    }
-                    if(globals.visualizer.circleEnabled === true) visualizerCircle(ctx);
-                    else visualizerNavbar(ctx);
-                }
-            }
-
-            requestAnimationFrame(renderFrame);
-        }
-        renderFrame();
-    }
 
     const configCSS =
 `input[type="color"] {
@@ -918,7 +534,309 @@ svg text {
         }
     };
 
-    function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
+    function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
+        if(globals.visualizer.startsFrom === 'Left' || globals.visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
+        else values.circleSize = 1; // 1(pi) = half;
+
+        if(globals.visualizer.bassBounce.enabled === true ||
+            globals.visualizer.rotate === 'Reactive (Bass)') calculateBass();
+
+        getRotationValue();
+
+        values.barTotal = values.circleSize * Math.PI / globals.visualizer.bufferLength;
+        values.barWidth = values.barTotal * 0.45;
+        // No need for barSpace
+        values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
+
+        const colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgb.samples);
+
+        if(globals.visualizer.startsFrom === 'Right' ||
+            globals.visualizer.startsFrom === 'Center' ||
+            globals.visualizer.startsFrom === 'Edges') drawArcs(false, ctx, colorDivergence);
+
+        if(globals.visualizer.startsFrom === 'Left' ||
+            globals.visualizer.startsFrom === 'Center' ||
+            globals.visualizer.startsFrom === 'Edges') drawArcs(true, ctx, colorDivergence);
+    }
+
+    function calculateBass() {
+        values.bass = globals.visualizer.dataArray.slice(
+            ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityStart),
+            ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityEnd) + 1
+        );
+
+        if(globals.visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
+        else values.bassSmoothRadius = ~~(averageOfArray(values.bass) / 2);
+
+        if(globals.visualizer.bassBounce.enabled === true) values.radius = ~~(values.HEIGHT / 8) + values.bassSmoothRadius * values.heightModifier * 1.25;
+    }
+
+    function getRotationValue() {
+        const r = globals.visualizer.rotate;
+        let direction;
+        if(globals.visualizer.rotateDirection === 'Clockwise') direction = 1;
+        else direction = -1;
+
+        if(r === 'Disabled') values.rotationValue = 0;
+        else if(r === 'On') values.rotationValue += 0.005 * direction;
+        else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(globals.visualizer.dataArray) / 10000 + 1, 2) - 1) * direction;
+        else if(r === 'Reactive (Bass)') values.rotationValue += (Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction;
+    }
+
+    function drawArcs(backwards, ctx, colorDivergence) {
+        ctx.save();
+        ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
+        ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
+
+        for(let i = 0; i < globals.visualizer.bufferLength; ++i) {
+            if(i === 0 && backwards === true) ctx.rotate(-values.barTotal);
+            else {
+                if(globals.visualizer.rgb.enabled === true) {
+                    const color = ~~(i / colorDivergence);
+                    if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                    else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
+                }
+                else ctx.fillStyle = globals.visualizer.color;
+
+                if(globals.visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(globals.visualizer.bufferLength * globals.visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+
+                if(globals.visualizer.bassBounce.enabled === true) values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
+                else values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * 0.5;
+
+                if(globals.visualizer.move == 'Outside' || globals.visualizer.move == 'Both Sides') values.outerRadius = values.radius + values.barHeight;
+                else values.outerRadius = values.radius;
+
+                if(globals.visualizer.move == 'Inside' || globals.visualizer.move == 'Both Sides') values.innerRadius = values.radius - values.barHeight;
+                else values.innerRadius = values.radius;
+
+                if(values.outerRadius < 0) values.outerRadius = 0;
+                if(values.innerRadius < 0) values.innerRadius = 0;
+
+                ctx.beginPath();
+                ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
+                ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
+                ctx.fill();
+                if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
+                else ctx.rotate(values.barTotal);
+            }
+        }
+        ctx.restore();
+    }
+
+    function visualizerNavbar(ctx) {
+        if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
+        else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
+        else values.xPosOffset = 0;
+
+        const maxBarHeight = (values.HEIGHT / 255), colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgbData.length);
+
+        firstDraw(ctx, maxBarHeight, colorDivergence);
+
+        if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
+        else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
+        else return;
+
+        secondDraw(ctx, maxBarHeight, colorDivergence);
+    }
+
+    function firstDraw(ctx, maxBarHeight, colorDivergence) {
+        for(let i = 0; i < globals.visualizer.bufferLength; i++) {
+            values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
+
+            if(globals.visualizer.rgb.enabled === true) {
+                const color = ~~(i / colorDivergence);
+                if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
+            }
+            else ctx.fillStyle = globals.visualizer.color;
+
+            // To this day I don't get the Y and values.HEIGHT values
+            if(globals.visualizer.startsFrom === 'Left') {
+                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right
+                values.xPosOffset += values.barTotal;
+            }
+            else if(globals.visualizer.startsFrom === 'Center') {
+                if(values.halfWidth - values.xPosOffset < 0 - values.barWidth) break;
+                ctx.fillRect(values.halfWidth - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, starting from center to left
+                values.xPosOffset += values.barTotal;
+            }
+            else if(globals.visualizer.startsFrom === 'Right') {
+                ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, 0 - values.barWidth, values.barHeight); // Draws rect from right to left
+                values.xPosOffset += values.barTotal;
+            }
+            else if(globals.visualizer.startsFrom === 'Edges') {
+                if(values.xPosOffset > values.halfWidth) break;
+                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from left to center
+                values.xPosOffset += values.barTotal;
+            }
+        }
+    }
+
+    function secondDraw(ctx, maxBarHeight, colorDivergence) {
+        for(let i = 1; i < globals.visualizer.bufferLength; i++) {
+            values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
+            if(globals.visualizer.rgb.enabled === true) {
+                const color = ~~(i / colorDivergence);
+                if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
+                else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
+            }
+            else ctx.fillStyle = globals.visualizer.color;
+            if(globals.visualizer.startsFrom === 'Center') {
+                if(values.xPosOffset > values.WIDTH) break;
+                ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from center to right
+                values.xPosOffset += values.barTotal;
+            }
+            else if(globals.visualizer.startsFrom === 'Edges') {
+                if(values.xPosOffset > values.halfWidth) break;
+                ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from right to center
+                values.xPosOffset += values.barTotal;
+            }
+        }
+    }
+
+    let video;
+    function getVideo() {
+        video = document.querySelector('video');
+        if(video) startVisualizer();
+        else {
+            console.warn('ytmPlus: Query "video" not found, retrying in 100ms.');
+            setTimeout(() => { getVideo(); }, 100);
+        }
+    }
+
+    const values = {
+        WIDTH: undefined,
+        HEIGHT: 1,
+        halfWidth: undefined,
+        halfHeight: undefined,
+        xPosOffset: undefined,
+        barTotal: undefined,
+        barWidth: undefined,
+        barSpace: undefined,
+        barHeight: undefined,
+        circleSize: undefined,
+        radius: 1,
+        heightModifier: 1,
+        innerRadius: undefined,
+        outerRadius: undefined,
+        rotationValue: 0,
+        bass: undefined,
+        bassSmoothRadius: 1,
+        reactiveBarHeightMultiplier: undefined,
+        startingPoint: -(0.5 * Math.PI)
+    };
+
+    function startVisualizer() {
+        // Init, connecting yt audio to canvas
+        const player = document.getElementById('player');
+        const context = new AudioContext();
+        const src = context.createMediaElementSource(video);
+        globals.visualizer.analyser = context.createAnalyser();
+
+        let canvas, ctx;
+        switch(globals.visualizer.place) {
+            case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
+            case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
+        }
+        ctx = canvas.getContext('2d');
+
+        src.connect(globals.visualizer.analyser);
+        globals.visualizer.analyser.connect(context.destination);
+
+        globals.visualizer.initValues();
+        globals.visualizer.getBufferData();
+
+        // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
+        setInterval(() => {
+            visualizerResizeFix();
+        }, 1000);
+        function visualizerResizeFix() {
+            switch(globals.visualizer.place) {
+                case 'Navbar': default:
+                    canvas.width = globals.navBarBg.offsetWidth;
+                    canvas.height = globals.navBarBg.offsetHeight;
+                    canvas.style.width = '';
+                    canvas.style.height = '';
+                    values.WIDTH = canvas.width;
+                    values.halfWidth = values.WIDTH / 2;
+                    values.HEIGHT = canvas.height;
+
+                    if(globals.visualizer.startsFrom === 'Center' || globals.visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / globals.visualizer.bufferLength;
+                    else values.barTotal = values.WIDTH / globals.visualizer.bufferLength;
+                    values.barSpace = values.barTotal * 0.05;
+                    values.barWidth = values.barTotal * 0.95;
+                    break;
+                case 'Album Cover':
+                    canvas.style.width = player.offsetWidth + 'px';
+                    canvas.style.height = player.offsetHeight + 'px';
+                    canvas.width = player.offsetWidth;
+                    canvas.height = player.offsetHeight;
+                    values.WIDTH = canvas.width;
+                    values.halfWidth = values.WIDTH / 2;
+                    values.HEIGHT = canvas.height;
+                    values.halfHeight = values.HEIGHT / 2;
+
+                    if(player.playerPageOpen_ === false) { // if miniplayer == true
+                        canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
+                        canvas.style.left = getComputedStyle(player).left;
+                    }
+                    else {
+                        canvas.style.removeProperty('bottom'); // else completely remove properties because html
+                        canvas.style.removeProperty('left');
+                    }
+
+                    if(globals.visualizer.circleEnabled === false) {
+                        if(globals.visualizer.startsFrom === 'Center' || globals.visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / globals.visualizer.bufferLength;
+                        else values.barTotal = values.WIDTH / globals.visualizer.bufferLength;
+                        values.barSpace = values.barTotal * 0.05;
+                        values.barWidth = values.barTotal * 0.95;
+                    }
+                    else if(globals.visualizer.bassBounce.enabled === false) {
+                        values.radius = ~~(values.HEIGHT / 4);
+                        values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
+                    }
+                    else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
+                    break;
+                case 'Disabled': break;
+            }
+        }
+
+        window.addEventListener('resize', visualizerResizeFix);
+
+        function renderFrame() {
+            ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
+
+            if(video.paused === false && globals.visualizer.place !== 'Disabled') { // If playback is not paused and visualizer is not off
+                globals.visualizer.analyser.getByteFrequencyData(globals.visualizer.dataArray); // Get audio data
+
+                if(globals.visualizer.rgb.enabled === true) { // Color cycle effect
+                    globals.visualizer.rgbData.push(globals.visualizer.rgbData[0]);
+                    globals.visualizer.rgbData.shift();
+                }
+
+                if(globals.visualizer.place === 'Navbar') {
+                    if(canvas.id !== 'visualizerNavbarCanvas') {
+                        canvas = document.getElementById('visualizerNavbarCanvas');
+                        ctx = canvas.getContext('2d');
+                    }
+                    visualizerNavbar(ctx);
+                }
+                else if(globals.visualizer.place === 'Album Cover') {
+                    if(canvas.id !== 'visualizerAlbumCoverCanvas') {
+                        canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                        ctx = canvas.getContext('2d');
+                    }
+                    if(globals.visualizer.circleEnabled === true) visualizerCircle(ctx);
+                    else visualizerNavbar(ctx);
+                }
+            }
+
+            requestAnimationFrame(renderFrame);
+        }
+        renderFrame();
+    }
+
+    function stylizeConfigWindow(doc, frame) {
         doc.body.style.overflow = 'hidden';
         frame.style.width = '25vw';
         // frame.style.height = // '80vh';
@@ -929,7 +847,9 @@ svg text {
         frame.style.boxShadow = '20px 20px 40px rgba(10, 10, 10, 0.8)';
         frame.style.border = '';
         frame.style.borderRadius = '1.5vw';
+    }
 
+    function stylizeConfigButtons(doc) {
         const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
         buttons.style.textAlign = 'center';
         for(let i = 0; i < buttons.children.length; i++) {
@@ -942,13 +862,39 @@ svg text {
             else e.firstChild.style.fontSize = '2vh';
             e.style.margin = '0.5vh';
         }
+    }
 
-        // Every color input we want has to be changed here (customType would come in handy but how the hell do it work)
-        doc.getElementById('ytmPlusCfg_field_bgColor').type = 'color';
-        doc.getElementById('ytmPlusCfg_field_bgGradient').type = 'color';
-        doc.getElementById('ytmPlusCfg_field_clockColor').type = 'color';
-        doc.getElementById('ytmPlusCfg_field_clockGradientColor').type = 'color';
-        doc.getElementById('ytmPlusCfg_field_visualizerColor').type = 'color';
+    const titleSVG =
+        `<svg viewBox="0 0 613 99">
+        <g style="overflow:hidden; text-anchor: middle;">
+            <defs>
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="10" result="glow"/>
+                    <feMerge>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="glow"/>
+                    </feMerge>
+                </filter>
+            </defs>
+            <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
+            <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
+        </g>
+    </svg>`;
+
+    function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
+        stylizeConfigWindow(doc, frame);
+        stylizeConfigButtons(doc);
+
+        // Every color input we want has to be 'manually set' (GM_config's customType would come in handy but how the hell do it work)
+        const colorTypeFields = [
+            'bgColor',
+            'bgGradient',
+            'clockColor',
+            'clockGradientColor',
+            'visualizerColor'
+        ];
+        for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
         // Putting the sections and settings into a scrollable div, so that the whole window won't become scrollable
         const node = doc.createElement('div');
@@ -958,7 +904,7 @@ svg text {
         for(let i = 0; i <= wrapper.childNodes.length + 1; i++) node.appendChild(wrapper.childNodes[1]); // Not sure how this works, but I somehow skip the header and the buttons at the end
         wrapper.appendChild(wrapper.childNodes[1]);
 
-        // Live change + Adding info to advanced visualizer settings
+        // Live change for input tags + Adding info to int/float settings
         const inputs = doc.getElementsByTagName('input');
         for(let i = 0; i < inputs.length; i++) {
             inputs[i].addEventListener('change', () => GM_config.save());
@@ -967,28 +913,13 @@ svg text {
                 inputs[i].title = `type: ${fieldSettings.type} | default: ${fieldSettings.default} | ${fieldSettings.min} . . ${fieldSettings.max}`;
             }
         }
+        // Live change for select tags
         const selects = doc.getElementsByTagName('select');
         for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => GM_config.save());
 
         // Header title svg
         const title = doc.getElementById('ytmPlusCfg_header');
-        title.innerHTML = `
-                <svg viewBox="0 0 613 99">
-                    <g style="overflow:hidden; text-anchor: middle;">
-                        <defs>
-                            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                                <feGaussianBlur stdDeviation="10" result="glow"/>
-                                <feMerge>
-                                <feMergeNode in="glow"/>
-                                <feMergeNode in="glow"/>
-                                <feMergeNode in="glow"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
-                        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
-                    </g>
-                </svg>`;
+        title.innerHTML = titleSVG;
 
         // Handles opening/closing categories
         const categories = doc.getElementsByClassName('section_header_holder');
@@ -1002,6 +933,7 @@ svg text {
                 categories[i].children[0].innerHTML = '▼ ' + categories[i].children[0].innerHTML + ' ▼';
                 categories[i].style.height = '3.25vh';
             }
+
 
             categories[i].children[0].addEventListener('click', () => {
                 if(GM_config.get(`section${i}`) == 'closed') {
@@ -1032,21 +964,7 @@ svg text {
 
     function saveEvent() {
         // Updates updateable stuff on save
-        if(GM_config.get('bg') == false) {
-            document.body.style.backgroundColor = '#000000';
-            document.body.style.backgroundImage = '';
-            globals.playerPageDiv.style.backgroundColor = '#000000';
-            globals.playerPageDiv.style.backgroundImage = '';
-        }
-        else {
-            try {
-                document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
-            }
-            catch { }
-            document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-            addFancy(document.body.style, true);
-            addFancy(globals.playerPageDiv.style);
-        }
+        changeBackground(GM_config.get('bg'));
 
         clockEnable(GM_config.get('clock'));
 
@@ -1066,7 +984,7 @@ svg text {
             }
         }
         else globals.visualizer.place = 'Disabled';
-        if(globals.visualizer.rgb.enabled) globals.visualizer.getRGB();
+
         window.dispatchEvent(new Event('resize'));
     }
 
@@ -1084,8 +1002,127 @@ svg text {
         }
     });
 
+    function promoEnable(turnOn) {
+        let popup;
+        if(!turnOn) clearInterval(globals.noPromoFunction);
+        else {
+            clearInterval(globals.noPromoFunction);
+            globals.noPromoFunction = setInterval(() => {
+                popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
+                if(popup.length > 0) {
+                    popup[0].remove();
+                    console.log('ytmPlus: Removed a promotion.');
+                }
+            }, 1000);
+        }
+    }
+
+    function afkEnable(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+        if(!turnOn) clearInterval(globals.noAfkFunction);
+        else {
+            clearInterval(globals.noAfkFunction);
+            globals.noAfkFunction = setInterval(() => {
+                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('ytmPlus: Nudged the page so user is not AFK.');
+            }, 15000);
+        }
+    }
+
+    function clockEnable(mode) {
+        let currentTime;
+        if(mode == 'Original') {
+            clearInterval(globals.clockFunction);
+            globals.upgradeButton.textContent = globals.originalUpgradeText;
+            globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        }
+        else if(mode == 'Digital Clock') {
+            clearInterval(globals.clockFunction);
+            globals.clockFunction = setInterval(() => {
+                currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                globals.upgradeButton.textContent = currentTime;
+            }, 1000);
+            globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        }
+        else {
+            clearInterval(globals.clockFunction);
+            globals.upgradeButton.textContent = '';
+            globals.upgradeButton.parentElement.style.margin = '0px';
+        }
+        const a = globals.upgradeButton.style;
+        a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+        a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
+        a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
+        a.textFillColor = mode != 'Digital Clock' ? '' : 'transparent';
+        a.webkitBackgroundClip = mode != 'Digital Clock' ? '' : 'text';
+        a.webkitTextFillColor = mode != 'Digital Clock' ? '' : 'transparent';
+        a.fontSize = mode != 'Digital Clock' ? '20px' : '50px';
+        a.animation = mode != 'Digital Clock' ? '' : 'clockGradient 2s linear infinite normal';
+    }
+
+    function changeBackground(option, firstRun) {
+        if(option === false) {
+            if(document.body.style.backgroundImage !== '') {
+                document.body.style.backgroundColor = '#000000';
+                document.body.style.backgroundImage = '';
+                globals.playerPageDiv.style.backgroundColor = '#000000';
+                globals.playerPageDiv.style.backgroundImage = '';
+            }
+            return;
+        }
+        try {
+            if(firstRun === true) document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
+            document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
+        }
+        catch { }
+        document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
+        addFancy(document.body.style, true);
+        addFancy(globals.playerPageDiv.style);
+    }
+
+    function addFancy(e, overflowOn) {
+        e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
+        e.animation = 'backgroundGradient 5s linear infinite alternate';
+        e.backgroundSize = '150% 150%';
+        e.backgroundAttachment = 'fixed';
+        // e.height = '100vh';
+        if(overflowOn === false) e.overflow = 'hidden';
+    }
+
+    function checkDislike() {
+        if(globals.dumbFix == 0) return globals.dumbFix++;
+        clearTimeout(globals.skipDislikedFunction);
+        globals.skipDislikedFunction = setTimeout(() => {
+            if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
+        }, 5000);
+        globals.dumbFix = 0;
+    }
+
+    function skipDisliked(turnOn) {
+        const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
+        if(!turnOn) return titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
+        titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
+        titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
+    }
+
+    function extraButtons(turnOn) {
+        const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+        if(!turnOn) {
+            playbackButtons[1].hidden = true;
+            playbackButtons[4].hidden = true;
+            return;
+        }
+        playbackButtons[1].hidden = false;
+        playbackButtons[4].hidden = false;
+    }
+
+    function averageOfArray(numbers) {
+        let result = 0;
+        for(let i = 0; i < numbers.length; i++) result += numbers[i];
+        return result / numbers.length;
+    }
+
     function keydownEvent(ev) {
-        if(ev.code == 'Backslash' && ev.ctrlKey == true) {
+        if(ev.code === 'Backslash' && ev.ctrlKey === true) {
             if(globals.settingsOpen === false) {
                 GM_config.open();
                 globals.settingsOpen = true;
@@ -1098,49 +1135,22 @@ svg text {
     }
 
     function loadEvent() {
-        // Creating bg movement animation by injecting css into head
-        // This apparently can be done in a more fancy way
-        const animation =
-        `@keyframes backgroundGradient {
-	    0% {
-            background-position: 0% 50%;
-        }
-
-        100% {
-            background-position: 100% 50%;
-        }
-    }
-    @keyframes clockGradient {
-        from {
-            background-position: 0% center;
-        }
-        to {
-            background-position: 200% center;
-        }
-    }`;
-        let node = document.createElement('style');
-        const textNode = document.createTextNode(animation);
-        node.appendChild(textNode);
-        document.head.appendChild(node);
+        createGradientEffects();
 
         globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
         globals.navBarBg = document.getElementById('nav-bar-background');
+        globals.mainPanel = document.getElementById('main-panel');
 
         // Checking whether functions are turned on, enabling them if yes
         promoEnable(GM_config.get('noPromo'));
 
-        afkEnable(GM_config.get('noAfk')); // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+        afkEnable(GM_config.get('noAfk'));
 
-        if(GM_config.get('bg') == true) {
-            // Remove weird bg gradient div stuff that ytm added early december 2022
-            document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
-            document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
+        changeBackground(GM_config.get('bg'), true);
 
-            addFancy(document.body.style, true);
-            addFancy(globals.playerPageDiv.style);
-        }
+        skipDisliked(GM_config.get('skipDisliked'));
 
-        globals.mainPanel = document.getElementById('main-panel');
+        extraButtons(GM_config.get('extraButtons'));
 
         // Tries to removes weird padding
         if(GM_config.get('padding') == true) {
@@ -1148,6 +1158,7 @@ svg text {
             globals.mainPanel.style.marginTop = '8vh';
             globals.mainPanel.style.marginBottom = '8vh';
         }
+
         setTimeout(() => {
             globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
             globals.originalUpgradeText = globals.upgradeButton.textContent;
@@ -1159,14 +1170,10 @@ svg text {
         globals.navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
         globals.navBarBg.style.opacity = 1;
         globals.mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none; visibility: visible"></canvas>';
-        if(GM_config.get('visualizerPlace') != 'Disabled') getVideo();
-
-        skipDisliked(GM_config.get('skipDisliked'));
-
-        extraButtons(GM_config.get('extraButtons'));
+        if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
 
         // Adds a settings button on the navbar
-        node = document.createElement('iframe');
+        const node = document.createElement('iframe');
         node.id = 'ytmPSettings';
         node.src = 'about:blank';
         node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; z-index: 9999; overflow: hidden;';
@@ -1185,6 +1192,31 @@ svg text {
                 }
             });
         }, 500);
+    }
+
+    function createGradientEffects() {
+        const animation =
+            `@keyframes backgroundGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes clockGradient {
+            from {
+                background-position: 0% center;
+            }
+            to {
+                background-position: 200% center;
+            }
+        }`;
+        const node = document.createElement('style');
+        const textNode = document.createTextNode(animation);
+        node.appendChild(textNode);
+        document.head.appendChild(node);
     }
 
     window.addEventListener('keydown', (ev) => keydownEvent(ev));

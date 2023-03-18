@@ -1,10 +1,10 @@
 import { globals } from '../globals';
-import { addFancy, afkEnable, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
 export function keydownEvent(ev) {
-    if(ev.code == 'Backslash' && ev.ctrlKey == true) {
+    if(ev.code === 'Backslash' && ev.ctrlKey === true) {
         if(globals.settingsOpen === false) {
             GM_config.open();
             globals.settingsOpen = true;
@@ -17,49 +17,22 @@ export function keydownEvent(ev) {
 }
 
 export function loadEvent() {
-    // Creating bg movement animation by injecting css into head
-    // This apparently can be done in a more fancy way
-    const animation =
-    `@keyframes backgroundGradient {
-	    0% {
-            background-position: 0% 50%;
-        }
-
-        100% {
-            background-position: 100% 50%;
-        }
-    }
-    @keyframes clockGradient {
-        from {
-            background-position: 0% center;
-        }
-        to {
-            background-position: 200% center;
-        }
-    }`;
-    let node = document.createElement('style');
-    const textNode = document.createTextNode(animation);
-    node.appendChild(textNode);
-    document.head.appendChild(node);
+    createGradientEffects();
 
     globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
     globals.navBarBg = document.getElementById('nav-bar-background');
+    globals.mainPanel = document.getElementById('main-panel');
 
     // Checking whether functions are turned on, enabling them if yes
     promoEnable(GM_config.get('noPromo'));
 
-    afkEnable(GM_config.get('noAfk')); // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+    afkEnable(GM_config.get('noAfk'));
 
-    if(GM_config.get('bg') == true) {
-        // Remove weird bg gradient div stuff that ytm added early december 2022
-        document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
-        document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
+    changeBackground(GM_config.get('bg'), true);
 
-        addFancy(document.body.style, true);
-        addFancy(globals.playerPageDiv.style);
-    }
+    skipDisliked(GM_config.get('skipDisliked'));
 
-    globals.mainPanel = document.getElementById('main-panel');
+    extraButtons(GM_config.get('extraButtons'));
 
     // Tries to removes weird padding
     if(GM_config.get('padding') == true) {
@@ -67,6 +40,7 @@ export function loadEvent() {
         globals.mainPanel.style.marginTop = '8vh';
         globals.mainPanel.style.marginBottom = '8vh';
     }
+
     setTimeout(() => {
         globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
         globals.originalUpgradeText = globals.upgradeButton.textContent;
@@ -78,14 +52,10 @@ export function loadEvent() {
     globals.navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
     globals.navBarBg.style.opacity = 1;
     globals.mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none; visibility: visible"></canvas>';
-    if(GM_config.get('visualizerPlace') != 'Disabled') getVideo();
-
-    skipDisliked(GM_config.get('skipDisliked'));
-
-    extraButtons(GM_config.get('extraButtons'));
+    if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
 
     // Adds a settings button on the navbar
-    node = document.createElement('iframe');
+    const node = document.createElement('iframe');
     node.id = 'ytmPSettings';
     node.src = 'about:blank';
     node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; z-index: 9999; overflow: hidden;';
@@ -104,4 +74,29 @@ export function loadEvent() {
             }
         });
     }, 500);
+}
+
+function createGradientEffects() {
+    const animation =
+        `@keyframes backgroundGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes clockGradient {
+            from {
+                background-position: 0% center;
+            }
+            to {
+                background-position: 200% center;
+            }
+        }`;
+    const node = document.createElement('style');
+    const textNode = document.createTextNode(animation);
+    node.appendChild(textNode);
+    document.head.appendChild(node);
 }

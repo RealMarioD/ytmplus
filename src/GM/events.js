@@ -1,8 +1,9 @@
 import { globals } from '../globals';
-import { addFancy, afkEnable, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
+import { GM_config } from './GM_config';
 
-export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
+function stylizeConfigWindow(doc, frame) {
     doc.body.style.overflow = 'hidden';
     frame.style.width = '25vw';
     // frame.style.height = // '80vh';
@@ -13,7 +14,9 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     frame.style.boxShadow = '20px 20px 40px rgba(10, 10, 10, 0.8)';
     frame.style.border = '';
     frame.style.borderRadius = '1.5vw';
+}
 
+function stylizeConfigButtons(doc) {
     const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
     buttons.style.textAlign = 'center';
     for(let i = 0; i < buttons.children.length; i++) {
@@ -26,13 +29,39 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
         else e.firstChild.style.fontSize = '2vh';
         e.style.margin = '0.5vh';
     }
+}
 
-    // Every color input we want has to be changed here (customType would come in handy but how the hell do it work)
-    doc.getElementById('ytmPlusCfg_field_bgColor').type = 'color';
-    doc.getElementById('ytmPlusCfg_field_bgGradient').type = 'color';
-    doc.getElementById('ytmPlusCfg_field_clockColor').type = 'color';
-    doc.getElementById('ytmPlusCfg_field_clockGradientColor').type = 'color';
-    doc.getElementById('ytmPlusCfg_field_visualizerColor').type = 'color';
+const titleSVG =
+    `<svg viewBox="0 0 613 99">
+        <g style="overflow:hidden; text-anchor: middle;">
+            <defs>
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="10" result="glow"/>
+                    <feMerge>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="glow"/>
+                    </feMerge>
+                </filter>
+            </defs>
+            <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
+            <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
+        </g>
+    </svg>`;
+
+export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
+    stylizeConfigWindow(doc, frame);
+    stylizeConfigButtons(doc);
+
+    // Every color input we want has to be 'manually set' (GM_config's customType would come in handy but how the hell do it work)
+    const colorTypeFields = [
+        'bgColor',
+        'bgGradient',
+        'clockColor',
+        'clockGradientColor',
+        'visualizerColor'
+    ];
+    for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
     // Putting the sections and settings into a scrollable div, so that the whole window won't become scrollable
     const node = doc.createElement('div');
@@ -42,7 +71,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     for(let i = 0; i <= wrapper.childNodes.length + 1; i++) node.appendChild(wrapper.childNodes[1]); // Not sure how this works, but I somehow skip the header and the buttons at the end
     wrapper.appendChild(wrapper.childNodes[1]);
 
-    // Live change + Adding info to advanced visualizer settings
+    // Live change for input tags + Adding info to int/float settings
     const inputs = doc.getElementsByTagName('input');
     for(let i = 0; i < inputs.length; i++) {
         inputs[i].addEventListener('change', () => GM_config.save());
@@ -51,28 +80,13 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
             inputs[i].title = `type: ${fieldSettings.type} | default: ${fieldSettings.default} | ${fieldSettings.min} . . ${fieldSettings.max}`;
         }
     }
+    // Live change for select tags
     const selects = doc.getElementsByTagName('select');
     for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => GM_config.save());
 
     // Header title svg
     const title = doc.getElementById('ytmPlusCfg_header');
-    title.innerHTML = `
-                <svg viewBox="0 0 613 99">
-                    <g style="overflow:hidden; text-anchor: middle;">
-                        <defs>
-                            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                                <feGaussianBlur stdDeviation="10" result="glow"/>
-                                <feMerge>
-                                <feMergeNode in="glow"/>
-                                <feMergeNode in="glow"/>
-                                <feMergeNode in="glow"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
-                        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
-                    </g>
-                </svg>`;
+    title.innerHTML = titleSVG;
 
     // Handles opening/closing categories
     const categories = doc.getElementsByClassName('section_header_holder');
@@ -86,6 +100,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
             categories[i].children[0].innerHTML = '▼ ' + categories[i].children[0].innerHTML + ' ▼';
             categories[i].style.height = '3.25vh';
         }
+
 
         categories[i].children[0].addEventListener('click', () => {
             if(GM_config.get(`section${i}`) == 'closed') {
@@ -116,21 +131,7 @@ export function closeEvent() {
 
 export function saveEvent() {
     // Updates updateable stuff on save
-    if(GM_config.get('bg') == false) {
-        document.body.style.backgroundColor = '#000000';
-        document.body.style.backgroundImage = '';
-        globals.playerPageDiv.style.backgroundColor = '#000000';
-        globals.playerPageDiv.style.backgroundImage = '';
-    }
-    else {
-        try {
-            document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
-        }
-        catch { }
-        document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-        addFancy(document.body.style, true);
-        addFancy(globals.playerPageDiv.style);
-    }
+    changeBackground(GM_config.get('bg'));
 
     clockEnable(GM_config.get('clock'));
 
@@ -150,6 +151,6 @@ export function saveEvent() {
         }
     }
     else globals.visualizer.place = 'Disabled';
-    if(globals.visualizer.rgb.enabled) globals.visualizer.getRGB();
+
     window.dispatchEvent(new Event('resize'));
 }

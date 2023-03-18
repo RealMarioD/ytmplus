@@ -11,9 +11,7 @@
 		"sourceType": "module"
 	},
 	"globals": {
-		"GM_getValue": "readonly",
-		"GM_configStruct": "readonly",
-		"GM_config": "readonly"
+		"GM_configStruct": "readonly"
 	},
 	"rules": {
 		"arrow-spacing": ["error", { "before": true, "after": true }],

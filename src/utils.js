@@ -1,4 +1,5 @@
 import { globals } from './globals';
+import { GM_config } from './GM/GM_config';
 
 export function promoEnable(turnOn) {
     let popup;
@@ -15,7 +16,7 @@ export function promoEnable(turnOn) {
     }
 }
 
-export function afkEnable(turnOn) {
+export function afkEnable(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
     if(!turnOn) clearInterval(globals.noAfkFunction);
     else {
         clearInterval(globals.noAfkFunction);
@@ -57,13 +58,33 @@ export function clockEnable(mode) {
     a.animation = mode != 'Digital Clock' ? '' : 'clockGradient 2s linear infinite normal';
 }
 
+export function changeBackground(option, firstRun) {
+    if(option === false) {
+        if(document.body.style.backgroundImage !== '') {
+            document.body.style.backgroundColor = '#000000';
+            document.body.style.backgroundImage = '';
+            globals.playerPageDiv.style.backgroundColor = '#000000';
+            globals.playerPageDiv.style.backgroundImage = '';
+        }
+        return;
+    }
+    try {
+        if(firstRun === true) document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
+        document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
+    }
+    catch { }
+    document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
+    addFancy(document.body.style, true);
+    addFancy(globals.playerPageDiv.style);
+}
+
 export function addFancy(e, overflowOn) {
     e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
     e.animation = 'backgroundGradient 5s linear infinite alternate';
     e.backgroundSize = '150% 150%';
     e.backgroundAttachment = 'fixed';
     // e.height = '100vh';
-    if(!overflowOn) e.overflow = 'hidden';
+    if(overflowOn === false) e.overflow = 'hidden';
 }
 
 export function checkDislike() {
@@ -97,4 +118,11 @@ export function averageOfArray(numbers) {
     let result = 0;
     for(let i = 0; i < numbers.length; i++) result += numbers[i];
     return result / numbers.length;
+}
+
+export function injectStyle(css) {
+    const node = document.createElement('style');
+    const textNode = document.createTextNode(css);
+    node.appendChild(textNode);
+    document.head.appendChild(node);
 }

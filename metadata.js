@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.0.0
+// @version      2.0.1
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/

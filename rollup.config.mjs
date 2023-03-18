@@ -2,6 +2,10 @@ import fs from 'fs';
 import { fuckGMConfig, lint } from './plugins.js';
 
 export default {
+    onwarn: (warning) => {
+        if(warning.code === 'CIRCULAR_DEPENDENCY') return;
+        console.warn(warning.message);
+    },
     input: 'src/index.js',
     output: {
         file: 'dist/ytmplus.user.js',

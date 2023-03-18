@@ -51,28 +51,36 @@ export const globals = {
              * (bassBounce is the last thing it checks so any values that should be initialised/changed upon saving should be set above bassBounce)
              */
             for(const key in this) {
-                if(Object.hasOwnProperty.call(this, key)) {
-                    let gmName = `visualizer${key[0].toUpperCase()}${key.slice(1, key.length)}`;
-                    if(typeof this[key] == 'object') {
-                        for(const key2 in this[key]) {
-                            if(Object.hasOwnProperty.call(this[key], key2)) {
-                                gmName = `visualizer${key[0].toUpperCase() + key.slice(1, key.length) + key2[0].toUpperCase() + key2.slice(1, key2.length)}`;
-                                this[key][key2] = GM_config.get(gmName);
-                            }
-                        }
-                        if(key == 'bassBounce') return;
-                        if(this.analyser !== undefined) {
-                            this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
-                            this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
-                            this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
-                        }
-                    }
-                    else this[key] = GM_config.get(gmName);
+                let gmName;
+
+                if(typeof this[key] !== 'object') {
+                    gmName = 'visualizer' + key[0].toUpperCase() + key.slice(1, key.length); // e.g.: visualizer + P + lace
+                    this[key] = GM_config.get(gmName);
+                    continue;
+                }
+
+                for(const key2 in this[key]) {
+                    gmName = 'visualizer' +
+                        key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
+                        key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
+
+                    this[key][key2] = GM_config.get(gmName);
+                }
+
+                if(key === 'bassBounce' && this.analyser !== undefined) {
+                    this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
+                    this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
+                    this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
+                    if(this.rgb.enabled === true && this.rgbData.length !== this.rgb.samples) this.getRGB();
+                    return;
                 }
             }
         },
-        getRGB() {
-            const hue = 2 * Math.PI / this.rgb.samples, piD3 = Math.PI / 3, piD3x2 = 2 * Math.PI / 3;
+        getRGB() { // Pregenerates RGB colors so we don't have to calculate colors every frame
+            const hue = 2 * Math.PI / this.rgb.samples,
+                piD3 = Math.PI / 3, // Offset
+                piD3x2 = 2 * Math.PI / 3; // so that colors aren't totally mixed together
+
             this.rgbData = [];
             for(let i = 0; i < this.rgb.samples; i++) {
                 this.rgbData[i] = {
