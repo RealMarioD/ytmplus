@@ -1,73 +1,94 @@
-import { globals } from '../globals';
-import { values } from './init';
+import { visualizer } from '../globals';
+import { getBarColor, values } from './init';
 
 export function visualizerNavbar(ctx) {
-    if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
-    else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
+    if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
+    else if(visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
     else values.xPosOffset = 0;
 
-    const maxBarHeight = (values.HEIGHT / 255), colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgbData.length);
+    const maxBarHeight = (values.HEIGHT / 255);
 
-    firstDraw(ctx, maxBarHeight, colorDivergence);
+    firstDraw(ctx, maxBarHeight);
 
-    if(globals.visualizer.startsFrom === 'Center') values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
-    else if(globals.visualizer.startsFrom === 'Edges') values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
-    else return;
-
-    secondDraw(ctx, maxBarHeight, colorDivergence);
-}
-
-function firstDraw(ctx, maxBarHeight, colorDivergence) {
-    for(let i = 0; i < globals.visualizer.bufferLength; i++) {
-        values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
-
-        if(globals.visualizer.rgb.enabled === true) {
-            const color = ~~(i / colorDivergence);
-            if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-            else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
-        }
-        else ctx.fillStyle = globals.visualizer.color;
-
-        // To this day I don't get the Y and values.HEIGHT values
-        if(globals.visualizer.startsFrom === 'Left') {
-            ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right
-            values.xPosOffset += values.barTotal;
-        }
-        else if(globals.visualizer.startsFrom === 'Center') {
-            if(values.halfWidth - values.xPosOffset < 0 - values.barWidth) break;
-            ctx.fillRect(values.halfWidth - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, starting from center to left
-            values.xPosOffset += values.barTotal;
-        }
-        else if(globals.visualizer.startsFrom === 'Right') {
-            ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, 0 - values.barWidth, values.barHeight); // Draws rect from right to left
-            values.xPosOffset += values.barTotal;
-        }
-        else if(globals.visualizer.startsFrom === 'Edges') {
-            if(values.xPosOffset > values.halfWidth) break;
-            ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from left to center
-            values.xPosOffset += values.barTotal;
-        }
+    if(visualizer.startsFrom === 'Center') {
+        values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
+        secondDraw(ctx, maxBarHeight, 1);
+    }
+    else if(visualizer.startsFrom === 'Edges') {
+        values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
+        secondDraw(ctx, maxBarHeight, 0);
     }
 }
 
-function secondDraw(ctx, maxBarHeight, colorDivergence) {
-    for(let i = 1; i < globals.visualizer.bufferLength; i++) {
-        values.barHeight = globals.visualizer.dataArray[i] * maxBarHeight;
-        if(globals.visualizer.rgb.enabled === true) {
-            const color = ~~(i / colorDivergence);
-            if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-            else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
+function firstDraw(ctx, maxBarHeight) {
+    for(let i = 0; i < visualizer.bufferLength; i++) {
+        values.barHeight = visualizer.dataArray[i] * maxBarHeight;
+
+        getBarColor(i, ctx);
+
+        // To this day I don't get the Y and values.HEIGHT values
+        if(visualizer.startsFrom === 'Left') {
+            ctx.fillRect( // Draws rect from left to right
+                values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                values.barWidth,
+                values.barHeight
+            );
         }
-        else ctx.fillStyle = globals.visualizer.color;
-        if(globals.visualizer.startsFrom === 'Center') {
-            if(values.xPosOffset > values.WIDTH) break;
-            ctx.fillRect(values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from center to right
-            values.xPosOffset += values.barTotal;
+        else if(visualizer.startsFrom === 'Center') {
+            if(values.halfWidth - values.xPosOffset < 0 - values.barWidth) break;
+            ctx.fillRect( // Draws rect from left to right, starting from center to left
+                values.halfWidth - values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                values.barWidth,
+                values.barHeight
+            );
         }
-        else if(globals.visualizer.startsFrom === 'Edges') {
+        else if(visualizer.startsFrom === 'Right') {
+            ctx.fillRect( // Draws rect from right to left
+                values.WIDTH - values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                0 - values.barWidth,
+                values.barHeight
+            );
+        }
+        else if(visualizer.startsFrom === 'Edges') {
             if(values.xPosOffset > values.halfWidth) break;
-            ctx.fillRect(values.WIDTH - values.xPosOffset, values.HEIGHT - values.barHeight, values.barWidth, values.barHeight); // Draws rect from left to right, from right to center
-            values.xPosOffset += values.barTotal;
+            ctx.fillRect( // Draws rect from left to right, from left to center
+                values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                values.barWidth,
+                values.barHeight
+            );
         }
+        values.xPosOffset += values.barTotal;
+    }
+}
+
+function secondDraw(ctx, maxBarHeight, i) {
+    for(i; i < visualizer.bufferLength; i++) {
+        values.barHeight = visualizer.dataArray[i] * maxBarHeight;
+
+        getBarColor(i, ctx);
+
+        if(visualizer.startsFrom === 'Center') {
+            if(values.xPosOffset > values.WIDTH) break;
+            ctx.fillRect( // Draws rect from left to right, from center to right
+                values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                values.barWidth,
+                values.barHeight
+            );
+        }
+        else if(visualizer.startsFrom === 'Edges') {
+            if(values.xPosOffset > values.halfWidth) break;
+            ctx.fillRect( // Draws rect from left to right, from right to center
+                values.WIDTH - values.xPosOffset,
+                values.HEIGHT - values.barHeight,
+                values.barWidth,
+                values.barHeight
+            );
+        }
+        values.xPosOffset += values.barTotal;
     }
 }

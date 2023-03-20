@@ -1,80 +1,70 @@
-import { globals } from '../globals';
-import { values } from './init';
+import { visualizer } from '../globals';
+import { getBarColor, values } from './init';
 import { averageOfArray } from '../utils';
 
 export function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-    if(globals.visualizer.startsFrom === 'Left' || globals.visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
+    if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
     else values.circleSize = 1; // 1(pi) = half;
 
-    if(globals.visualizer.bassBounce.enabled === true ||
-        globals.visualizer.rotate === 'Reactive (Bass)') calculateBass();
+    if(visualizer.bassBounce.enabled === true ||
+        visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
     getRotationValue();
 
-    values.barTotal = values.circleSize * Math.PI / globals.visualizer.bufferLength;
+    values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
     values.barWidth = values.barTotal * 0.45;
     // No need for barSpace
     values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
 
-    const colorDivergence = (globals.visualizer.bufferLength / globals.visualizer.rgb.samples);
-
-    if(globals.visualizer.startsFrom === 'Right' ||
-        globals.visualizer.startsFrom === 'Center' ||
-        globals.visualizer.startsFrom === 'Edges') drawArcs(false, ctx, colorDivergence);
-
-    if(globals.visualizer.startsFrom === 'Left' ||
-        globals.visualizer.startsFrom === 'Center' ||
-        globals.visualizer.startsFrom === 'Edges') drawArcs(true, ctx, colorDivergence);
+    if(visualizer.startsFrom === 'Right') drawArcs(false, ctx);
+    else if(visualizer.startsFrom === 'Left') drawArcs(true, ctx);
+    else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
+        drawArcs(false, ctx);
+        drawArcs(true, ctx);
+    }
 }
 
 function calculateBass() {
-    values.bass = globals.visualizer.dataArray.slice(
-        ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityStart),
-        ~~(globals.visualizer.dataArray.length * globals.visualizer.bassBounce.sensitivityEnd) + 1
+    values.bass = visualizer.dataArray.slice(
+        ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart),
+        ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1
     );
 
-    if(globals.visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
+    if(visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
     else values.bassSmoothRadius = ~~(averageOfArray(values.bass) / 2);
 
-    if(globals.visualizer.bassBounce.enabled === true) values.radius = ~~(values.HEIGHT / 8) + values.bassSmoothRadius * values.heightModifier * 1.25;
+    if(visualizer.bassBounce.enabled === true) values.radius = ~~(values.HEIGHT / 8) + values.bassSmoothRadius * values.heightModifier * 1.25;
 }
 
 function getRotationValue() {
-    const r = globals.visualizer.rotate;
-    let direction;
-    if(globals.visualizer.rotateDirection === 'Clockwise') direction = 1;
-    else direction = -1;
+    const r = visualizer.rotate,
+        direction = (visualizer.rotateDirection === 'Clockwise') ? 1 : -1;
 
     if(r === 'Disabled') values.rotationValue = 0;
     else if(r === 'On') values.rotationValue += 0.005 * direction;
-    else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(globals.visualizer.dataArray) / 10000 + 1, 2) - 1) * direction;
+    else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1) * direction;
     else if(r === 'Reactive (Bass)') values.rotationValue += (Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction;
 }
 
-function drawArcs(backwards, ctx, colorDivergence) {
+function drawArcs(backwards, ctx) {
     ctx.save();
     ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
     ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
 
-    for(let i = 0; i < globals.visualizer.bufferLength; ++i) {
+    for(let i = 0; i < visualizer.bufferLength; ++i) {
         if(i === 0 && backwards === true) ctx.rotate(-values.barTotal);
         else {
-            if(globals.visualizer.rgb.enabled === true) {
-                const color = ~~(i / colorDivergence);
-                if(globals.visualizer.fade === true) ctx.fillStyle = `rgba(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue}, ${globals.visualizer.dataArray[i] < 128 ? globals.visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-                else ctx.fillStyle = `rgb(${globals.visualizer.rgbData[color].red}, ${globals.visualizer.rgbData[color].green}, ${globals.visualizer.rgbData[color].blue})`;
-            }
-            else ctx.fillStyle = globals.visualizer.color;
+            getBarColor(i, ctx);
 
-            if(globals.visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(globals.visualizer.bufferLength * globals.visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
 
-            if(globals.visualizer.bassBounce.enabled === true) values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
-            else values.barHeight = globals.visualizer.dataArray[i] * values.heightModifier * 0.5;
+            if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
+            else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
 
-            if(globals.visualizer.move == 'Outside' || globals.visualizer.move == 'Both Sides') values.outerRadius = values.radius + values.barHeight;
+            if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
             else values.outerRadius = values.radius;
 
-            if(globals.visualizer.move == 'Inside' || globals.visualizer.move == 'Both Sides') values.innerRadius = values.radius - values.barHeight;
+            if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') values.innerRadius = values.radius - values.barHeight;
             else values.innerRadius = values.radius;
 
             if(values.outerRadius < 0) values.outerRadius = 0;

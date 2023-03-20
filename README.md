@@ -9,7 +9,7 @@ Now with **Hungarian** support!
 1. Download and install [Tampermonkey](https://www.tampermonkey.net) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey), depends on what browser you have.
 2. [Click here to install the script!](https://github.com/RealMarioD/ytmplus/raw/main/dist/ytmplus.user.js)
 
-*Note: Script only tested on Chrome and Firefox *(thanks sl0thi3)*, other browsers are not officially supported, but may still work.*
+*Note: Script only tested on Chrome and Firefox **(thanks sl0thi3)**, other browsers are not officially supported, but may still work.*
 
 ## Settings
 

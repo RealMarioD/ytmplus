@@ -2,9 +2,9 @@ import fs from 'fs';
 import { fuckGMConfig, lint } from './plugins.js';
 
 export default {
-    onwarn: (warning) => {
+    onwarn: (warning) => { // We can ignore circular dependecies, it's required for ESLint
         if(warning.code === 'CIRCULAR_DEPENDENCY') return;
-        console.warn(warning.message);
+        console.warn('\x1b[33m%s\x1b[0m', warning.message);
     },
     input: 'src/index.js',
     output: {

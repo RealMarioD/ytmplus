@@ -1,4 +1,4 @@
-import { globals } from '../globals';
+import { globals, visualizer } from '../globals';
 import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from './GM_config';
@@ -75,7 +75,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     const inputs = doc.getElementsByTagName('input');
     for(let i = 0; i < inputs.length; i++) {
         inputs[i].addEventListener('change', () => GM_config.save());
-        if(!isNaN(parseInt(inputs[i].value))) {
+        if(!isNaN(parseInt(inputs[i].value, 10))) {
             const fieldSettings = GM_config.fields[inputs[i].id.split('_')[2]].settings;
             inputs[i].title = `type: ${fieldSettings.type} | default: ${fieldSettings.default} | ${fieldSettings.min} . . ${fieldSettings.max}`;
         }
@@ -144,13 +144,13 @@ export function saveEvent() {
     extraButtons(GM_config.get('extraButtons'));
 
     if(GM_config.get('visualizerPlace') != 'Disabled') {
-        if(globals.visualizer.analyser === undefined) getVideo();
+        if(visualizer.analyser === undefined) getVideo();
         else {
-            globals.visualizer.initValues();
-            globals.visualizer.getBufferData();
+            visualizer.getBufferData();
+            visualizer.initValues();
         }
     }
-    else globals.visualizer.place = 'Disabled';
+    else visualizer.place = 'Disabled';
 
     window.dispatchEvent(new Event('resize'));
 }

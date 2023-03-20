@@ -3,39 +3,34 @@ import { GM_config } from './GM/GM_config';
 
 export function promoEnable(turnOn) {
     let popup;
-    if(!turnOn) clearInterval(globals.noPromoFunction);
-    else {
-        clearInterval(globals.noPromoFunction);
-        globals.noPromoFunction = setInterval(() => {
-            popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-            if(popup.length > 0) {
-                popup[0].remove();
-                console.log('ytmPlus: Removed a promotion.');
-            }
-        }, 1000);
-    }
+    clearInterval(globals.noPromoFunction);
+    if(!turnOn) return;
+    globals.noPromoFunction = setInterval(() => {
+        popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
+        if(popup.length > 0) {
+            popup[0].remove();
+            console.log('ytmPlus: Removed a promotion.');
+        }
+    }, 1000);
 }
 
 export function afkEnable(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
-    if(!turnOn) clearInterval(globals.noAfkFunction);
-    else {
-        clearInterval(globals.noAfkFunction);
-        globals.noAfkFunction = setInterval(() => {
-            document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-            console.log('ytmPlus: Nudged the page so user is not AFK.');
-        }, 15000);
-    }
+    clearInterval(globals.noAfkFunction);
+    if(!turnOn) return;
+    globals.noAfkFunction = setInterval(() => {
+        document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+        console.log('ytmPlus: Nudged the page so user is not AFK.');
+    }, 15000);
 }
 
 export function clockEnable(mode) {
     let currentTime;
-    if(mode == 'Original') {
-        clearInterval(globals.clockFunction);
+    clearInterval(globals.clockFunction);
+    if(mode === 'Original') {
         globals.upgradeButton.textContent = globals.originalUpgradeText;
         globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
     }
-    else if(mode == 'Digital Clock') {
-        clearInterval(globals.clockFunction);
+    else if(mode === 'Digital Clock') {
         globals.clockFunction = setInterval(() => {
             currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             globals.upgradeButton.textContent = currentTime;
@@ -43,12 +38,11 @@ export function clockEnable(mode) {
         globals.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
     }
     else {
-        clearInterval(globals.clockFunction);
         globals.upgradeButton.textContent = '';
         globals.upgradeButton.parentElement.style.margin = '0px';
     }
     const a = globals.upgradeButton.style;
-    a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') == true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+    a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
     a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
     a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
     a.textFillColor = mode != 'Digital Clock' ? '' : 'transparent';
@@ -88,7 +82,7 @@ export function addFancy(e, overflowOn) {
 }
 
 export function checkDislike() {
-    if(globals.dumbFix == 0) return globals.dumbFix++;
+    if(globals.dumbFix === 0) return globals.dumbFix++;
     clearTimeout(globals.skipDislikedFunction);
     globals.skipDislikedFunction = setTimeout(() => {
         if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
@@ -98,8 +92,8 @@ export function checkDislike() {
 
 export function skipDisliked(turnOn) {
     const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
-    if(!turnOn) return titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
     titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
+    if(!turnOn) return;
     titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
 }
 
@@ -108,10 +102,11 @@ export function extraButtons(turnOn) {
     if(!turnOn) {
         playbackButtons[1].hidden = true;
         playbackButtons[4].hidden = true;
-        return;
     }
-    playbackButtons[1].hidden = false;
-    playbackButtons[4].hidden = false;
+    else {
+        playbackButtons[1].hidden = false;
+        playbackButtons[4].hidden = false;
+    }
 }
 
 export function averageOfArray(numbers) {
