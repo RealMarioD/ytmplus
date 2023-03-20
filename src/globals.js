@@ -3,6 +3,7 @@ import { GM_config } from './GM/GM_config';
 export const globals = {
     settingsOpen: false, // Used to track if config window is open or not
     playerPageDiv: undefined, // Set to the player "overlay" in window.onload
+    player: undefined, // Playback player player player player player player
     upgradeButton: undefined, // Set to the upgrade "button" in window.onload
     originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
     clockFunction: undefined, // Holds the interval function that updates the digital clock
@@ -23,6 +24,11 @@ export const visualizer = {
     rotate: undefined,
     rotateDirection: undefined,
     move: undefined,
+    image: {
+        type: undefined,
+        removeThumbnail: undefined,
+        customURL: undefined
+    },
     rgb: {
         enabled: undefined,
         red: undefined,

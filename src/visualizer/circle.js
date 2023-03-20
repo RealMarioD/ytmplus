@@ -1,6 +1,42 @@
-import { visualizer } from '../globals';
+import { globals, visualizer } from '../globals';
 import { getBarColor, values } from './init';
 import { averageOfArray } from '../utils';
+
+const image = new Image();
+let imgLoaded = false;
+
+image.onload = () => {
+    imgLoaded = true;
+};
+
+
+function handleImage(ctx, currentURL) {
+    if(visualizer.image.type === 'Thumbnail') currentURL = document.getElementById('thumbnail').firstElementChild.src;
+    else currentURL = visualizer.image.customURL;
+
+    if(image.src !== currentURL) {
+        imgLoaded = false;
+        image.src = currentURL;
+    }
+
+    if(visualizer.image.removeThumbnail === true) {
+        if(globals.player.style.opacity !== 0.001) globals.player.style.opacity = 0.001;
+    }
+    else if(globals.player.style.opacity !== 1) globals.player.style.opacity = 1;
+    if(imgLoaded === true) drawVisImage(ctx);
+}
+
+function drawVisImage(ctx) {
+    console.log('drew');
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(image, values.halfWidth - values.radius, values.halfHeight - values.radius, values.radius * 2, values.radius * 2);
+    ctx.restore();
+}
+
 
 export function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
     if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
@@ -10,6 +46,8 @@ export function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used
         visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
     getRotationValue();
+
+    if(visualizer.image.type !== 'Disabled') handleImage(ctx);
 
     values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
     values.barWidth = values.barTotal * 0.45;

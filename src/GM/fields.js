@@ -171,6 +171,23 @@ export const configFields = {
         type: 'checkbox',
         default: true
     },
+    visualizerImageType: {
+        label: fieldTexts.visualizerImageType[langOption],
+        type: 'select',
+        options: ['Disabled', 'Thumbnail', 'Custom'],
+        default: 'Thumbnail'
+    },
+    visualizerImageRemoveThumbnail: {
+        label: fieldTexts.visualizerImageRemoveThumbnail[langOption],
+        type: 'checkbox',
+        default: true
+    },
+    visualizerImageCustomURL: {
+        label: fieldTexts.visualizerImageCustomURL[langOption],
+        type: 'textarea',
+        size: 100,
+        default: ''
+    },
     section4: {
         type: 'hidden',
         value: 'open',

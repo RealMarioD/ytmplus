@@ -36,7 +36,7 @@ export const values = {
 
 export function startVisualizer() {
     // Init, connecting yt audio to canvas
-    const player = document.getElementById('player');
+    globals.player = document.getElementById('player');
     const context = new AudioContext();
     const src = context.createMediaElementSource(video);
     visualizer.analyser = context.createAnalyser();
@@ -75,18 +75,18 @@ export function startVisualizer() {
                 values.barWidth = values.barTotal * 0.95;
                 break;
             case 'Album Cover':
-                canvas.style.width = player.offsetWidth + 'px';
-                canvas.style.height = player.offsetHeight + 'px';
-                canvas.width = player.offsetWidth;
-                canvas.height = player.offsetHeight;
+                canvas.style.width = globals.player.offsetWidth + 'px';
+                canvas.style.height = globals.player.offsetHeight + 'px';
+                canvas.width = globals.player.offsetWidth;
+                canvas.height = globals.player.offsetHeight;
                 values.WIDTH = canvas.width;
                 values.halfWidth = values.WIDTH / 2;
                 values.HEIGHT = canvas.height;
                 values.halfHeight = values.HEIGHT / 2;
 
-                if(player.playerPageOpen_ === false) { // if miniplayer == true
-                    canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
-                    canvas.style.left = getComputedStyle(player).left;
+                if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
+                    canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
+                    canvas.style.left = getComputedStyle(globals.player).left;
                 }
                 else {
                     canvas.style.removeProperty('bottom'); // else completely remove properties because html

@@ -50,6 +50,12 @@ input {
     background-color: rgba(66, 66, 66, 0.8);
     font-size: 2vh;
 }
+textarea {
+    background-color: rgba(66, 66, 66, 0.8);
+    width: 50%;
+    resize: none;
+    margin: auto;
+}
 #ytmPlusCfg .config_var {
     margin: 0 0 0.5vh;
     text-align: center;
@@ -161,6 +167,9 @@ svg text {
         visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
         visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
         visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
+        visualizerImageType: { english: 'Image', hungarian: 'Kép' },
+        visualizerImageRemoveThumbnail: { english: 'Remove Thumbnail', hungarian: 'Miniatűr Eltávolítása' },
+        visualizerImageCustomURL: { english: 'Custom image URL', hungarian: 'Saját kép URL' },
         attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
         attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
         visualizerRgbRed: { english: 'RGB:Red Value', hungarian: 'RGB:Piros Érték' },
@@ -346,6 +355,23 @@ svg text {
             label: fieldTexts.visualizerBassBounceSmooth[langOption],
             type: 'checkbox',
             default: true
+        },
+        visualizerImageType: {
+            label: fieldTexts.visualizerImageType[langOption],
+            type: 'select',
+            options: ['Disabled', 'Thumbnail', 'Custom'],
+            default: 'Thumbnail'
+        },
+        visualizerImageRemoveThumbnail: {
+            label: fieldTexts.visualizerImageRemoveThumbnail[langOption],
+            type: 'checkbox',
+            default: true
+        },
+        visualizerImageCustomURL: {
+            label: fieldTexts.visualizerImageCustomURL[langOption],
+            type: 'textarea',
+            size: 100,
+            default: ''
         },
         section4: {
             type: 'hidden',
@@ -560,6 +586,42 @@ svg text {
         document.head.appendChild(node);
     }
 
+    const image = new Image();
+    let imgLoaded = false;
+
+    image.onload = () => {
+        imgLoaded = true;
+    };
+
+
+    function handleImage(ctx, currentURL) {
+        if(visualizer.image.type === 'Thumbnail') currentURL = document.getElementById('thumbnail').firstElementChild.src;
+        else currentURL = visualizer.image.customURL;
+
+        if(image.src !== currentURL) {
+            imgLoaded = false;
+            image.src = currentURL;
+        }
+
+        if(visualizer.image.removeThumbnail === true) {
+            if(globals.player.style.opacity !== 0.001) globals.player.style.opacity = 0.001;
+        }
+        else if(globals.player.style.opacity !== 1) globals.player.style.opacity = 1;
+        if(imgLoaded === true) drawVisImage(ctx);
+    }
+
+    function drawVisImage(ctx) {
+        console.log('drew');
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(image, values.halfWidth - values.radius, values.halfHeight - values.radius, values.radius * 2, values.radius * 2);
+        ctx.restore();
+    }
+
+
     function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
         if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
         else values.circleSize = 1; // 1(pi) = half;
@@ -568,6 +630,8 @@ svg text {
             visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
         getRotationValue();
+
+        if(visualizer.image.type !== 'Disabled') handleImage(ctx);
 
         values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
         values.barWidth = values.barTotal * 0.45;
@@ -765,7 +829,7 @@ svg text {
 
     function startVisualizer() {
         // Init, connecting yt audio to canvas
-        const player = document.getElementById('player');
+        globals.player = document.getElementById('player');
         const context = new AudioContext();
         const src = context.createMediaElementSource(video);
         visualizer.analyser = context.createAnalyser();
@@ -804,18 +868,18 @@ svg text {
                     values.barWidth = values.barTotal * 0.95;
                     break;
                 case 'Album Cover':
-                    canvas.style.width = player.offsetWidth + 'px';
-                    canvas.style.height = player.offsetHeight + 'px';
-                    canvas.width = player.offsetWidth;
-                    canvas.height = player.offsetHeight;
+                    canvas.style.width = globals.player.offsetWidth + 'px';
+                    canvas.style.height = globals.player.offsetHeight + 'px';
+                    canvas.width = globals.player.offsetWidth;
+                    canvas.height = globals.player.offsetHeight;
                     values.WIDTH = canvas.width;
                     values.halfWidth = values.WIDTH / 2;
                     values.HEIGHT = canvas.height;
                     values.halfHeight = values.HEIGHT / 2;
 
-                    if(player.playerPageOpen_ === false) { // if miniplayer == true
-                        canvas.style.bottom = getComputedStyle(player).bottom; // move the canvas over the miniplayer
-                        canvas.style.left = getComputedStyle(player).left;
+                    if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
+                        canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
+                        canvas.style.left = getComputedStyle(globals.player).left;
                     }
                     else {
                         canvas.style.removeProperty('bottom'); // else completely remove properties because html
@@ -1051,6 +1115,7 @@ svg text {
     const globals = {
         settingsOpen: false, // Used to track if config window is open or not
         playerPageDiv: undefined, // Set to the player "overlay" in window.onload
+        player: undefined, // Playback player player player player player player
         upgradeButton: undefined, // Set to the upgrade "button" in window.onload
         originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
         clockFunction: undefined, // Holds the interval function that updates the digital clock
@@ -1071,6 +1136,11 @@ svg text {
         rotate: undefined,
         rotateDirection: undefined,
         move: undefined,
+        image: {
+            type: undefined,
+            removeThumbnail: undefined,
+            customURL: undefined
+        },
         rgb: {
             enabled: undefined,
             red: undefined,

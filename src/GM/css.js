@@ -24,6 +24,12 @@ input {
     background-color: rgba(66, 66, 66, 0.8);
     font-size: 2vh;
 }
+textarea {
+    background-color: rgba(66, 66, 66, 0.8);
+    width: 50%;
+    resize: none;
+    margin: auto;
+}
 #ytmPlusCfg .config_var {
     margin: 0 0 0.5vh;
     text-align: center;
