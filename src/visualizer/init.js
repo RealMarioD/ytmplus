@@ -77,8 +77,8 @@ export function startVisualizer() {
             case 'Album Cover':
                 canvas.style.width = globals.player.offsetWidth + 'px';
                 canvas.style.height = globals.player.offsetHeight + 'px';
-                canvas.width = globals.player.offsetWidth;
-                canvas.height = globals.player.offsetHeight;
+                if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
+                if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
                 values.WIDTH = canvas.width;
                 values.halfWidth = values.WIDTH / 2;
                 values.HEIGHT = canvas.height;
@@ -111,32 +111,36 @@ export function startVisualizer() {
 
     window.addEventListener('resize', visualizerResizeFix);
 
-    function renderFrame() {
+    let lastFrameTime = 0;
+    function renderFrame(time) {
+        if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+        lastFrameTime = time;
+
+        if(((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) || visualizer.place === 'Disabled') return requestAnimationFrame(renderFrame);
+
         ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-        if(video.paused === false && visualizer.place !== 'Disabled') { // If playback is not paused and visualizer is not off
-            visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
+        visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
 
-            if(visualizer.rgb.enabled === true) { // Color cycle effect
-                visualizer.rgbData.push(visualizer.rgbData[0]);
-                visualizer.rgbData.shift();
-            }
+        if(visualizer.rgb.enabled === true) { // Color cycle effect
+            visualizer.rgbData.push(visualizer.rgbData[0]);
+            visualizer.rgbData.shift();
+        }
 
-            if(visualizer.place === 'Navbar') {
-                if(canvas.id !== 'visualizerNavbarCanvas') {
-                    canvas = document.getElementById('visualizerNavbarCanvas');
-                    ctx = canvas.getContext('2d');
-                }
-                visualizerNavbar(ctx);
+        if(visualizer.place === 'Navbar') {
+            if(canvas.id !== 'visualizerNavbarCanvas') {
+                canvas = document.getElementById('visualizerNavbarCanvas');
+                ctx = canvas.getContext('2d');
             }
-            else if(visualizer.place === 'Album Cover') {
-                if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-                    canvas = document.getElementById('visualizerAlbumCoverCanvas');
-                    ctx = canvas.getContext('2d');
-                }
-                if(visualizer.circleEnabled === true) visualizerCircle(ctx);
-                else visualizerNavbar(ctx);
+            visualizerNavbar(ctx);
+        }
+        else if(visualizer.place === 'Album Cover') {
+            if(canvas.id !== 'visualizerAlbumCoverCanvas') {
+                canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                ctx = canvas.getContext('2d');
             }
+            if(visualizer.circleEnabled === true) visualizerCircle(ctx);
+            else visualizerNavbar(ctx);
         }
 
         requestAnimationFrame(renderFrame);
@@ -150,5 +154,6 @@ export function getBarColor(i, ctx) {
         if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
         else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
     }
+    else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
     else ctx.fillStyle = visualizer.color;
 }

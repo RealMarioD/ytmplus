@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.0.2
+// @version      2.1.0
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
 // @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
-// @description  Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
+// @description  ytmPlus is a userscript that adds multiple visual customizations to YouTube Music.
 // @match        https://music.youtube.com/*
 // @icon         https://imgur.com/gfg6VLJ.png
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js

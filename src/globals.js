@@ -24,9 +24,14 @@ export const visualizer = {
     rotate: undefined,
     rotateDirection: undefined,
     move: undefined,
+    energySaver: {
+        type: undefined,
+        fps: undefined,
+        _frameMinTime: undefined,
+        _getFMT: function(fps) { visualizer.energySaver._frameMinTime = (1000 / 60) * (60 / fps) - (1000 / 60) * 0.5; }
+    },
     image: {
         type: undefined,
-        removeThumbnail: undefined,
         customURL: undefined
     },
     rgb: {
@@ -71,6 +76,7 @@ export const visualizer = {
             }
 
             for(const key2 in this[key]) {
+                if(key2[0] === '_') continue;
                 gmName = 'visualizer' +
                 key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
                 key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
@@ -85,8 +91,12 @@ export const visualizer = {
                 this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
                 this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
             }
+
             this.colorDivergence = this.bufferLength / this.rgb.samples;
             if(this.rgb.enabled === true && this.rgbData.length !== this.rgb.samples) this.getRGB();
+
+            if(this.energySaver.type === 'Limit FPS' || this.energySaver.type === 'Both') this.energySaver._getFMT(this.energySaver.fps);
+            else this.energySaver._getFMT(60);
             return; // So we don't check anything beyond bassBounce
         }
     },

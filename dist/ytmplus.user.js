@@ -52,9 +52,12 @@ input {
 }
 textarea {
     background-color: rgba(66, 66, 66, 0.8);
-    width: 50%;
+    width: 75%;
+    height: 3.5vh;
     resize: none;
     margin: auto;
+    white-space: nowrap;
+    overflow-wrap: normal;
 }
 #ytmPlusCfg .config_var {
     margin: 0 0 0.5vh;
@@ -62,7 +65,7 @@ textarea {
 }
 @-moz-document url-prefix() {
     #cfgHolder {
-    overflow-y: scroll;
+        overflow-y: scroll;
     }
 }
 #ytmPlusCfg * {
@@ -99,18 +102,19 @@ textarea {
     color: rgba(255, 255, 255, 0.8);
 }
 ::-webkit-scrollbar {
-    width: 2vw;
+    width: 1vw;
+    height: 0.5vh;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #eeea;
     border-radius: 2vw;
 }
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #888a;
     border-radius: 2vw;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #555f;
 }
 svg text {
     font-size: 17vw;
@@ -142,6 +146,7 @@ svg text {
         skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
         padding: { english: 'Fix Layout<span title="Refresh for changes">🔄</span>', hungarian: 'Elrendezés javítása<span title="Frissíts a változásokhoz">🔄</span>' },
         extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
+        removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
         bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
         bgSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
         bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
@@ -155,11 +160,12 @@ svg text {
         visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
         visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
         visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
-        visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+        // visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
         visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
         visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
         visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-        visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="A magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+        visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+        visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
         visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
         visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
         visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
@@ -167,14 +173,13 @@ svg text {
         visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
         visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
         visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
-        visualizerImageType: { english: 'Image', hungarian: 'Kép' },
-        visualizerImageRemoveThumbnail: { english: 'Remove Thumbnail', hungarian: 'Miniatűr Eltávolítása' },
-        visualizerImageCustomURL: { english: 'Custom image URL', hungarian: 'Saját kép URL' },
+        visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép' },
+        visualizerImageCustomURL: { english: 'Custom Image URL', hungarian: 'Egyéni Kép URL' },
         attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
         attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
-        visualizerRgbRed: { english: 'RGB:Red Value', hungarian: 'RGB:Piros Érték' },
-        visualizerRgbGreen: { english: 'RGB:Green Value', hungarian: 'RGB:Zöld Érték' },
-        visualizerRgbBlue: { english: 'RGB:Blue Value', hungarian: 'RGB:Kék Érték' },
+        visualizerRgbRed: { english: 'RGB:Red', hungarian: 'RGB:Piros' },
+        visualizerRgbGreen: { english: 'RGB:Green', hungarian: 'RGB:Zöld' },
+        visualizerRgbBlue: { english: 'RGB:Blue', hungarian: 'RGB:Kék' },
         visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
         visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
         visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
@@ -183,6 +188,7 @@ svg text {
         visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
         visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
         visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
+        visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' }
     };
 
     let langOption = GM_getValue('ytmPlusCfg', 'english');
@@ -192,6 +198,7 @@ svg text {
         else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
     }
 
+    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
     const configFields = {
         lang: {
             label: fieldTexts.lang[langOption],
@@ -222,6 +229,11 @@ svg text {
         },
         extraButtons: {
             label: fieldTexts.extraButtons[langOption],
+            type: 'checkbox',
+            default: true
+        },
+        removeThumbnail: {
+            label: fieldTexts.removeThumbnail[langOption],
             type: 'checkbox',
             default: true
         },
@@ -317,6 +329,12 @@ svg text {
             options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
             default: '1024',
         },
+        visualizerEnergySaverType: {
+            label: fieldTexts.visualizerEnergySaverType[langOption],
+            type: 'select',
+            options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
+            default: false
+        },
         section3: {
             type: 'hidden',
             value: 'open',
@@ -344,7 +362,7 @@ svg text {
             label: fieldTexts.visualizerMove[langOption],
             type: 'select',
             options: ['Inside', 'Outside', 'Both Sides'],
-            default: 'Both Sides'
+            default: 'Outside'
         },
         visualizerBassBounceEnabled: {
             label: fieldTexts.visualizerBassBounceEnabled[langOption],
@@ -362,16 +380,10 @@ svg text {
             options: ['Disabled', 'Thumbnail', 'Custom'],
             default: 'Thumbnail'
         },
-        visualizerImageRemoveThumbnail: {
-            label: fieldTexts.visualizerImageRemoveThumbnail[langOption],
-            type: 'checkbox',
-            default: true
-        },
         visualizerImageCustomURL: {
             label: fieldTexts.visualizerImageCustomURL[langOption],
             type: 'textarea',
-            size: 100,
-            default: ''
+            default: 'https://yt3.googleusercontent.com/ytc/AL5GRJX3OEex8FqN1gogsXQZNB7fV9TVHfda2EynDiW9_g=s900-c-k-c0x00ffffff-no-rj'
         },
         section4: {
             type: 'hidden',
@@ -457,6 +469,13 @@ svg text {
             label: fieldTexts.visualizerBassBounceDebug[langOption],
             type: 'checkbox',
             default: false
+        },
+        visualizerEnergySaverFps: {
+            label: fieldTexts.visualizerEnergySaverFps[langOption],
+            type: 'int',
+            min: 1,
+            max: 144,
+            default: 30,
         },
         section5: {
             type: 'hidden',
@@ -573,6 +592,15 @@ svg text {
         }
     }
 
+    function removeThumbnail(turnOn) {
+        globals.player.style.backgroundColor = '#01010101';
+        const songImage = document.getElementById('song-image');
+        setTimeout(() => {
+            if(!turnOn) songImage.style.opacity = 1;
+            else songImage.style.opacity = 0.001;
+        }, 500);
+    }
+
     function averageOfArray(numbers) {
         let result = 0;
         for(let i = 0; i < numbers.length; i++) result += numbers[i];
@@ -587,14 +615,21 @@ svg text {
     }
 
     const image = new Image();
-    let imgLoaded = false;
+    let imgLoaded = false,
+        currentURL;
 
     image.onload = () => {
         imgLoaded = true;
     };
+    image.onerror = () => {
+        if(visualizer.image.type === 'Thumbnail' && currentURL.indexOf('data') === 0) return;
+        console.warn('ytmPlus: Custom Image couldn\'t be loaded.');
+        currentURL = 'https://imgur.com/Nkj0d6D.png';
+        visualizer.image.customURL = currentURL;
+    };
 
 
-    function handleImage(ctx, currentURL) {
+    function handleImage(ctx) {
         if(visualizer.image.type === 'Thumbnail') currentURL = document.getElementById('thumbnail').firstElementChild.src;
         else currentURL = visualizer.image.customURL;
 
@@ -603,15 +638,10 @@ svg text {
             image.src = currentURL;
         }
 
-        if(visualizer.image.removeThumbnail === true) {
-            if(globals.player.style.opacity !== 0.001) globals.player.style.opacity = 0.001;
-        }
-        else if(globals.player.style.opacity !== 1) globals.player.style.opacity = 1;
         if(imgLoaded === true) drawVisImage(ctx);
     }
 
     function drawVisImage(ctx) {
-        console.log('drew');
         ctx.save();
         ctx.beginPath();
         ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
@@ -674,31 +704,33 @@ svg text {
         ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
 
         for(let i = 0; i < visualizer.bufferLength; ++i) {
-            if(i === 0 && backwards === true) ctx.rotate(-values.barTotal);
-            else {
-                getBarColor(i, ctx);
-
-                if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
-
-                if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
-                else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
-
-                if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
-                else values.outerRadius = values.radius;
-
-                if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') values.innerRadius = values.radius - values.barHeight;
-                else values.innerRadius = values.radius;
-
-                if(values.outerRadius < 0) values.outerRadius = 0;
-                if(values.innerRadius < 0) values.innerRadius = 0;
-
-                ctx.beginPath();
-                ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
-                ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
-                ctx.fill();
-                if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
-                else ctx.rotate(values.barTotal);
+            if(i === 0 && backwards === true) {
+                ctx.rotate(-values.barTotal);
+                continue;
             }
+
+            getBarColor(i, ctx);
+
+            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+
+            if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
+            else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
+
+            if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
+            else values.outerRadius = values.radius;
+
+            if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') values.innerRadius = values.radius - values.barHeight;
+            else values.innerRadius = values.radius;
+
+            if(values.outerRadius < 0) values.outerRadius = 0;
+            if(values.innerRadius < 0) values.innerRadius = 0;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
+            ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
+            ctx.fill();
+            if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
+            else ctx.rotate(values.barTotal);
         }
         ctx.restore();
     }
@@ -870,8 +902,8 @@ svg text {
                 case 'Album Cover':
                     canvas.style.width = globals.player.offsetWidth + 'px';
                     canvas.style.height = globals.player.offsetHeight + 'px';
-                    canvas.width = globals.player.offsetWidth;
-                    canvas.height = globals.player.offsetHeight;
+                    if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
+                    if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
                     values.WIDTH = canvas.width;
                     values.halfWidth = values.WIDTH / 2;
                     values.HEIGHT = canvas.height;
@@ -904,32 +936,36 @@ svg text {
 
         window.addEventListener('resize', visualizerResizeFix);
 
-        function renderFrame() {
+        let lastFrameTime = 0;
+        function renderFrame(time) {
+            if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+            lastFrameTime = time;
+
+            if(((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) || visualizer.place === 'Disabled') return requestAnimationFrame(renderFrame);
+
             ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-            if(video.paused === false && visualizer.place !== 'Disabled') { // If playback is not paused and visualizer is not off
-                visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
+            visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
 
-                if(visualizer.rgb.enabled === true) { // Color cycle effect
-                    visualizer.rgbData.push(visualizer.rgbData[0]);
-                    visualizer.rgbData.shift();
-                }
+            if(visualizer.rgb.enabled === true) { // Color cycle effect
+                visualizer.rgbData.push(visualizer.rgbData[0]);
+                visualizer.rgbData.shift();
+            }
 
-                if(visualizer.place === 'Navbar') {
-                    if(canvas.id !== 'visualizerNavbarCanvas') {
-                        canvas = document.getElementById('visualizerNavbarCanvas');
-                        ctx = canvas.getContext('2d');
-                    }
-                    visualizerNavbar(ctx);
+            if(visualizer.place === 'Navbar') {
+                if(canvas.id !== 'visualizerNavbarCanvas') {
+                    canvas = document.getElementById('visualizerNavbarCanvas');
+                    ctx = canvas.getContext('2d');
                 }
-                else if(visualizer.place === 'Album Cover') {
-                    if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-                        canvas = document.getElementById('visualizerAlbumCoverCanvas');
-                        ctx = canvas.getContext('2d');
-                    }
-                    if(visualizer.circleEnabled === true) visualizerCircle(ctx);
-                    else visualizerNavbar(ctx);
+                visualizerNavbar(ctx);
+            }
+            else if(visualizer.place === 'Album Cover') {
+                if(canvas.id !== 'visualizerAlbumCoverCanvas') {
+                    canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                    ctx = canvas.getContext('2d');
                 }
+                if(visualizer.circleEnabled === true) visualizerCircle(ctx);
+                else visualizerNavbar(ctx);
             }
 
             requestAnimationFrame(renderFrame);
@@ -943,6 +979,7 @@ svg text {
             if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
             else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
         }
+        else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
         else ctx.fillStyle = visualizer.color;
     }
 
@@ -1026,6 +1063,9 @@ svg text {
         // Live change for select tags
         const selects = doc.getElementsByTagName('select');
         for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => GM_config.save());
+        // Live change for textarea tags
+        const textareas = doc.getElementsByTagName('textarea');
+        for(let i = 0; i < textareas.length; i++) textareas[i].addEventListener('change', () => GM_config.save());
 
         // Header title svg
         const title = doc.getElementById('ytmPlusCfg_header');
@@ -1086,6 +1126,8 @@ svg text {
 
         extraButtons(GM_config.get('extraButtons'));
 
+        removeThumbnail(GM_config.get('removeThumbnail'));
+
         if(GM_config.get('visualizerPlace') != 'Disabled') {
             if(visualizer.analyser === undefined) getVideo();
             else {
@@ -1097,8 +1139,6 @@ svg text {
 
         window.dispatchEvent(new Event('resize'));
     }
-
-    // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
 
     const GM_config = new GM_configStruct({
         id: 'ytmPlusCfg',
@@ -1136,9 +1176,14 @@ svg text {
         rotate: undefined,
         rotateDirection: undefined,
         move: undefined,
+        energySaver: {
+            type: undefined,
+            fps: undefined,
+            _frameMinTime: undefined,
+            _getFMT: function(fps) { visualizer.energySaver._frameMinTime = (1000 / 60) * (60 / fps) - (1000 / 60) * 0.5; }
+        },
         image: {
             type: undefined,
-            removeThumbnail: undefined,
             customURL: undefined
         },
         rgb: {
@@ -1183,6 +1228,7 @@ svg text {
                 }
 
                 for(const key2 in this[key]) {
+                    if(key2[0] === '_') continue;
                     gmName = 'visualizer' +
                     key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
                     key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
@@ -1197,8 +1243,12 @@ svg text {
                     this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
                     this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
                 }
+
                 this.colorDivergence = this.bufferLength / this.rgb.samples;
                 if(this.rgb.enabled === true && this.rgbData.length !== this.rgb.samples) this.getRGB();
+
+                if(this.energySaver.type === 'Limit FPS' || this.energySaver.type === 'Both') this.energySaver._getFMT(this.energySaver.fps);
+                else this.energySaver._getFMT(60);
                 return; // So we don't check anything beyond bassBounce
             }
         },
@@ -1234,6 +1284,7 @@ svg text {
         globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
         globals.navBarBg = document.getElementById('nav-bar-background');
         globals.mainPanel = document.getElementById('main-panel');
+        globals.player = document.getElementById('player');
 
         createGradientEffects();
 
@@ -1259,6 +1310,8 @@ svg text {
             globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
             globals.originalUpgradeText = globals.upgradeButton.textContent;
             clockEnable(GM_config.get('clock'));
+
+            removeThumbnail(GM_config.get('removeThumbnail'));
         }, 500);
 
 
@@ -1297,7 +1350,7 @@ svg text {
     function createSettingsFrame() {
         const ytmSettingsSvg = document.getElementById('settings').outerHTML;
 
-        const settingsSVG = // Stolen from YTM top right menu
+        const settingsSVG =
         `<svg id="openSettings" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
         ${ytmSettingsSvg}
     </svg>`;

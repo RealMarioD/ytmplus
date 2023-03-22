@@ -1,5 +1,5 @@
 import { globals, visualizer } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, removeThumbnail, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from './GM_config';
 
@@ -83,6 +83,9 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     // Live change for select tags
     const selects = doc.getElementsByTagName('select');
     for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => GM_config.save());
+    // Live change for textarea tags
+    const textareas = doc.getElementsByTagName('textarea');
+    for(let i = 0; i < textareas.length; i++) textareas[i].addEventListener('change', () => GM_config.save());
 
     // Header title svg
     const title = doc.getElementById('ytmPlusCfg_header');
@@ -142,6 +145,8 @@ export function saveEvent() {
     skipDisliked(GM_config.get('skipDisliked'));
 
     extraButtons(GM_config.get('extraButtons'));
+
+    removeThumbnail(GM_config.get('removeThumbnail'));
 
     if(GM_config.get('visualizerPlace') != 'Disabled') {
         if(visualizer.analyser === undefined) getVideo();

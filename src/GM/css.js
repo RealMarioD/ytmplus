@@ -26,9 +26,12 @@ input {
 }
 textarea {
     background-color: rgba(66, 66, 66, 0.8);
-    width: 50%;
+    width: 75%;
+    height: 3.5vh;
     resize: none;
     margin: auto;
+    white-space: nowrap;
+    overflow-wrap: normal;
 }
 #ytmPlusCfg .config_var {
     margin: 0 0 0.5vh;
@@ -36,7 +39,7 @@ textarea {
 }
 @-moz-document url-prefix() {
     #cfgHolder {
-    overflow-y: scroll;
+        overflow-y: scroll;
     }
 }
 #ytmPlusCfg * {
@@ -73,18 +76,19 @@ textarea {
     color: rgba(255, 255, 255, 0.8);
 }
 ::-webkit-scrollbar {
-    width: 2vw;
+    width: 1vw;
+    height: 0.5vh;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #eeea;
     border-radius: 2vw;
 }
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #888a;
     border-radius: 2vw;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #555f;
 }
 svg text {
     font-size: 17vw;

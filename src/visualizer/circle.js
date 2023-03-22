@@ -1,16 +1,23 @@
-import { globals, visualizer } from '../globals';
+import { visualizer } from '../globals';
 import { getBarColor, values } from './init';
 import { averageOfArray } from '../utils';
 
 const image = new Image();
-let imgLoaded = false;
+let imgLoaded = false,
+    currentURL;
 
 image.onload = () => {
     imgLoaded = true;
 };
+image.onerror = () => {
+    if(visualizer.image.type === 'Thumbnail' && currentURL.indexOf('data') === 0) return;
+    console.warn('ytmPlus: Custom Image couldn\'t be loaded.');
+    currentURL = 'https://imgur.com/Nkj0d6D.png';
+    visualizer.image.customURL = currentURL;
+};
 
 
-function handleImage(ctx, currentURL) {
+export function handleImage(ctx) {
     if(visualizer.image.type === 'Thumbnail') currentURL = document.getElementById('thumbnail').firstElementChild.src;
     else currentURL = visualizer.image.customURL;
 
@@ -19,15 +26,10 @@ function handleImage(ctx, currentURL) {
         image.src = currentURL;
     }
 
-    if(visualizer.image.removeThumbnail === true) {
-        if(globals.player.style.opacity !== 0.001) globals.player.style.opacity = 0.001;
-    }
-    else if(globals.player.style.opacity !== 1) globals.player.style.opacity = 1;
     if(imgLoaded === true) drawVisImage(ctx);
 }
 
 function drawVisImage(ctx) {
-    console.log('drew');
     ctx.save();
     ctx.beginPath();
     ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
@@ -90,31 +92,33 @@ function drawArcs(backwards, ctx) {
     ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
 
     for(let i = 0; i < visualizer.bufferLength; ++i) {
-        if(i === 0 && backwards === true) ctx.rotate(-values.barTotal);
-        else {
-            getBarColor(i, ctx);
-
-            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
-
-            if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
-            else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
-
-            if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
-            else values.outerRadius = values.radius;
-
-            if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') values.innerRadius = values.radius - values.barHeight;
-            else values.innerRadius = values.radius;
-
-            if(values.outerRadius < 0) values.outerRadius = 0;
-            if(values.innerRadius < 0) values.innerRadius = 0;
-
-            ctx.beginPath();
-            ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
-            ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
-            ctx.fill();
-            if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
-            else ctx.rotate(values.barTotal);
+        if(i === 0 && backwards === true) {
+            ctx.rotate(-values.barTotal);
+            continue;
         }
+
+        getBarColor(i, ctx);
+
+        if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+
+        if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
+        else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
+
+        if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
+        else values.outerRadius = values.radius;
+
+        if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') values.innerRadius = values.radius - values.barHeight;
+        else values.innerRadius = values.radius;
+
+        if(values.outerRadius < 0) values.outerRadius = 0;
+        if(values.innerRadius < 0) values.innerRadius = 0;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, values.innerRadius, -values.barWidth, values.barWidth);
+        ctx.arc(0, 0, values.outerRadius, values.barWidth, -values.barWidth, true);
+        ctx.fill();
+        if(backwards === true) ctx.rotate(-values.barTotal); // rotate the coordinates by one bar
+        else ctx.rotate(values.barTotal);
     }
     ctx.restore();
 }

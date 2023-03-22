@@ -1,5 +1,5 @@
 import { globals } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, injectStyle, promoEnable, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, injectStyle, promoEnable, removeThumbnail, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
@@ -19,6 +19,7 @@ export function loadEvent() {
     globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
     globals.navBarBg = document.getElementById('nav-bar-background');
     globals.mainPanel = document.getElementById('main-panel');
+    globals.player = document.getElementById('player');
 
     createGradientEffects();
 
@@ -44,6 +45,8 @@ export function loadEvent() {
         globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
         globals.originalUpgradeText = globals.upgradeButton.textContent;
         clockEnable(GM_config.get('clock'));
+
+        removeThumbnail(GM_config.get('removeThumbnail'));
     }, 500);
 
 
@@ -82,7 +85,7 @@ function createGradientEffects() {
 function createSettingsFrame() {
     const ytmSettingsSvg = document.getElementById('settings').outerHTML;
 
-    const settingsSVG = // Stolen from YTM top right menu
+    const settingsSVG =
     `<svg id="openSettings" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
         ${ytmSettingsSvg}
     </svg>`;

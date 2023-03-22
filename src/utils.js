@@ -109,6 +109,15 @@ export function extraButtons(turnOn) {
     }
 }
 
+export function removeThumbnail(turnOn) {
+    globals.player.style.backgroundColor = '#01010101';
+    const songImage = document.getElementById('song-image');
+    setTimeout(() => {
+        if(!turnOn) songImage.style.opacity = 1;
+        else songImage.style.opacity = 0.001;
+    }, 500);
+}
+
 export function averageOfArray(numbers) {
     let result = 0;
     for(let i = 0; i < numbers.length; i++) result += numbers[i];

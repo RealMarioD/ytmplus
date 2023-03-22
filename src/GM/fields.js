@@ -7,6 +7,7 @@ if(langOption != 'english') {
     else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
 }
 
+// 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
 export const configFields = {
     lang: {
         label: fieldTexts.lang[langOption],
@@ -37,6 +38,11 @@ export const configFields = {
     },
     extraButtons: {
         label: fieldTexts.extraButtons[langOption],
+        type: 'checkbox',
+        default: true
+    },
+    removeThumbnail: {
+        label: fieldTexts.removeThumbnail[langOption],
         type: 'checkbox',
         default: true
     },
@@ -132,6 +138,12 @@ export const configFields = {
         options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
         default: '1024',
     },
+    visualizerEnergySaverType: {
+        label: fieldTexts.visualizerEnergySaverType[langOption],
+        type: 'select',
+        options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
+        default: false
+    },
     section3: {
         type: 'hidden',
         value: 'open',
@@ -159,7 +171,7 @@ export const configFields = {
         label: fieldTexts.visualizerMove[langOption],
         type: 'select',
         options: ['Inside', 'Outside', 'Both Sides'],
-        default: 'Both Sides'
+        default: 'Outside'
     },
     visualizerBassBounceEnabled: {
         label: fieldTexts.visualizerBassBounceEnabled[langOption],
@@ -177,16 +189,10 @@ export const configFields = {
         options: ['Disabled', 'Thumbnail', 'Custom'],
         default: 'Thumbnail'
     },
-    visualizerImageRemoveThumbnail: {
-        label: fieldTexts.visualizerImageRemoveThumbnail[langOption],
-        type: 'checkbox',
-        default: true
-    },
     visualizerImageCustomURL: {
         label: fieldTexts.visualizerImageCustomURL[langOption],
         type: 'textarea',
-        size: 100,
-        default: ''
+        default: 'https://yt3.googleusercontent.com/ytc/AL5GRJX3OEex8FqN1gogsXQZNB7fV9TVHfda2EynDiW9_g=s900-c-k-c0x00ffffff-no-rj'
     },
     section4: {
         type: 'hidden',
@@ -272,6 +278,13 @@ export const configFields = {
         label: fieldTexts.visualizerBassBounceDebug[langOption],
         type: 'checkbox',
         default: false
+    },
+    visualizerEnergySaverFps: {
+        label: fieldTexts.visualizerEnergySaverFps[langOption],
+        type: 'int',
+        min: 1,
+        max: 144,
+        default: 30,
     },
     section5: {
         type: 'hidden',
