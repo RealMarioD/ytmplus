@@ -19,7 +19,6 @@ export function loadEvent() {
     globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
     globals.navBarBg = document.getElementById('nav-bar-background');
     globals.mainPanel = document.getElementById('main-panel');
-    globals.player = document.getElementById('player');
 
     createGradientEffects();
 
@@ -46,6 +45,7 @@ export function loadEvent() {
         globals.originalUpgradeText = globals.upgradeButton.textContent;
         clockEnable(GM_config.get('clock'));
 
+        globals.player = document.getElementById('player');
         removeThumbnail(GM_config.get('removeThumbnail'));
     }, 500);
 

@@ -1,9 +1,10 @@
 import { GM_config } from './GM/GM_config';
+import { visualizerResizeFix } from './visualizer/init';
 
 export const globals = {
     settingsOpen: false, // Used to track if config window is open or not
     playerPageDiv: undefined, // Set to the player "overlay" in window.onload
-    player: undefined, // Playback player player player player player player
+    player: undefined, // Has the sizes we need for album cover canvas
     upgradeButton: undefined, // Set to the upgrade "button" in window.onload
     originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
     clockFunction: undefined, // Holds the interval function that updates the digital clock
@@ -54,6 +55,7 @@ export const visualizer = {
     analyser: undefined,
     bufferLength: undefined,
     dataArray: undefined,
+    resizeInterval: undefined,
     getBufferData() {
         this.analyser.fftSize = GM_config.get('visualizerFft');
         this.cutOff = GM_config.get('visualizerCutOff');
@@ -97,6 +99,9 @@ export const visualizer = {
 
             if(this.energySaver.type === 'Limit FPS' || this.energySaver.type === 'Both') this.energySaver._getFMT(this.energySaver.fps);
             else this.energySaver._getFMT(60);
+
+            clearInterval(visualizer.resizeInterval);
+            if(this.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
             return; // So we don't check anything beyond bassBounce
         }
     },

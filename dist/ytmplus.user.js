@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.1.0
+// @version      2.1.1
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -709,7 +709,7 @@ svg text {
                 continue;
             }
 
-            getBarColor(i, ctx);
+            getBarColor(i);
 
             if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
 
@@ -758,7 +758,7 @@ svg text {
         for(let i = 0; i < visualizer.bufferLength; i++) {
             values.barHeight = visualizer.dataArray[i] * maxBarHeight;
 
-            getBarColor(i, ctx);
+            getBarColor(i);
 
             // To this day I don't get the Y and values.HEIGHT values
             if(visualizer.startsFrom === 'Left') {
@@ -803,7 +803,7 @@ svg text {
         for(i; i < visualizer.bufferLength; i++) {
             values.barHeight = visualizer.dataArray[i] * maxBarHeight;
 
-            getBarColor(i, ctx);
+            getBarColor(i);
 
             if(visualizer.startsFrom === 'Center') {
                 if(values.xPosOffset > values.WIDTH) break;
@@ -859,14 +859,14 @@ svg text {
         startingPoint: -(0.5 * Math.PI)
     };
 
+    let canvas, ctx;
+
     function startVisualizer() {
         // Init, connecting yt audio to canvas
-        globals.player = document.getElementById('player');
         const context = new AudioContext();
         const src = context.createMediaElementSource(video);
         visualizer.analyser = context.createAnalyser();
 
-        let canvas, ctx;
         switch(visualizer.place) {
             case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
             case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
@@ -880,100 +880,104 @@ svg text {
         visualizer.initValues();
 
         // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
-        setInterval(() => {
+        visualizer.resizeInterval = setInterval(() => {
             visualizerResizeFix();
         }, 1000);
-        function visualizerResizeFix() {
-            switch(visualizer.place) {
-                case 'Navbar': default:
-                    canvas.width = globals.navBarBg.offsetWidth;
-                    canvas.height = globals.navBarBg.offsetHeight;
-                    canvas.style.width = '';
-                    canvas.style.height = '';
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
 
+        window.addEventListener('resize', visualizerResizeFix);
+
+        requestAnimationFrame(renderFrame);
+    }
+
+    function visualizerResizeFix() {
+        switch(visualizer.place) {
+            case 'Navbar': default:
+                canvas.width = globals.navBarBg.offsetWidth;
+                canvas.height = globals.navBarBg.offsetHeight;
+                canvas.style.width = '';
+                canvas.style.height = '';
+                values.WIDTH = canvas.width;
+                values.halfWidth = values.WIDTH / 2;
+                values.HEIGHT = canvas.height;
+
+                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
+                else values.barTotal = values.WIDTH / visualizer.bufferLength;
+                values.barSpace = values.barTotal * 0.05;
+                values.barWidth = values.barTotal * 0.95;
+                break;
+            case 'Album Cover':
+                canvas.style.width = globals.player.offsetWidth + 'px';
+                canvas.style.height = globals.player.offsetHeight + 'px';
+                if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
+                if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
+                values.WIDTH = canvas.width;
+                values.halfWidth = values.WIDTH / 2;
+                values.HEIGHT = canvas.height;
+                values.halfHeight = values.HEIGHT / 2;
+
+                if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
+                    canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
+                    canvas.style.left = getComputedStyle(globals.player).left;
+                }
+                else {
+                    canvas.style.removeProperty('bottom'); // else completely remove properties because html
+                    canvas.style.removeProperty('left');
+                }
+
+                if(visualizer.circleEnabled === false) {
                     if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
                     else values.barTotal = values.WIDTH / visualizer.bufferLength;
                     values.barSpace = values.barTotal * 0.05;
                     values.barWidth = values.barTotal * 0.95;
-                    break;
-                case 'Album Cover':
-                    canvas.style.width = globals.player.offsetWidth + 'px';
-                    canvas.style.height = globals.player.offsetHeight + 'px';
-                    if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
-                    if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
-                    values.halfHeight = values.HEIGHT / 2;
-
-                    if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
-                        canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
-                        canvas.style.left = getComputedStyle(globals.player).left;
-                    }
-                    else {
-                        canvas.style.removeProperty('bottom'); // else completely remove properties because html
-                        canvas.style.removeProperty('left');
-                    }
-
-                    if(visualizer.circleEnabled === false) {
-                        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
-                        else values.barTotal = values.WIDTH / visualizer.bufferLength;
-                        values.barSpace = values.barTotal * 0.05;
-                        values.barWidth = values.barTotal * 0.95;
-                    }
-                    else if(visualizer.bassBounce.enabled === false) {
-                        values.radius = ~~(values.HEIGHT / 4);
-                        values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
-                    }
-                    else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
-                    break;
-                case 'Disabled': break;
-            }
-        }
-
-        window.addEventListener('resize', visualizerResizeFix);
-
-        let lastFrameTime = 0;
-        function renderFrame(time) {
-            if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
-            lastFrameTime = time;
-
-            if(((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) || visualizer.place === 'Disabled') return requestAnimationFrame(renderFrame);
-
-            ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
-
-            visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
-
-            if(visualizer.rgb.enabled === true) { // Color cycle effect
-                visualizer.rgbData.push(visualizer.rgbData[0]);
-                visualizer.rgbData.shift();
-            }
-
-            if(visualizer.place === 'Navbar') {
-                if(canvas.id !== 'visualizerNavbarCanvas') {
-                    canvas = document.getElementById('visualizerNavbarCanvas');
-                    ctx = canvas.getContext('2d');
                 }
-                visualizerNavbar(ctx);
-            }
-            else if(visualizer.place === 'Album Cover') {
-                if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-                    canvas = document.getElementById('visualizerAlbumCoverCanvas');
-                    ctx = canvas.getContext('2d');
+                else if(visualizer.bassBounce.enabled === false) {
+                    values.radius = ~~(values.HEIGHT / 4);
+                    values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
                 }
-                if(visualizer.circleEnabled === true) visualizerCircle(ctx);
-                else visualizerNavbar(ctx);
-            }
-
-            requestAnimationFrame(renderFrame);
+                else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
+                break;
+            case 'Disabled': break;
         }
-        renderFrame();
     }
 
-    function getBarColor(i, ctx) {
+    let lastFrameTime = 0;
+    function renderFrame(time) {
+        if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+        lastFrameTime = time;
+
+        if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
+
+        ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
+
+        if(visualizer.place === 'Disabled') return;
+
+        visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
+
+        if(visualizer.rgb.enabled === true) { // Color cycle effect
+            visualizer.rgbData.push(visualizer.rgbData[0]);
+            visualizer.rgbData.shift();
+        }
+
+        if(visualizer.place === 'Navbar') {
+            if(canvas.id !== 'visualizerNavbarCanvas') {
+                canvas = document.getElementById('visualizerNavbarCanvas');
+                ctx = canvas.getContext('2d');
+            }
+            visualizerNavbar(ctx);
+        }
+        else if(visualizer.place === 'Album Cover') {
+            if(canvas.id !== 'visualizerAlbumCoverCanvas') {
+                canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                ctx = canvas.getContext('2d');
+            }
+            if(visualizer.circleEnabled === true) visualizerCircle(ctx);
+            else visualizerNavbar(ctx);
+        }
+
+        requestAnimationFrame(renderFrame);
+    }
+
+    function getBarColor(i) {
         if(visualizer.rgb.enabled === true) {
             const color = ~~(i / visualizer.colorDivergence);
             if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
@@ -1112,7 +1116,7 @@ svg text {
         globals.settingsOpen = false;
     }
 
-    function saveEvent() {
+    function saveEvent(oldVisPlace, newVisPlace) {
         // Updates updateable stuff on save
         changeBackground(GM_config.get('bg'));
 
@@ -1128,12 +1132,14 @@ svg text {
 
         removeThumbnail(GM_config.get('removeThumbnail'));
 
-        if(GM_config.get('visualizerPlace') != 'Disabled') {
-            if(visualizer.analyser === undefined) getVideo();
-            else {
-                visualizer.getBufferData();
-                visualizer.initValues();
-            }
+        oldVisPlace = visualizer.place;
+        newVisPlace = GM_config.get('visualizerPlace');
+
+        if(newVisPlace !== 'Disabled') {
+            if(visualizer.analyser === undefined) return getVideo();
+            visualizer.getBufferData();
+            visualizer.initValues();
+            if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame);
         }
         else visualizer.place = 'Disabled';
 
@@ -1155,7 +1161,7 @@ svg text {
     const globals = {
         settingsOpen: false, // Used to track if config window is open or not
         playerPageDiv: undefined, // Set to the player "overlay" in window.onload
-        player: undefined, // Playback player player player player player player
+        player: undefined, // Has the sizes we need for album cover canvas
         upgradeButton: undefined, // Set to the upgrade "button" in window.onload
         originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
         clockFunction: undefined, // Holds the interval function that updates the digital clock
@@ -1206,6 +1212,7 @@ svg text {
         analyser: undefined,
         bufferLength: undefined,
         dataArray: undefined,
+        resizeInterval: undefined,
         getBufferData() {
             this.analyser.fftSize = GM_config.get('visualizerFft');
             this.cutOff = GM_config.get('visualizerCutOff');
@@ -1249,6 +1256,9 @@ svg text {
 
                 if(this.energySaver.type === 'Limit FPS' || this.energySaver.type === 'Both') this.energySaver._getFMT(this.energySaver.fps);
                 else this.energySaver._getFMT(60);
+
+                clearInterval(visualizer.resizeInterval);
+                if(this.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
                 return; // So we don't check anything beyond bassBounce
             }
         },
@@ -1284,7 +1294,6 @@ svg text {
         globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
         globals.navBarBg = document.getElementById('nav-bar-background');
         globals.mainPanel = document.getElementById('main-panel');
-        globals.player = document.getElementById('player');
 
         createGradientEffects();
 
@@ -1311,6 +1320,7 @@ svg text {
             globals.originalUpgradeText = globals.upgradeButton.textContent;
             clockEnable(GM_config.get('clock'));
 
+            globals.player = document.getElementById('player');
             removeThumbnail(GM_config.get('removeThumbnail'));
         }, 500);
 

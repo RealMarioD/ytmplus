@@ -1,6 +1,6 @@
 import { globals, visualizer } from '../globals';
 import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, removeThumbnail, skipDisliked } from '../utils';
-import { getVideo } from '../visualizer/init';
+import { getVideo, renderFrame } from '../visualizer/init';
 import { GM_config } from './GM_config';
 
 function stylizeConfigWindow(doc, frame) {
@@ -132,7 +132,7 @@ export function closeEvent() {
     globals.settingsOpen = false;
 }
 
-export function saveEvent() {
+export function saveEvent(oldVisPlace, newVisPlace) {
     // Updates updateable stuff on save
     changeBackground(GM_config.get('bg'));
 
@@ -148,12 +148,14 @@ export function saveEvent() {
 
     removeThumbnail(GM_config.get('removeThumbnail'));
 
-    if(GM_config.get('visualizerPlace') != 'Disabled') {
-        if(visualizer.analyser === undefined) getVideo();
-        else {
-            visualizer.getBufferData();
-            visualizer.initValues();
-        }
+    oldVisPlace = visualizer.place;
+    newVisPlace = GM_config.get('visualizerPlace');
+
+    if(newVisPlace !== 'Disabled') {
+        if(visualizer.analyser === undefined) return getVideo();
+        visualizer.getBufferData();
+        visualizer.initValues();
+        if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame);
     }
     else visualizer.place = 'Disabled';
 
