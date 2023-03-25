@@ -27,10 +27,10 @@
     const configCSS =
 `input[type="color"] {
     -webkit-appearance: none;
-    border: 0;
+    border: none;
     padding: 0;
-    width: 2.5vh;
-    height: 2.5vh;
+    width: 3.5vh;
+    height: 3.5vh;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
@@ -39,34 +39,44 @@ input[type="color"]::-webkit-color-swatch {
     border: 0;
 }
 input[type="color"], input[type="checkbox"] {
-    width: 2vh;
-    height: 2vh;
+    width: 3.5vh;
+    height: 3.5vh;
 }
 input[type="text"] {
-    width: 8vh;
+    width: 10.5vh;
 }
 input {
-    vertical-align: middle;
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2vh;
+    font-size: 2.5vh;
+    border: none;
+    border-radius: 1vh;
+    padding: 1vh;
 }
 textarea {
     background-color: rgba(66, 66, 66, 0.8);
     width: 75%;
-    height: 3.5vh;
+    height: 5vh;
     resize: none;
     margin: auto;
     white-space: nowrap;
     overflow-wrap: normal;
+    font-size: 2.5vh;
+    border: none;
+    border-radius: 1vh;
+    padding: 1vh;
+    scrollbar-width: none;
+}
+textarea::-webkit-scrollbar {
+    display: none;
 }
 #ytmPlusCfg .config_var {
-    margin: 0 0 0.5vh;
+    margin: 0 0 1vh;
     text-align: center;
-}
-@-moz-document url-prefix() {
-    #cfgHolder {
-        overflow-y: scroll;
-    }
+    height: 6vh;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 #ytmPlusCfg * {
     font-family: monospace;
@@ -76,30 +86,38 @@ textarea {
     background-color: rgba(0, 0, 0, 0.9);
 }
 #ytmPlusCfg #ytmPlusCfg_header {
-    font-size: 7vh;
     background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 0.5vh 0;
+    margin: 2vh 0;
+    width: -webkit-fill-available;
+    height: 12vh;
 }
 #ytmPlusCfg .section_header_holder {
     margin-top: 0;
+    display: none;
 }
 #ytmPlusCfg .section_header {
     margin-bottom: 0.5vh;
-    font-size: 2.5vh;
+    font-size: 4.5vh;
 }
 #ytmPlusCfg .field_label {
-    font-size: 2.5vh;
-    vertical-align: middle;
+    font-size: 3.5vh;
+    display: flex;
+    align-items: center;
 }
 #ytmPlusCfg select {
-    vertical-align: middle;
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2vh;
+    font-size: 2.5vh;
+    border: none;
+    border-radius: 1vh;
+    padding: 1vh
 }
 #ytmPlusCfg .reset {
     color: rgba(255, 255, 255, 0.8);
+}
+#ytmPlusCfg_wrapper {
+    height: -webkit-fill-available;
 }
 ::-webkit-scrollbar {
     width: 1vw;
@@ -116,8 +134,45 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
     background: #555f;
 }
+#ytmPlusCfg_buttons_holder {
+    text-align: center;
+}
+#ytmPlusCfg .saveclose_buttons {
+    background-color: rgba(66, 66, 66, 0.8);
+    font-size: 2.5vh;
+    margin: 0.5vh;
+    width: 47.5%;
+    padding: 1vh;
+    border: solid 3px transparent;
+    border-radius: 1vh;
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: 2px 1000px 1px #333 inset;
+}
+#ytmPlusCfg .saveclose_buttonsdisabled {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
+}
+#ytmPlusCfg .saveclose_buttons:hover {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #ff0077ff, #7700ffff);
+}
+#ytmPlusCfg .saveclose_buttons:active {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #6600eecc, #ee0066cc);
+}
+
+#ytmPlusCfg .reset_holder {
+    margin: 0.5vh;
+}
+#ytmPlusCfg .reset {
+    font-size: 2vh;
+}
+svg {
+    width: inherit;
+    height: inherit;
+    margin: auto;
+}
 svg text {
-    font-size: 17vw;
+    font-size: 10vmin;
     animation: stroke 10s infinite alternate linear;
     stroke-width: 2;
     stroke: #aa0000;
@@ -133,18 +188,58 @@ svg text {
     }
 }
 #cfgHolder {
-    overflow-y: overlay;
-    max-height: 80vh;
-    display: block;
+    display: flex;
+    height: 100%;
+}
+#categorySelect {
+    width: 34vw;
+    max-width: 34vw;
+    justify-content: center;
+    border-right: solid #6666;
+    display: flex;
+    flex-direction: column;
+    padding: 0 4vh;
+}
+.changeCategoryButton {
+    border: solid 3px transparent;
+    border-radius: 1vh;
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: 2px 1000px 1px #333 inset;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+    margin-bottom: 2vh;
+}
+.changeCategoryButton:disabled {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
+}
+.changeCategoryButton:hover {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #ff0077ff, #7700ffff);
+}
+.changeCategoryButton:active {
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #6600eecc, #ee0066cc);
+}
+#currentSettings {
+    width: -webkit-fill-available;
+    overflow: overlay;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+@-moz-document url-prefix() {
+    #currentSettings {
+        overflow: scroll;
+    }
 }`;
 
     const fieldTexts = {
-        lang: { english: 'Language<span title="Refresh for changes">🔄</span>', hungarian: 'Nyelv<span title="Frissíts a változásokhoz">🔄</span>' },
+        lang: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
         langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
         noAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
         noPromo: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
         skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
-        padding: { english: 'Fix Layout<span title="Refresh for changes">🔄</span>', hungarian: 'Elrendezés javítása<span title="Frissíts a változásokhoz">🔄</span>' },
+        padding: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
         extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
         removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
         bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
@@ -237,11 +332,6 @@ svg text {
             type: 'checkbox',
             default: true
         },
-        section0: {
-            type: 'hidden',
-            value: 'open',
-            default: 'open'
-        },
         bg: {
             label: fieldTexts.bg[langOption],
             section: fieldTexts.bgSection[langOption],
@@ -262,11 +352,6 @@ svg text {
             label: fieldTexts.bgGradient[langOption],
             type: 'color',
             default: '#0000AA'
-        },
-        section1: {
-            type: 'hidden',
-            value: 'open',
-            default: 'open'
         },
         clock: {
             label: fieldTexts.clock[langOption],
@@ -289,11 +374,6 @@ svg text {
             label: fieldTexts.clockGradientColor[langOption],
             type: 'color',
             default: '#3333AA'
-        },
-        section2: {
-            type: 'hidden',
-            value: 'open',
-            default: 'open'
         },
         visualizerPlace: {
             label: fieldTexts.visualizerPlace[langOption],
@@ -334,11 +414,6 @@ svg text {
             type: 'select',
             options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
             default: false
-        },
-        section3: {
-            type: 'hidden',
-            value: 'open',
-            default: 'open'
         },
         visualizerCircleEnabled: {
             label: fieldTexts.visualizerCircleEnabled[langOption],
@@ -384,11 +459,6 @@ svg text {
             label: fieldTexts.visualizerImageCustomURL[langOption],
             type: 'textarea',
             default: 'https://yt3.googleusercontent.com/ytc/AL5GRJX3OEex8FqN1gogsXQZNB7fV9TVHfda2EynDiW9_g=s900-c-k-c0x00ffffff-no-rj'
-        },
-        section4: {
-            type: 'hidden',
-            value: 'open',
-            default: 'open'
         },
         attention1: {
             label: fieldTexts.attention1[langOption],
@@ -476,11 +546,6 @@ svg text {
             min: 1,
             max: 144,
             default: 30,
-        },
-        section5: {
-            type: 'hidden',
-            value: 'closed',
-            default: 'closed'
         }
     };
 
@@ -589,6 +654,19 @@ svg text {
         else {
             playbackButtons[1].hidden = false;
             playbackButtons[4].hidden = false;
+        }
+    }
+
+    function fixLayout(turnOn) {
+        if(turnOn) {
+            globals.playerPageDiv.style.paddingTop = '0px';
+            globals.mainPanel.style.marginTop = '8vh';
+            globals.mainPanel.style.marginBottom = '8vh';
+        }
+        else {
+            globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
+            globals.mainPanel.style.marginTop = '0';
+            globals.mainPanel.style.marginBottom = 'var(--ytmusic-player-page-vertical-padding)';
         }
     }
 
@@ -989,9 +1067,9 @@ svg text {
 
     function stylizeConfigWindow(doc, frame) {
         doc.body.style.overflow = 'hidden';
-        frame.style.width = '25vw';
+        frame.style.width = '50vw';
         // frame.style.height = // '80vh';
-        frame.style.maxHeight = '85vh';
+        frame.style.maxHeight = '75vh';
         frame.style.display = 'block';
         frame.style.margin = 'auto';
         frame.style.inset = '0';
@@ -1000,23 +1078,8 @@ svg text {
         frame.style.borderRadius = '1.5vw';
     }
 
-    function stylizeConfigButtons(doc) {
-        const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
-        buttons.style.textAlign = 'center';
-        for(let i = 0; i < buttons.children.length; i++) {
-            const e = buttons.children[i];
-            if(i + 1 != buttons.children.length) {
-                e.style.verticalAlign = 'middle';
-                e.style.backgroundColor = 'rgba(66, 66, 66, 0.8)';
-                e.style.fontSize = '2vh';
-            }
-            else e.firstChild.style.fontSize = '2vh';
-            e.style.margin = '0.5vh';
-        }
-    }
-
-    const titleSVG =
-        `<svg viewBox="0 0 613 99">
+    const titleSVG = // viewBox="0 0 613 99"
+        `<svg>
         <g style="overflow:hidden; text-anchor: middle;">
             <defs>
                 <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -1033,9 +1096,52 @@ svg text {
         </g>
     </svg>`;
 
+    function injectElement(type, id, wrapperId, doc) {
+        const node = doc.createElement(type);
+        node.id = id;
+        const wrapper = doc.getElementById(wrapperId);
+        if(!wrapper) throw new Error(`Wrapper Error: no element with id "${wrapperId}"`);
+        wrapper.appendChild(node);
+        return node;
+    }
+
+    function manageUIV2(doc) {
+        injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
+
+        const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
+        const categories = doc.getElementsByClassName('section_header_holder');
+
+        for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
+
+        const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
+        let lastOpenSetting;
+        for(let i = 0; i < changeCategoryButton.length; i++) {
+            changeCategoryButton[i].addEventListener('click', () => {
+                for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
+                changeCategoryButton[i].disabled = true;
+                const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
+                if(lastOpenSetting) lastOpenSetting.style = 'display: none;';
+                lastOpenSetting = currentSetting;
+                currentSetting.style = 'display: block;';
+            });
+        }
+
+        const currentSettings = injectElement('div', 'currentSettings', 'cfgHolder', doc);
+
+        const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+        categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
+        categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
+
+        for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
+            const e = wrapper.childNodes[0];
+            e.style = 'display: none;'; // Set category to invisible
+            e.removeChild(e.firstElementChild);
+            currentSettings.appendChild(e); // Move category to currentSettings and await to be visible
+        }
+    }
+
     function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
         stylizeConfigWindow(doc, frame);
-        stylizeConfigButtons(doc);
 
         // Every color input we want has to be 'manually set' (GM_config's customType would come in handy but how the hell do it work)
         const colorTypeFields = [
@@ -1047,13 +1153,7 @@ svg text {
         ];
         for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
-        // Putting the sections and settings into a scrollable div, so that the whole window won't become scrollable
-        const node = doc.createElement('div');
-        node.id = 'cfgHolder';
-        const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
-        wrapper.appendChild(node);
-        for(let i = 0; i <= wrapper.childNodes.length + 1; i++) node.appendChild(wrapper.childNodes[1]); // Not sure how this works, but I somehow skip the header and the buttons at the end
-        wrapper.appendChild(wrapper.childNodes[1]);
+        manageUIV2(doc);
 
         // Live change for input tags + Adding info to int/float settings
         const inputs = doc.getElementsByTagName('input');
@@ -1074,36 +1174,6 @@ svg text {
         // Header title svg
         const title = doc.getElementById('ytmPlusCfg_header');
         title.innerHTML = titleSVG;
-
-        // Handles opening/closing categories
-        const categories = doc.getElementsByClassName('section_header_holder');
-        for(let i = 0; i < categories.length; i++) {
-            categories[i].style.overflowY = 'hidden';
-            if(GM_config.get(`section${i}`) == 'open') {
-                categories[i].children[0].innerHTML = '▲ ' + categories[i].children[0].innerHTML + ' ▲';
-                categories[i].style.height = 'auto';
-            }
-            else if(GM_config.get(`section${i}`) == 'closed') {
-                categories[i].children[0].innerHTML = '▼ ' + categories[i].children[0].innerHTML + ' ▼';
-                categories[i].style.height = '3.25vh';
-            }
-
-
-            categories[i].children[0].addEventListener('click', () => {
-                if(GM_config.get(`section${i}`) == 'closed') {
-                    categories[i].style.height = 'auto';
-                    categories[i].children[0].innerHTML = categories[i].children[0].innerHTML.replaceAll(/▼/g, '▲');
-                    GM_config.set(`section${i}`, 'open');
-                    GM_config.save();
-                }
-                else if(GM_config.get(`section${i}`) == 'open') {
-                    categories[i].style.height = '3.25vh';
-                    categories[i].children[0].innerHTML = categories[i].children[0].innerHTML.replaceAll(/▲/g, '▼');
-                    GM_config.set(`section${i}`, 'closed');
-                    GM_config.save();
-                }
-            });
-        }
 
         doc.addEventListener('keydown', event => {
             if(event.key == 'Escape') GM_config.close();
@@ -1129,6 +1199,8 @@ svg text {
         skipDisliked(GM_config.get('skipDisliked'));
 
         extraButtons(GM_config.get('extraButtons'));
+
+        fixLayout(GM_config.get('padding'));
 
         removeThumbnail(GM_config.get('removeThumbnail'));
 
@@ -1308,12 +1380,7 @@ svg text {
 
         extraButtons(GM_config.get('extraButtons'));
 
-        // Tries to removes weird padding
-        if(GM_config.get('padding') === true) {
-            globals.playerPageDiv.style.paddingTop = '0px';
-            globals.mainPanel.style.marginTop = '8vh';
-            globals.mainPanel.style.marginBottom = '8vh';
-        }
+        fixLayout(GM_config.get('padding'));
 
         setTimeout(() => {
             globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];

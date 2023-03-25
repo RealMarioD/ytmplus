@@ -1,5 +1,5 @@
 import { globals } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, injectStyle, promoEnable, removeThumbnail, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectStyle, promoEnable, removeThumbnail, skipDisliked } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
@@ -33,12 +33,7 @@ export function loadEvent() {
 
     extraButtons(GM_config.get('extraButtons'));
 
-    // Tries to removes weird padding
-    if(GM_config.get('padding') === true) {
-        globals.playerPageDiv.style.paddingTop = '0px';
-        globals.mainPanel.style.marginTop = '8vh';
-        globals.mainPanel.style.marginBottom = '8vh';
-    }
+    fixLayout(GM_config.get('padding'));
 
     setTimeout(() => {
         globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];

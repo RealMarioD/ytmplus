@@ -1,10 +1,10 @@
 export const fieldTexts = {
-    lang: { english: 'Language<span title="Refresh for changes">🔄</span>', hungarian: 'Nyelv<span title="Frissíts a változásokhoz">🔄</span>' },
+    lang: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
     langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
     noAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
     noPromo: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
-    padding: { english: 'Fix Layout<span title="Refresh for changes">🔄</span>', hungarian: 'Elrendezés javítása<span title="Frissíts a változásokhoz">🔄</span>' },
+    padding: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
     extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
     removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
     bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },

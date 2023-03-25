@@ -1,13 +1,13 @@
 import { globals, visualizer } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, promoEnable, removeThumbnail, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, promoEnable, removeThumbnail, skipDisliked } from '../utils';
 import { getVideo, renderFrame } from '../visualizer/init';
 import { GM_config } from './GM_config';
 
 function stylizeConfigWindow(doc, frame) {
     doc.body.style.overflow = 'hidden';
-    frame.style.width = '25vw';
+    frame.style.width = '50vw';
     // frame.style.height = // '80vh';
-    frame.style.maxHeight = '85vh';
+    frame.style.maxHeight = '75vh';
     frame.style.display = 'block';
     frame.style.margin = 'auto';
     frame.style.inset = '0';
@@ -16,23 +16,8 @@ function stylizeConfigWindow(doc, frame) {
     frame.style.borderRadius = '1.5vw';
 }
 
-function stylizeConfigButtons(doc) {
-    const buttons = doc.getElementById('ytmPlusCfg_buttons_holder');
-    buttons.style.textAlign = 'center';
-    for(let i = 0; i < buttons.children.length; i++) {
-        const e = buttons.children[i];
-        if(i + 1 != buttons.children.length) {
-            e.style.verticalAlign = 'middle';
-            e.style.backgroundColor = 'rgba(66, 66, 66, 0.8)';
-            e.style.fontSize = '2vh';
-        }
-        else e.firstChild.style.fontSize = '2vh';
-        e.style.margin = '0.5vh';
-    }
-}
-
-const titleSVG =
-    `<svg viewBox="0 0 613 99">
+const titleSVG = // viewBox="0 0 613 99"
+    `<svg>
         <g style="overflow:hidden; text-anchor: middle;">
             <defs>
                 <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -49,9 +34,52 @@ const titleSVG =
         </g>
     </svg>`;
 
+function injectElement(type, id, wrapperId, doc) {
+    const node = doc.createElement(type);
+    node.id = id;
+    const wrapper = doc.getElementById(wrapperId);
+    if(!wrapper) throw new Error(`Wrapper Error: no element with id "${wrapperId}"`);
+    wrapper.appendChild(node);
+    return node;
+}
+
+function manageUIV2(doc) {
+    injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
+
+    const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
+    const categories = doc.getElementsByClassName('section_header_holder');
+
+    for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
+
+    const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
+    let lastOpenSetting;
+    for(let i = 0; i < changeCategoryButton.length; i++) {
+        changeCategoryButton[i].addEventListener('click', () => {
+            for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
+            changeCategoryButton[i].disabled = true;
+            const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
+            if(lastOpenSetting) lastOpenSetting.style = 'display: none;';
+            lastOpenSetting = currentSetting;
+            currentSetting.style = 'display: block;';
+        });
+    }
+
+    const currentSettings = injectElement('div', 'currentSettings', 'cfgHolder', doc);
+
+    const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+    categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
+    categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
+
+    for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
+        const e = wrapper.childNodes[0];
+        e.style = 'display: none;'; // Set category to invisible
+        e.removeChild(e.firstElementChild);
+        currentSettings.appendChild(e); // Move category to currentSettings and await to be visible
+    }
+}
+
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     stylizeConfigWindow(doc, frame);
-    stylizeConfigButtons(doc);
 
     // Every color input we want has to be 'manually set' (GM_config's customType would come in handy but how the hell do it work)
     const colorTypeFields = [
@@ -63,13 +91,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     ];
     for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
-    // Putting the sections and settings into a scrollable div, so that the whole window won't become scrollable
-    const node = doc.createElement('div');
-    node.id = 'cfgHolder';
-    const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
-    wrapper.appendChild(node);
-    for(let i = 0; i <= wrapper.childNodes.length + 1; i++) node.appendChild(wrapper.childNodes[1]); // Not sure how this works, but I somehow skip the header and the buttons at the end
-    wrapper.appendChild(wrapper.childNodes[1]);
+    manageUIV2(doc);
 
     // Live change for input tags + Adding info to int/float settings
     const inputs = doc.getElementsByTagName('input');
@@ -90,36 +112,6 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     // Header title svg
     const title = doc.getElementById('ytmPlusCfg_header');
     title.innerHTML = titleSVG;
-
-    // Handles opening/closing categories
-    const categories = doc.getElementsByClassName('section_header_holder');
-    for(let i = 0; i < categories.length; i++) {
-        categories[i].style.overflowY = 'hidden';
-        if(GM_config.get(`section${i}`) == 'open') {
-            categories[i].children[0].innerHTML = '▲ ' + categories[i].children[0].innerHTML + ' ▲';
-            categories[i].style.height = 'auto';
-        }
-        else if(GM_config.get(`section${i}`) == 'closed') {
-            categories[i].children[0].innerHTML = '▼ ' + categories[i].children[0].innerHTML + ' ▼';
-            categories[i].style.height = '3.25vh';
-        }
-
-
-        categories[i].children[0].addEventListener('click', () => {
-            if(GM_config.get(`section${i}`) == 'closed') {
-                categories[i].style.height = 'auto';
-                categories[i].children[0].innerHTML = categories[i].children[0].innerHTML.replaceAll(/▼/g, '▲');
-                GM_config.set(`section${i}`, 'open');
-                GM_config.save();
-            }
-            else if(GM_config.get(`section${i}`) == 'open') {
-                categories[i].style.height = '3.25vh';
-                categories[i].children[0].innerHTML = categories[i].children[0].innerHTML.replaceAll(/▲/g, '▼');
-                GM_config.set(`section${i}`, 'closed');
-                GM_config.save();
-            }
-        });
-    }
 
     doc.addEventListener('keydown', event => {
         if(event.key == 'Escape') GM_config.close();
@@ -145,6 +137,8 @@ export function saveEvent(oldVisPlace, newVisPlace) {
     skipDisliked(GM_config.get('skipDisliked'));
 
     extraButtons(GM_config.get('extraButtons'));
+
+    fixLayout(GM_config.get('padding'));
 
     removeThumbnail(GM_config.get('removeThumbnail'));
 

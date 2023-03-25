@@ -46,11 +46,6 @@ export const configFields = {
         type: 'checkbox',
         default: true
     },
-    section0: {
-        type: 'hidden',
-        value: 'open',
-        default: 'open'
-    },
     bg: {
         label: fieldTexts.bg[langOption],
         section: fieldTexts.bgSection[langOption],
@@ -71,11 +66,6 @@ export const configFields = {
         label: fieldTexts.bgGradient[langOption],
         type: 'color',
         default: '#0000AA'
-    },
-    section1: {
-        type: 'hidden',
-        value: 'open',
-        default: 'open'
     },
     clock: {
         label: fieldTexts.clock[langOption],
@@ -98,11 +88,6 @@ export const configFields = {
         label: fieldTexts.clockGradientColor[langOption],
         type: 'color',
         default: '#3333AA'
-    },
-    section2: {
-        type: 'hidden',
-        value: 'open',
-        default: 'open'
     },
     visualizerPlace: {
         label: fieldTexts.visualizerPlace[langOption],
@@ -143,11 +128,6 @@ export const configFields = {
         type: 'select',
         options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
         default: false
-    },
-    section3: {
-        type: 'hidden',
-        value: 'open',
-        default: 'open'
     },
     visualizerCircleEnabled: {
         label: fieldTexts.visualizerCircleEnabled[langOption],
@@ -193,11 +173,6 @@ export const configFields = {
         label: fieldTexts.visualizerImageCustomURL[langOption],
         type: 'textarea',
         default: 'https://yt3.googleusercontent.com/ytc/AL5GRJX3OEex8FqN1gogsXQZNB7fV9TVHfda2EynDiW9_g=s900-c-k-c0x00ffffff-no-rj'
-    },
-    section4: {
-        type: 'hidden',
-        value: 'open',
-        default: 'open'
     },
     attention1: {
         label: fieldTexts.attention1[langOption],
@@ -285,10 +260,5 @@ export const configFields = {
         min: 1,
         max: 144,
         default: 30,
-    },
-    section5: {
-        type: 'hidden',
-        value: 'closed',
-        default: 'closed'
     }
 };

@@ -109,6 +109,19 @@ export function extraButtons(turnOn) {
     }
 }
 
+export function fixLayout(turnOn) {
+    if(turnOn) {
+        globals.playerPageDiv.style.paddingTop = '0px';
+        globals.mainPanel.style.marginTop = '8vh';
+        globals.mainPanel.style.marginBottom = '8vh';
+    }
+    else {
+        globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
+        globals.mainPanel.style.marginTop = '0';
+        globals.mainPanel.style.marginBottom = 'var(--ytmusic-player-page-vertical-padding)';
+    }
+}
+
 export function removeThumbnail(turnOn) {
     globals.player.style.backgroundColor = '#01010101';
     const songImage = document.getElementById('song-image');
