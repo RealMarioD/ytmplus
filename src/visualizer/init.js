@@ -67,8 +67,8 @@ export function startVisualizer() {
 export function visualizerResizeFix() {
     switch(visualizer.place) {
         case 'Navbar': default:
-            canvas.width = globals.navBarBg.offsetWidth;
-            canvas.height = globals.navBarBg.offsetHeight;
+            if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
+            if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
             canvas.style.width = '';
             canvas.style.height = '';
             values.WIDTH = canvas.width;
