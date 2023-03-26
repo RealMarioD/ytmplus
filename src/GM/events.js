@@ -21,7 +21,7 @@ const titleSVG = // viewBox="0 0 613 99"
         <g style="overflow:hidden; text-anchor: middle;">
             <defs>
                 <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="10" result="glow"/>
+                    <feGaussianBlur stdDeviation="5" result="glow"/>
                     <feMerge>
                     <feMergeNode in="glow"/>
                     <feMergeNode in="glow"/>
@@ -43,7 +43,7 @@ function injectElement(type, id, wrapperId, doc) {
     return node;
 }
 
-function manageUIV2(doc) {
+function manageUIv2(doc) {
     injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
 
     const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
@@ -71,10 +71,10 @@ function manageUIV2(doc) {
     categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
 
     for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
-        const e = wrapper.childNodes[0];
-        e.style = 'display: none;'; // Set category to invisible
-        e.removeChild(e.firstElementChild);
-        currentSettings.appendChild(e); // Move category to currentSettings and await to be visible
+        const configVars = wrapper.childNodes[0];
+        configVars.style = 'display: none;'; // Set category to invisible
+        configVars.removeChild(configVars.firstElementChild);
+        currentSettings.appendChild(configVars); // Move category to currentSettings and await to be visible
     }
 }
 
@@ -91,7 +91,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     ];
     for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
-    manageUIV2(doc);
+    manageUIv2(doc);
 
     // Live change for input tags + Adding info to int/float settings
     const inputs = doc.getElementsByTagName('input');

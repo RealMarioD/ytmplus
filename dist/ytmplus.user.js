@@ -29,8 +29,6 @@
     -webkit-appearance: none;
     border: none;
     padding: 0;
-    width: 3.5vh;
-    height: 3.5vh;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
@@ -39,79 +37,81 @@ input[type="color"]::-webkit-color-swatch {
     border: 0;
 }
 input[type="color"], input[type="checkbox"] {
-    width: 3.5vh;
-    height: 3.5vh;
+    width: 3vmin;
+    height: 3vmin;
+    margin: 0;
+    padding: 0;
 }
 input[type="text"] {
-    width: 10.5vh;
+    width: 10.5vmin;
 }
 input {
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2.5vh;
+    font-size: 2vmin;
     border: none;
-    border-radius: 1vh;
-    padding: 1vh;
+    border-radius: 1vmin;
+    padding: 1vmin;
 }
 textarea {
     background-color: rgba(66, 66, 66, 0.8);
-    width: 75%;
-    height: 5vh;
+    width: 50%;
+    height: 5vmin;
     resize: none;
-    margin: auto;
     white-space: nowrap;
     overflow-wrap: normal;
-    font-size: 2.5vh;
+    font-size: 2vmin;
     border: none;
-    border-radius: 1vh;
-    padding: 1vh;
+    border-radius: 1vmin;
+    padding: 1vmin;
     scrollbar-width: none;
 }
 textarea::-webkit-scrollbar {
     display: none;
 }
 #ytmPlusCfg .config_var {
-    margin: 0 0 1vh;
-    text-align: center;
-    height: 6vh;
+    margin: 0 0 1%;
+    text-align: left;
+    height: 6vmin;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: no-wrap;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    border-bottom: solid 1px #6666
 }
 #ytmPlusCfg * {
     font-family: monospace;
     color: rgba(255, 255, 255, 0.8);
 }
 #ytmPlusCfg {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.95);
 }
 #ytmPlusCfg #ytmPlusCfg_header {
     background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 2vh 0;
+    margin-bottom: 1vmin;
     width: -webkit-fill-available;
-    height: 12vh;
+    height: 12vmin;
 }
 #ytmPlusCfg .section_header_holder {
     margin-top: 0;
     display: none;
 }
 #ytmPlusCfg .section_header {
-    margin-bottom: 0.5vh;
-    font-size: 4.5vh;
+    margin-bottom: 0.5vmin;
+    font-size: 4.5vmin;
 }
 #ytmPlusCfg .field_label {
-    font-size: 3.5vh;
+    font-size: 2.5vmin;
     display: flex;
     align-items: center;
 }
 #ytmPlusCfg select {
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2.5vh;
+    font-size: 2vmin;
     border: none;
-    border-radius: 1vh;
-    padding: 1vh
+    border-radius: 1vmin;
+    padding: 1vmin
 }
 #ytmPlusCfg .reset {
     color: rgba(255, 255, 255, 0.8);
@@ -120,16 +120,16 @@ textarea::-webkit-scrollbar {
     height: -webkit-fill-available;
 }
 ::-webkit-scrollbar {
-    width: 1vw;
-    height: 0.5vh;
+    width: 1vmin;
+    height: 0.5vmin;
 }
 ::-webkit-scrollbar-track {
     background: #eeea;
-    border-radius: 2vw;
+    border-radius: 2vmin;
 }
 ::-webkit-scrollbar-thumb {
     background: #888a;
-    border-radius: 2vw;
+    border-radius: 2vmin;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #555f;
@@ -137,20 +137,23 @@ textarea::-webkit-scrollbar {
 #ytmPlusCfg_buttons_holder {
     text-align: center;
 }
+#ytmPlusCfg #ytmPlusCfg_saveBtn {
+    margin-right: 2%;
+}
 #ytmPlusCfg .saveclose_buttons {
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2.5vh;
-    margin: 0.5vh;
-    width: 47.5%;
-    padding: 1vh;
+    font-size: 2vmin;
+    margin: 0;
+    width: 49%;
+    padding: 1vmin;
     border: solid 3px transparent;
-    border-radius: 1vh;
+    border-radius: 1vmin;
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: 2px 1000px 1px #333 inset;
 }
-#ytmPlusCfg .saveclose_buttonsdisabled {
+#ytmPlusCfg .saveclose_buttons:disabled {
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
 }
 #ytmPlusCfg .saveclose_buttons:hover {
@@ -159,12 +162,11 @@ textarea::-webkit-scrollbar {
 #ytmPlusCfg .saveclose_buttons:active {
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #6600eecc, #ee0066cc);
 }
-
 #ytmPlusCfg .reset_holder {
-    margin: 0.5vh;
+    margin: 4vmin 0;
 }
 #ytmPlusCfg .reset {
-    font-size: 2vh;
+    font-size: 2vmin;
 }
 svg {
     width: inherit;
@@ -192,24 +194,23 @@ svg text {
     height: 100%;
 }
 #categorySelect {
-    width: 34vw;
-    max-width: 34vw;
+    width: 40vmin;
+    max-width: 40vmin;
     justify-content: center;
     border-right: solid #6666;
     display: flex;
     flex-direction: column;
-    padding: 0 4vh;
+    padding: 0 4vmin;
 }
 .changeCategoryButton {
     border: solid 3px transparent;
-    border-radius: 1vh;
+    border-radius: 1vmin;
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: 2px 1000px 1px #333 inset;
-    padding-top: 0.5vh;
-    padding-bottom: 0.5vh;
-    margin-bottom: 2vh;
+    padding: 1vmin;
+    margin-bottom: 2vmin;
 }
 .changeCategoryButton:disabled {
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
@@ -226,6 +227,7 @@ svg text {
     justify-content: center;
     display: flex;
     flex-direction: column;
+    padding: 0 4vmin;
 }
 @-moz-document url-prefix() {
     #currentSettings {
@@ -259,7 +261,7 @@ svg text {
         visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
         visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
         visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-        visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+        visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Bar Amount⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Sáv mennyiség⚠</span>' },
         visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
         visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
         visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
@@ -970,8 +972,8 @@ svg text {
     function visualizerResizeFix() {
         switch(visualizer.place) {
             case 'Navbar': default:
-                canvas.width = globals.navBarBg.offsetWidth;
-                canvas.height = globals.navBarBg.offsetHeight;
+                if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
+                if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
                 canvas.style.width = '';
                 canvas.style.height = '';
                 values.WIDTH = canvas.width;
@@ -1083,7 +1085,7 @@ svg text {
         <g style="overflow:hidden; text-anchor: middle;">
             <defs>
                 <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="10" result="glow"/>
+                    <feGaussianBlur stdDeviation="5" result="glow"/>
                     <feMerge>
                     <feMergeNode in="glow"/>
                     <feMergeNode in="glow"/>
@@ -1105,7 +1107,7 @@ svg text {
         return node;
     }
 
-    function manageUIV2(doc) {
+    function manageUIv2(doc) {
         injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
 
         const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
@@ -1133,10 +1135,10 @@ svg text {
         categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
 
         for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
-            const e = wrapper.childNodes[0];
-            e.style = 'display: none;'; // Set category to invisible
-            e.removeChild(e.firstElementChild);
-            currentSettings.appendChild(e); // Move category to currentSettings and await to be visible
+            const configVars = wrapper.childNodes[0];
+            configVars.style = 'display: none;'; // Set category to invisible
+            configVars.removeChild(configVars.firstElementChild);
+            currentSettings.appendChild(configVars); // Move category to currentSettings and await to be visible
         }
     }
 
@@ -1153,7 +1155,7 @@ svg text {
         ];
         for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
 
-        manageUIV2(doc);
+        manageUIv2(doc);
 
         // Live change for input tags + Adding info to int/float settings
         const inputs = doc.getElementsByTagName('input');

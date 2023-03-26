@@ -24,7 +24,7 @@ export const fieldTexts = {
     visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
     visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
     visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-    visualizerFft: { english: 'Bar Amount<span title="High values can affect performance and can break circle visualizer.">⚠️</span>', hungarian: 'Sáv mennyiség<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">⚠️</span>' },
+    visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Bar Amount⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Sáv mennyiség⚠</span>' },
     visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
     visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
     visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
