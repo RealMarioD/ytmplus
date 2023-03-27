@@ -5,9 +5,9 @@ import { GM_config } from './GM_config';
 
 function stylizeConfigWindow(doc, frame) {
     doc.body.style.overflow = 'hidden';
-    frame.style.width = '50vw';
-    // frame.style.height = // '80vh';
-    frame.style.maxHeight = '75vh';
+    frame.style.width = '60vw';
+    frame.style.height = 'calc((3 / 4) * 60vw)';
+    // frame.style.maxHeight = '75vh';
     frame.style.display = 'block';
     frame.style.margin = 'auto';
     frame.style.inset = '0';
@@ -44,33 +44,34 @@ function injectElement(type, id, wrapperId, doc) {
 }
 
 function manageUIv2(doc) {
-    injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
-
-    const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
+    // Create categorySelect buttons
+    const categorySelect = injectElement('div', 'categorySelect', 'ytmPlusCfg_wrapper', doc);
     const categories = doc.getElementsByClassName('section_header_holder');
-
     for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
+    // Handle changeCategoryButtons
     const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
     let lastOpenSetting;
     for(let i = 0; i < changeCategoryButton.length; i++) {
         changeCategoryButton[i].addEventListener('click', () => {
             for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
-            changeCategoryButton[i].disabled = true;
+            changeCategoryButton[i].disabled = true; // "Disable" current button for styling
             const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
-            if(lastOpenSetting) lastOpenSetting.style = 'display: none;';
+            if(lastOpenSetting) lastOpenSetting.style = 'display: none;'; // Make last open category disappear
             lastOpenSetting = currentSetting;
-            currentSetting.style = 'display: block;';
+            currentSetting.style = 'display: block;'; // Make selected category appear
         });
     }
 
-    const currentSettings = injectElement('div', 'currentSettings', 'cfgHolder', doc);
+    const currentSettings = injectElement('div', 'currentSettings', 'ytmPlusCfg_wrapper', doc);
 
     const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
     categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
-    categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
+    categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 3]); // Put save/close buttons into categorySelect
+    const resetDiv = doc.getElementsByClassName('reset_holder block')[0];
+    categorySelect.append(resetDiv); // Put reset button into categorySelect
 
-    for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
+    for(let i = 0, len = wrapper.childNodes.length - 2; i < len; i++) { // - 2: skip categorySelect and currentSettings
         const configVars = wrapper.childNodes[0];
         configVars.style = 'display: none;'; // Set category to invisible
         configVars.removeChild(configVars.firstElementChild);

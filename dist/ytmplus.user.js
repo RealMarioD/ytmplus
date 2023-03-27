@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.1.1
+// @version      2.2.0
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -37,32 +37,32 @@ input[type="color"]::-webkit-color-swatch {
     border: 0;
 }
 input[type="color"], input[type="checkbox"] {
-    width: 3vmin;
-    height: 3vmin;
+    width: 3vh;
+    height: 3vh;
     margin: 0;
     padding: 0;
 }
 input[type="text"] {
-    width: 10.5vmin;
+    width: 10.5vh;
 }
 input {
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2vmin;
+    font-size: 2.5vh;
     border: none;
-    border-radius: 1vmin;
-    padding: 1vmin;
+    border-radius: 1vh;
+    padding: 1vh;
 }
 textarea {
     background-color: rgba(66, 66, 66, 0.8);
     width: 50%;
-    height: 5vmin;
+    height: 5vh;
     resize: none;
     white-space: nowrap;
     overflow-wrap: normal;
-    font-size: 2vmin;
+    font-size: 2.5vh;
     border: none;
-    border-radius: 1vmin;
-    padding: 1vmin;
+    border-radius: 1vh;
+    padding: 1vh;
     scrollbar-width: none;
 }
 textarea::-webkit-scrollbar {
@@ -71,7 +71,7 @@ textarea::-webkit-scrollbar {
 #ytmPlusCfg .config_var {
     margin: 0 0 1%;
     text-align: left;
-    height: 6vmin;
+    height: 6vh;
     display: flex;
     flex-wrap: no-wrap;
     align-items: center;
@@ -89,47 +89,46 @@ textarea::-webkit-scrollbar {
     background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 1vmin;
+    margin: auto 0;
     width: -webkit-fill-available;
-    height: 12vmin;
+    height: 12vh;
 }
 #ytmPlusCfg .section_header_holder {
     margin-top: 0;
     display: none;
 }
 #ytmPlusCfg .section_header {
-    margin-bottom: 0.5vmin;
-    font-size: 4.5vmin;
+    margin-bottom: 0.5vh;
+    font-size: 4.5vh;
 }
 #ytmPlusCfg .field_label {
-    font-size: 2.5vmin;
+    font-size: 3vh;
     display: flex;
     align-items: center;
 }
 #ytmPlusCfg select {
     background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2vmin;
+    font-size: 2.5vh;
     border: none;
-    border-radius: 1vmin;
-    padding: 1vmin
-}
-#ytmPlusCfg .reset {
-    color: rgba(255, 255, 255, 0.8);
+    border-radius: 1vh;
+    padding: 1vh
 }
 #ytmPlusCfg_wrapper {
-    height: -webkit-fill-available;
+    display: flex;
+    height: 100%;
+    /* height: -webkit-fill-available; */
 }
 ::-webkit-scrollbar {
-    width: 1vmin;
-    height: 0.5vmin;
+    width: 1vh;
+    height: 0.5vh;
 }
 ::-webkit-scrollbar-track {
     background: #eeea;
-    border-radius: 2vmin;
+    border-radius: 2vh;
 }
 ::-webkit-scrollbar-thumb {
     background: #888a;
-    border-radius: 2vmin;
+    border-radius: 2vh;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #555f;
@@ -141,32 +140,42 @@ textarea::-webkit-scrollbar {
     margin-right: 2%;
 }
 #ytmPlusCfg .saveclose_buttons {
-    background-color: rgba(66, 66, 66, 0.8);
-    font-size: 2vmin;
+    font-size: 2.5vh;
     margin: 0;
     width: 49%;
-    padding: 1vmin;
+    padding: 1.5vh;
     border: solid 3px transparent;
-    border-radius: 1vmin;
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
+    border-radius: 1vh;
+    background: rgba(66, 66, 66, 0.8);
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));
+    background-size: 200% 100%;
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: 2px 1000px 1px #333 inset;
+    animation: buttonBorder 2s infinite forwards linear;
 }
 #ytmPlusCfg .saveclose_buttons:disabled {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
+    --borderColor1: #dd0055ee;
+    --borderColor2: #5500ddee;
+    animation: buttonBorder 2s infinite forwards linear;
 }
 #ytmPlusCfg .saveclose_buttons:hover {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #ff0077ff, #7700ffff);
+    --borderColor1: #ff0077ff;
+    --borderColor2: #7700ffff;
+    animation: buttonBorder 1s infinite forwards linear;
 }
 #ytmPlusCfg .saveclose_buttons:active {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #6600eecc, #ee0066cc);
+    --borderColor1: #6600eecc;
+    --borderColor2: #ee0066cc;
+    animation: buttonBorder 0.5s infinite forwards linear;
 }
 #ytmPlusCfg .reset_holder {
-    margin: 4vmin 0;
+    margin: 4vh 0 auto;
+    text-align: center;
 }
 #ytmPlusCfg .reset {
-    font-size: 2vmin;
+    font-size: 2vh;
+    color: rgba(255, 255, 255, 0.8);
 }
 svg {
     width: inherit;
@@ -174,7 +183,7 @@ svg {
     margin: auto;
 }
 svg text {
-    font-size: 10vmin;
+    font-size: 8.5vh;
     animation: stroke 10s infinite alternate linear;
     stroke-width: 2;
     stroke: #aa0000;
@@ -194,32 +203,55 @@ svg text {
     height: 100%;
 }
 #categorySelect {
-    width: 40vmin;
-    max-width: 40vmin;
-    justify-content: center;
+    min-width: 30vw;
+    width: 30vw;
+    max-width: 30vw;
+    justify-content: flex-start;
     border-right: solid #6666;
     display: flex;
     flex-direction: column;
-    padding: 0 4vmin;
+    padding: 0 4vh;
+}
+:root {
+    --borderColor1: #66003366;
+    --borderColor2: #33006666;
+}
+@keyframes buttonBorder {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
 }
 .changeCategoryButton {
     border: solid 3px transparent;
-    border-radius: 1vmin;
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #66003366, #33006666);
+    border-radius: 1vh;
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));
+    background-size: 200% 100%;
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: 2px 1000px 1px #333 inset;
-    padding: 1vmin;
-    margin-bottom: 2vmin;
+    padding: 1.5vh;
+    margin-bottom: 2vh;
+    height: auto;
+    white-space: pre-wrap;
+    animation: buttonBorder 2s infinite forwards linear;
 }
 .changeCategoryButton:disabled {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #dd0055ee, #5500ddee);
+    --borderColor1: #dd0055ee;
+    --borderColor2: #5500ddee;
+    animation: buttonBorder 2s infinite forwards linear;
 }
 .changeCategoryButton:hover {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #ff0077ff, #7700ffff);
+    --borderColor1: #ff0077ff;
+    --borderColor2: #7700ffff;
+    animation: buttonBorder 1s infinite forwards linear;
 }
 .changeCategoryButton:active {
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(90deg, #6600eecc, #ee0066cc);
+    --borderColor1: #6600eecc;
+    --borderColor2: #ee0066cc;
+    animation: buttonBorder 0.5s infinite forwards linear;
 }
 #currentSettings {
     width: -webkit-fill-available;
@@ -227,7 +259,7 @@ svg text {
     justify-content: center;
     display: flex;
     flex-direction: column;
-    padding: 0 4vmin;
+    padding: 0 4vh;
 }
 @-moz-document url-prefix() {
     #currentSettings {
@@ -1069,9 +1101,9 @@ svg text {
 
     function stylizeConfigWindow(doc, frame) {
         doc.body.style.overflow = 'hidden';
-        frame.style.width = '50vw';
-        // frame.style.height = // '80vh';
-        frame.style.maxHeight = '75vh';
+        frame.style.width = '60vw';
+        frame.style.height = 'calc((3 / 4) * 60vw)';
+        // frame.style.maxHeight = '75vh';
         frame.style.display = 'block';
         frame.style.margin = 'auto';
         frame.style.inset = '0';
@@ -1108,33 +1140,34 @@ svg text {
     }
 
     function manageUIv2(doc) {
-        injectElement('div', 'cfgHolder', 'ytmPlusCfg_wrapper', doc);
-
-        const categorySelect = injectElement('div', 'categorySelect', 'cfgHolder', doc);
+        // Create categorySelect buttons
+        const categorySelect = injectElement('div', 'categorySelect', 'ytmPlusCfg_wrapper', doc);
         const categories = doc.getElementsByClassName('section_header_holder');
-
         for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
+        // Handle changeCategoryButtons
         const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
         let lastOpenSetting;
         for(let i = 0; i < changeCategoryButton.length; i++) {
             changeCategoryButton[i].addEventListener('click', () => {
                 for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
-                changeCategoryButton[i].disabled = true;
+                changeCategoryButton[i].disabled = true; // "Disable" current button for styling
                 const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
-                if(lastOpenSetting) lastOpenSetting.style = 'display: none;';
+                if(lastOpenSetting) lastOpenSetting.style = 'display: none;'; // Make last open category disappear
                 lastOpenSetting = currentSetting;
-                currentSetting.style = 'display: block;';
+                currentSetting.style = 'display: block;'; // Make selected category appear
             });
         }
 
-        const currentSettings = injectElement('div', 'currentSettings', 'cfgHolder', doc);
+        const currentSettings = injectElement('div', 'currentSettings', 'ytmPlusCfg_wrapper', doc);
 
         const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
         categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
-        categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
+        categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 3]); // Put save/close buttons into categorySelect
+        const resetDiv = doc.getElementsByClassName('reset_holder block')[0];
+        categorySelect.append(resetDiv); // Put reset button into categorySelect
 
-        for(let i = 0, len = wrapper.childNodes.length - 1; i < len; i++) { // - 1: skip cfgHolder
+        for(let i = 0, len = wrapper.childNodes.length - 2; i < len; i++) { // - 2: skip categorySelect and currentSettings
             const configVars = wrapper.childNodes[0];
             configVars.style = 'display: none;'; // Set category to invisible
             configVars.removeChild(configVars.firstElementChild);
