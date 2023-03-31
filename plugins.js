@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { ESLint } from 'eslint';
+import { debugging } from './src/debug.js';
 
 let fixedVars;
 export function fuckGMConfig() { // Rollup creates "GM_config$1" and idk why, this plugin deletes "$1"
@@ -37,6 +38,16 @@ export function lint() {
                 console.log(resultText);
                 console.log('\x1b[32m%s\x1b[0m', 'lint: Job done.');
             }, 1000);
+        }
+    };
+}
+
+export function checkDebug() {
+    return {
+        name: 'checkDebug',
+        buildEnd(err) {
+            if(err) return console.error(err);
+            if(debugging === true) console.warn('\x1b[1m\x1b[33m%s\x1b[0m', '⚠ DEBUGGING IS TURNED ON IN ./src/debug.js⚠\n⚠ DISABLE DEBUGGING BEFORE RELEASE⚠');
         }
     };
 }
