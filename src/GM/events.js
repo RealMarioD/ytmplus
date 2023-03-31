@@ -1,6 +1,7 @@
 import { globals, visualizer } from '../globals';
 import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, promoEnable, removeThumbnail, skipDisliked } from '../utils';
 import { getVideo, renderFrame } from '../visualizer/init';
+import { replaceImageURL } from '../visualizer/image';
 import { GM_config } from './GM_config';
 
 function stylizeConfigWindow(doc, frame) {
@@ -151,6 +152,7 @@ export function saveEvent(oldVisPlace, newVisPlace) {
         visualizer.getBufferData();
         visualizer.initValues();
         if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame);
+        else replaceImageURL();
     }
     else visualizer.place = 'Disabled';
 

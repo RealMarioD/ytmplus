@@ -1,46 +1,9 @@
 import { visualizer } from '../globals';
-import { getBarColor, values } from './init';
+import { getBarColor, values, ctx } from './init';
 import { averageOfArray } from '../utils';
+import { handleImage } from './image';
 
-const image = new Image();
-let imgLoaded = false,
-    currentURL;
-
-image.onload = () => {
-    imgLoaded = true;
-};
-image.onerror = () => {
-    if(visualizer.image.type === 'Thumbnail' && currentURL.indexOf('data') === 0) return;
-    console.warn('ytmPlus: Custom Image couldn\'t be loaded.');
-    currentURL = 'https://imgur.com/Nkj0d6D.png';
-    visualizer.image.customURL = currentURL;
-};
-
-
-export function handleImage(ctx) {
-    if(visualizer.image.type === 'Thumbnail') currentURL = document.getElementById('thumbnail').firstElementChild.src;
-    else currentURL = visualizer.image.customURL;
-
-    if(image.src !== currentURL) {
-        imgLoaded = false;
-        image.src = currentURL;
-    }
-
-    if(imgLoaded === true) drawVisImage(ctx);
-}
-
-function drawVisImage(ctx) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(image, values.halfWidth - values.radius, values.halfHeight - values.radius, values.radius * 2, values.radius * 2);
-    ctx.restore();
-}
-
-
-export function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
+export function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
     if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
     else values.circleSize = 1; // 1(pi) = half;
 
@@ -49,25 +12,25 @@ export function visualizerCircle(ctx) { // Bitwise truncation (~~number) is used
 
     getRotationValue();
 
-    if(visualizer.image.type !== 'Disabled') handleImage(ctx);
+    if(visualizer.image.type !== 'Disabled') handleImage();
 
     values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
     values.barWidth = values.barTotal * 0.45;
     // No need for barSpace
     values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
 
-    if(visualizer.startsFrom === 'Right') drawArcs(false, ctx);
-    else if(visualizer.startsFrom === 'Left') drawArcs(true, ctx);
+    if(visualizer.startsFrom === 'Right') drawArcs(false);
+    else if(visualizer.startsFrom === 'Left') drawArcs(true);
     else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
-        drawArcs(false, ctx);
-        drawArcs(true, ctx);
+        drawArcs(false);
+        drawArcs(true);
     }
 }
 
 function calculateBass() {
-    values.bass = visualizer.dataArray.slice(
-        ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityStart),
-        ~~(visualizer.dataArray.length * visualizer.bassBounce.sensitivityEnd) + 1
+    values.bass = visualizer.audioData.slice(
+        ~~(visualizer.audioData.length * visualizer.bassBounce.sensitivityStart),
+        ~~(visualizer.audioData.length * visualizer.bassBounce.sensitivityEnd) + 1
     );
 
     if(visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
@@ -82,11 +45,11 @@ function getRotationValue() {
 
     if(r === 'Disabled') values.rotationValue = 0;
     else if(r === 'On') values.rotationValue += 0.005 * direction;
-    else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(visualizer.dataArray) / 10000 + 1, 2) - 1) * direction;
+    else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction;
     else if(r === 'Reactive (Bass)') values.rotationValue += (Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction;
 }
 
-function drawArcs(backwards, ctx) {
+function drawArcs(backwards) {
     ctx.save();
     ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
     ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
@@ -97,12 +60,12 @@ function drawArcs(backwards, ctx) {
             continue;
         }
 
-        getBarColor(i, ctx);
+        getBarColor(i);
 
         if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
 
-        if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.dataArray[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
-        else values.barHeight = visualizer.dataArray[i] * values.heightModifier * 0.5;
+        if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.audioData[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
+        else values.barHeight = visualizer.audioData[i] * values.heightModifier * 0.5;
 
         if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') values.outerRadius = values.radius + values.barHeight;
         else values.outerRadius = values.radius;

@@ -40,7 +40,8 @@ export const visualizer = {
         red: undefined,
         green: undefined,
         blue: undefined,
-        samples: undefined
+        samples: undefined,
+        _data: []
     },
     bassBounce: {
         enabled: undefined,
@@ -50,17 +51,16 @@ export const visualizer = {
         debug: undefined
     },
     cutOff: undefined,
-    rgbData: [],
     colorDivergence: undefined,
     analyser: undefined,
     bufferLength: undefined,
-    dataArray: undefined,
+    audioData: undefined,
     resizeInterval: undefined,
     getBufferData() {
         this.analyser.fftSize = GM_config.get('visualizerFft');
         this.cutOff = GM_config.get('visualizerCutOff');
         this.bufferLength = this.analyser.frequencyBinCount - Math.floor(this.analyser.frequencyBinCount * this.cutOff); // We cut off the end because data is 0, making visualizer's end flat
-        this.dataArray = new Uint8Array(this.bufferLength);
+        this.audioData = new Uint8Array(this.bufferLength);
     },
     /**
      * Visualizer keys must have identical names with their GM_config equivalent, e.g.: visualizer.place = 'visualizerPlace'
@@ -88,6 +88,7 @@ export const visualizer = {
 
             if(key !== 'bassBounce') continue;
 
+            // Last things to do (everything here runs only once)
             if(this.analyser !== undefined) {
                 this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
                 this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
@@ -95,7 +96,7 @@ export const visualizer = {
             }
 
             this.colorDivergence = this.bufferLength / this.rgb.samples;
-            if(this.rgb.enabled === true && this.rgbData.length !== this.rgb.samples) this.getRGB();
+            if(this.rgb.enabled === true && this.rgb._data.length !== this.rgb.samples) this.getRGB();
 
             if(this.energySaver.type === 'Limit FPS' || this.energySaver.type === 'Both') this.energySaver._getFMT(this.energySaver.fps);
             else this.energySaver._getFMT(60);
@@ -110,9 +111,9 @@ export const visualizer = {
             piD3 = Math.PI / 3, // Offset
             piD3x2 = 2 * Math.PI / 3; // so that colors aren't totally mixed together
 
-        this.rgbData = [];
+        this.rgb._data = [];
         for(let i = 0; i < this.rgb.samples; i++) {
-            this.rgbData[i] = {
+            this.rgb._data[i] = {
                 red: Math.abs(this.rgb.red * Math.sin(i * hue)),
                 green: Math.abs(this.rgb.green * Math.sin(i * hue + piD3)),
                 blue: Math.abs(this.rgb.blue * Math.sin(i * hue + piD3x2))

@@ -1,5 +1,7 @@
 import { globals, visualizer } from '../globals';
+import { logplus } from '../debug';
 import { visualizerCircle } from './circle';
+import { replaceImageURL } from './image';
 import { visualizerNavbar } from './navbar';
 
 export let video;
@@ -7,8 +9,8 @@ export function getVideo() {
     video = document.querySelector('video');
     if(video) startVisualizer();
     else {
-        console.warn('ytmPlus: Query "video" not found, retrying in 100ms.');
-        setTimeout(() => { getVideo(); }, 100);
+        logplus('warn', 'Query "video" not found, retrying in 100ms.');
+        setTimeout(getVideo, 100);
     }
 }
 
@@ -34,7 +36,7 @@ export const values = {
     startingPoint: -(0.5 * Math.PI)
 };
 
-let canvas, ctx;
+export let canvas, ctx;
 
 export function startVisualizer() {
     // Init, connecting yt audio to canvas
@@ -61,12 +63,13 @@ export function startVisualizer() {
 
     window.addEventListener('resize', visualizerResizeFix);
 
+    replaceImageURL();
     requestAnimationFrame(renderFrame);
 }
 
 export function visualizerResizeFix() {
     switch(visualizer.place) {
-        case 'Navbar': default:
+        case 'Navbar': default: {
             if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
             if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
             canvas.style.width = '';
@@ -80,11 +83,12 @@ export function visualizerResizeFix() {
             values.barSpace = values.barTotal * 0.05;
             values.barWidth = values.barTotal * 0.95;
             break;
-        case 'Album Cover':
-            canvas.style.width = globals.player.offsetWidth + 'px';
-            canvas.style.height = globals.player.offsetHeight + 'px';
+        }
+        case 'Album Cover': {
             if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
             if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
+            canvas.style.width = globals.player.offsetWidth + 'px';
+            canvas.style.height = globals.player.offsetHeight + 'px';
             values.WIDTH = canvas.width;
             values.halfWidth = values.WIDTH / 2;
             values.HEIGHT = canvas.height;
@@ -111,26 +115,29 @@ export function visualizerResizeFix() {
             }
             else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
             break;
+        }
         case 'Disabled': break;
     }
 }
 
 let lastFrameTime = 0;
-export function renderFrame(time) {
+export function renderFrame(time) { // Never remove time var from here
+    // Don't do anything if True Pause energy saver is on and playback is paused
+    if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
+
+    // If render would be faster than max fps (60 by default if energy saver is off) come back later
     if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
     lastFrameTime = time;
 
-    if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
-
     ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-    if(visualizer.place === 'Disabled') return;
+    if(visualizer.place === 'Disabled') return; // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see GM's save event
 
-    visualizer.analyser.getByteFrequencyData(visualizer.dataArray); // Get audio data
+    visualizer.analyser.getByteFrequencyData(visualizer.audioData); // Get audio data
 
     if(visualizer.rgb.enabled === true) { // Color cycle effect
-        visualizer.rgbData.push(visualizer.rgbData[0]);
-        visualizer.rgbData.shift();
+        visualizer.rgb._data.push(visualizer.rgb._data[0]);
+        visualizer.rgb._data.shift();
     }
 
     if(visualizer.place === 'Navbar') {
@@ -154,10 +161,10 @@ export function renderFrame(time) {
 
 export function getBarColor(i) {
     if(visualizer.rgb.enabled === true) {
-        const color = ~~(i / visualizer.colorDivergence);
-        if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue}, ${visualizer.dataArray[i] < 128 ? visualizer.dataArray[i] * 2 / 255 : 1.0})`;
-        else ctx.fillStyle = `rgb(${visualizer.rgbData[color].red}, ${visualizer.rgbData[color].green}, ${visualizer.rgbData[color].blue})`;
+        const color = ~~(i / visualizer.colorDivergence); // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+        if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
+        else ctx.fillStyle = `rgb(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue})`;
     }
-    else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.dataArray[i] < 128 ? (visualizer.dataArray[i] * 2).toString(16) : 'FF');
+    else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
     else ctx.fillStyle = visualizer.color;
 }

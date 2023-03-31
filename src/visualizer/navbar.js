@@ -1,30 +1,30 @@
 import { visualizer } from '../globals';
-import { getBarColor, values } from './init';
+import { getBarColor, values, ctx } from './init';
 
-export function visualizerNavbar(ctx) {
+export function visualizerNavbar() {
     if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
     else if(visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
     else values.xPosOffset = 0;
 
     const maxBarHeight = (values.HEIGHT / 255);
 
-    firstDraw(ctx, maxBarHeight);
+    firstDraw(maxBarHeight);
 
     if(visualizer.startsFrom === 'Center') {
         values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
-        secondDraw(ctx, maxBarHeight, 1);
+        secondDraw(maxBarHeight, 1);
     }
     else if(visualizer.startsFrom === 'Edges') {
         values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
-        secondDraw(ctx, maxBarHeight, 0);
+        secondDraw(maxBarHeight, 0);
     }
 }
 
-function firstDraw(ctx, maxBarHeight) {
+function firstDraw(maxBarHeight) {
     for(let i = 0; i < visualizer.bufferLength; i++) {
-        values.barHeight = visualizer.dataArray[i] * maxBarHeight;
+        values.barHeight = visualizer.audioData[i] * maxBarHeight;
 
-        getBarColor(i, ctx);
+        getBarColor(i);
 
         // To this day I don't get the Y and values.HEIGHT values
         if(visualizer.startsFrom === 'Left') {
@@ -65,11 +65,11 @@ function firstDraw(ctx, maxBarHeight) {
     }
 }
 
-function secondDraw(ctx, maxBarHeight, i) {
+function secondDraw(maxBarHeight, i) {
     for(i; i < visualizer.bufferLength; i++) {
-        values.barHeight = visualizer.dataArray[i] * maxBarHeight;
+        values.barHeight = visualizer.audioData[i] * maxBarHeight;
 
-        getBarColor(i, ctx);
+        getBarColor(i);
 
         if(visualizer.startsFrom === 'Center') {
             if(values.xPosOffset > values.WIDTH) break;
