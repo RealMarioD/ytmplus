@@ -1,3 +1,4 @@
+import { logplus } from './debug';
 import { globals } from './globals';
 import { GM_config } from './GM/GM_config';
 
@@ -9,7 +10,7 @@ export function promoEnable(turnOn) {
         popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
         if(popup.length > 0) {
             popup[0].remove();
-            console.log('ytmPlus: Removed a promotion.');
+            logplus('Removed a promotion.');
         }
     }, 1000);
 }
@@ -19,7 +20,7 @@ export function afkEnable(turnOn) { // Credit to q1k - https://greasyfork.org/en
     if(!turnOn) return;
     globals.noAfkFunction = setInterval(() => {
         document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-        console.log('ytmPlus: Nudged the page so user is not AFK.');
+        logplus('Nudged the page so user is not AFK.');
     }, 15000);
 }
 
@@ -41,15 +42,31 @@ export function clockEnable(mode) {
         globals.upgradeButton.textContent = '';
         globals.upgradeButton.parentElement.style.margin = '0px';
     }
-    const a = globals.upgradeButton.style;
-    a.background = mode != 'Digital Clock' ? '' : `linear-gradient(to right, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
-    a.backgroundSize = mode != 'Digital Clock' ? '' : '200% auto';
-    a.backgroundClip = mode != 'Digital Clock' ? '' : 'text';
-    a.textFillColor = mode != 'Digital Clock' ? '' : 'transparent';
-    a.webkitBackgroundClip = mode != 'Digital Clock' ? '' : 'text';
-    a.webkitTextFillColor = mode != 'Digital Clock' ? '' : 'transparent';
-    a.fontSize = mode != 'Digital Clock' ? '20px' : '50px';
-    a.animation = mode != 'Digital Clock' ? '' : 'clockGradient 2s linear infinite normal';
+
+    // Trust me this is the way
+    const buttonStyle = globals.upgradeButton.style;
+    if(mode === 'Digital Clock') {
+        buttonStyle.background = `linear-gradient(${GM_config.get('clockGradientAngle')}deg, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+        buttonStyle.backgroundSize = '200% 200%';
+        buttonStyle.backgroundClip = 'text';
+        buttonStyle.textFillColor = 'transparent';
+        buttonStyle.webkitBackgroundClip = 'text';
+        buttonStyle.webkitTextFillColor = 'transparent';
+        buttonStyle.fontSize = '50px';
+        const animation = GM_config.get('clockGradientAnimation');
+        if(animation === 'Horizontal') buttonStyle.animation = 'clockGradientHorizontal 2s linear infinite normal';
+        else if(animation === 'Vertical') buttonStyle.animation = 'clockGradientVertical 2s linear infinite normal';
+        else buttonStyle.animation = '';
+    }
+    else {
+        buttonStyle.background = '';
+        buttonStyle.backgroundSize = '';
+        buttonStyle.backgroundClip = '';
+        buttonStyle.textFillColor = '';
+        buttonStyle.webkitBackgroundClip = '';
+        buttonStyle.webkitTextFillColor = '';
+        buttonStyle.fontSize = '20px';
+    }
 }
 
 export function changeBackground(option, firstRun) {
@@ -68,16 +85,27 @@ export function changeBackground(option, firstRun) {
     }
     catch { }
     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-    addFancy(document.body.style, true);
-    addFancy(globals.playerPageDiv.style);
+    const animation = GM_config.get('bgGradientAnimation');
+    addFancy(document.body.style, true, animation);
+    addFancy(globals.playerPageDiv.style, false, animation);
 }
 
-export function addFancy(e, overflowOn) {
-    e.backgroundImage = `linear-gradient(45deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
-    e.animation = 'backgroundGradient 5s linear infinite alternate';
-    e.backgroundSize = '150% 150%';
+export function addFancy(e, overflowOn, animation) {
+    e.backgroundImage = `linear-gradient(${GM_config.get('bgGradientAngle')}deg, ${GM_config.get('bgColor')}, ${GM_config.get('bgEnableGradient') == true ? GM_config.get('bgGradient') : GM_config.get('bgColor')})`;
+    if(animation === 'Horizontal') {
+        e.backgroundSize = '200% 200%';
+        e.animation = 'backgroundGradientHorizontal 5s linear infinite alternate';
+    }
+    else if(animation === 'Vertical') {
+        e.backgroundSize = '200% 200%';
+        e.animation = 'backgroundGradientVertical 5s linear infinite alternate';
+    }
+    else {
+        e.backgroundSize = '100% 100%';
+        e.animation = '';
+        e.backgroundPosition = 'center center';
+    }
     e.backgroundAttachment = 'fixed';
-    // e.height = '100vh';
     if(overflowOn === false) e.overflow = 'hidden';
 }
 

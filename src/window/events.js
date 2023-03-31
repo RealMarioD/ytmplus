@@ -57,23 +57,40 @@ export function loadEvent() {
 
 function createGradientEffects() {
     const animation =
-        `@keyframes backgroundGradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            100% {
-                background-position: 100% 50%;
-            }
+    `@keyframes backgroundGradientHorizontal {
+        0% {
+            background-position: 0% center;
         }
-        @keyframes clockGradient {
-            from {
-                background-position: 0% center;
-            }
-            to {
-                background-position: 200% center;
-            }
-        }`;
+
+        100% {
+            background-position: 100% center;
+        }
+    }
+    @keyframes backgroundGradientVertical {
+        0% {
+            background-position: center 0%;
+        }
+
+        100% {
+            background-position: center 100%;
+        }
+    }
+    @keyframes clockGradientHorizontal {
+        from {
+            background-position: 0% center;
+        }
+        to {
+            background-position: 200% center;
+        }
+    }
+    @keyframes clockGradientVertical {
+        from {
+            background-position: center 0%;
+        }
+        to {
+            background-position: center 200%;
+        }
+    }`;
     injectStyle(animation);
 }
 

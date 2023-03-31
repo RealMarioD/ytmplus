@@ -67,6 +67,19 @@ export const configFields = {
         type: 'color',
         default: '#0000AA'
     },
+    bgGradientAngle: {
+        label: fieldTexts.bgGradientAngle[langOption],
+        type: 'int',
+        min: -360,
+        max: 360,
+        default: 45
+    },
+    bgGradientAnimation: {
+        label: fieldTexts.bgGradientAnimation[langOption],
+        type: 'select',
+        options: ['Disabled', 'Horizontal', 'Vertical'],
+        default: true
+    },
     clock: {
         label: fieldTexts.clock[langOption],
         section: fieldTexts.clockSection[langOption],
@@ -88,6 +101,19 @@ export const configFields = {
         label: fieldTexts.clockGradientColor[langOption],
         type: 'color',
         default: '#3333AA'
+    },
+    clockGradientAngle: {
+        label: fieldTexts.clockGradientAngle[langOption],
+        type: 'int',
+        min: -360,
+        max: 360,
+        default: 90
+    },
+    clockGradientAnimation: {
+        label: fieldTexts.clockGradientAnimation[langOption],
+        type: 'select',
+        options: ['Disabled', 'Horizontal', 'Vertical'],
+        default: 'Horizontal'
     },
     visualizerPlace: {
         label: fieldTexts.visualizerPlace[langOption],
