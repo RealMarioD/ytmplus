@@ -159,6 +159,11 @@ export function removeThumbnail(turnOn) {
     }, 500);
 }
 
+export function swapMainPanelWithPlaylist(turnOn) {
+    if(turnOn) globals.mainPanel.parentNode.append(globals.mainPanel);
+    else globals.mainPanel.parentNode.prepend(globals.mainPanel);
+}
+
 export function averageOfArray(numbers) {
     let result = 0;
     for(let i = 0; i < numbers.length; i++) result += numbers[i];

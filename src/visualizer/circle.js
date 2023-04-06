@@ -29,8 +29,8 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
 function calculateBass() {
     values.bass = visualizer.audioData.slice(
-        ~~(visualizer.audioData.length * visualizer.bassBounce.sensitivityStart),
-        ~~(visualizer.audioData.length * visualizer.bassBounce.sensitivityEnd) + 1
+        ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityStart),
+        ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityEnd) + 1
     );
 
     if(visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
@@ -40,13 +40,14 @@ function calculateBass() {
 }
 
 function getRotationValue() {
-    const r = visualizer.rotate,
-        direction = (visualizer.rotateDirection === 'Clockwise') ? 1 : -1;
+    const direction = (visualizer.rotateDirection === 'Clockwise') ? 1 : -1;
 
-    if(r === 'Disabled') values.rotationValue = 0;
-    else if(r === 'On') values.rotationValue += 0.005 * direction;
-    else if(r === 'Reactive') values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction;
-    else if(r === 'Reactive (Bass)') values.rotationValue += (Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction;
+    switch(visualizer.rotate) {
+        case 'Disabled': default: { values.rotationValue = 0; } break;
+        case 'On': { values.rotationValue += 0.005 * direction; } break;
+        case 'Reactive': { values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
+        case 'Reactive (Bass)': { values.rotationValue += (Math.pow(values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
+    }
 }
 
 function drawArcs(backwards) {
@@ -61,8 +62,6 @@ function drawArcs(backwards) {
         }
 
         getBarColor(i);
-
-        if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
 
         if(visualizer.bassBounce.enabled === true) values.barHeight = visualizer.audioData[i] * values.heightModifier * values.reactiveBarHeightMultiplier;
         else values.barHeight = visualizer.audioData[i] * values.heightModifier * 0.5;

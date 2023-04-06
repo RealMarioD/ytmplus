@@ -46,6 +46,11 @@ export const configFields = {
         type: 'checkbox',
         default: true
     },
+    swapMainPanelWithPlaylist: {
+        label: fieldTexts.swapMainPanelWithPlaylist[langOption],
+        type: 'checkbox',
+        default: false
+    },
     bg: {
         label: fieldTexts.bg[langOption],
         section: fieldTexts.bgSection[langOption],
@@ -250,9 +255,9 @@ export const configFields = {
     visualizerSmoothing: {
         label: fieldTexts.visualizerSmoothing[langOption],
         type: 'float',
-        min: 0.0,
-        max: 1.0,
-        default: 0.5
+        min: 0,
+        max: 1,
+        default: 0.3
     },
     visualizerCutOff: {
         label: fieldTexts.visualizerCutOff[langOption],
@@ -271,9 +276,9 @@ export const configFields = {
     visualizerBassBounceSensitivityEnd: {
         label: fieldTexts.visualizerBassBounceSensitivityEnd[langOption],
         type: 'float',
-        min: 0.00001,
+        min: 0,
         max: 1,
-        default: 0.004
+        default: 0.0025
     },
     visualizerBassBounceDebug: {
         label: fieldTexts.visualizerBassBounceDebug[langOption],

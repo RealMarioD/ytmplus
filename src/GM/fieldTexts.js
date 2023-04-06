@@ -7,6 +7,7 @@ export const fieldTexts = {
     padding: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
     extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
     removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
+    swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
     bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
     bgSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
     bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },

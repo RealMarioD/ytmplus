@@ -67,7 +67,7 @@ function drawVisImage() {
     ctx.clip();
     if(hRatio === 1) ctx.drawImage(image, values.halfWidth - values.radius, values.halfHeight - values.radius, values.radius * 2, values.radius * 2);
     else if(quality === 'sddefault') {
-        const radiusMult = values.radius * 1.25;
+        const radiusMult = values.radius * 1.33;
         ctx.drawImage(image, values.halfWidth - radiusMult * wRatio, values.halfHeight - radiusMult, radiusMult * 2 * wRatio, radiusMult * 2);
     }
     else ctx.drawImage(image, values.halfWidth - values.radius * wRatio, values.halfHeight - values.radius, values.radius * 2 * wRatio, values.radius * 2);

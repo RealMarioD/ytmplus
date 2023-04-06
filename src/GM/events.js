@@ -1,5 +1,5 @@
 import { globals, visualizer } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, promoEnable, removeThumbnail, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
 import { getVideo, renderFrame } from '../visualizer/init';
 import { replaceImageURL } from '../visualizer/image';
 import { GM_config } from './GM_config';
@@ -143,6 +143,8 @@ export function saveEvent(oldVisPlace, newVisPlace) {
     fixLayout(GM_config.get('padding'));
 
     removeThumbnail(GM_config.get('removeThumbnail'));
+
+    swapMainPanelWithPlaylist(GM_config.get('swapMainPanelWithPlaylist'));
 
     oldVisPlace = visualizer.place;
     newVisPlace = GM_config.get('visualizerPlace');
