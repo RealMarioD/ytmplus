@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.4.0
+// @version      2.4.1
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -856,6 +856,7 @@ svg text {
             else if(image.src === currentURL)
                 return;
 
+            lastSavedVideoURL = currentVideoURL().href;
             finalize();
         }
 

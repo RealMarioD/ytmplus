@@ -63,7 +63,7 @@ function thumbnailEvent() {
             return;
         }
 
-        logplus(`lastSavedVideoURL: ${lastSavedVideoURL}`);
+        logplus(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
         imgLoaded = false;
         if(loadSD === true) {
             quality = 'sddefault';
@@ -77,6 +77,7 @@ function thumbnailEvent() {
         logplus('Image src is already thumbnail');
         return;
     }
+    lastSavedVideoURL = currentVideoURL().href;
     finalize();
 }
 
