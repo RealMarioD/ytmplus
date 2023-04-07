@@ -105,8 +105,13 @@ function createSettingsFrame() {
     const node = document.createElement('iframe');
     node.id = 'ytmPSettings';
     node.src = 'about:blank';
-    node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; z-index: 9999; overflow: hidden;';
-    document.body.appendChild(node);
+    node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; overflow: hidden;';
+    try {
+        document.getElementsByTagName('ytmusic-nav-bar')[0].appendChild(node);
+    }
+    catch {
+        document.body.appendChild(node);
+    }
     setTimeout(function() {
         const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
         frameDoc.body.innerHTML = settingsSVG;
@@ -121,4 +126,16 @@ function createSettingsFrame() {
             }
         });
     }, 500);
+
+    const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
+
+    const logoObserver = new MutationObserver(changes => {
+        changes.forEach(change => {
+            if(change.attributeName === 'logo-src') {
+                if(navbarLogo.logoSrc.endsWith('logo.svg')) node.style.left = '50px';
+                else node.style.left = '100px';
+            }
+        });
+    });
+    logoObserver.observe(navbarLogo, { attributes: true });
 }
