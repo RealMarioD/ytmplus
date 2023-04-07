@@ -1,7 +1,7 @@
 import { visualizer } from '../globals';
 import { getBarColor, values, ctx } from './init';
 import { averageOfArray } from '../utils';
-import { handleImage } from './image';
+import { imgLoaded, drawVisImage } from './image';
 
 export function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
     if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') values.circleSize = 2; // 2(pi) = full
@@ -12,7 +12,7 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
     getRotationValue();
 
-    if(visualizer.image.type !== 'Disabled') handleImage();
+    if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
     values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
     values.barWidth = values.barTotal * 0.45;
