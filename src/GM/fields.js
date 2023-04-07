@@ -44,7 +44,7 @@ export const configFields = {
     removeThumbnail: {
         label: fieldTexts.removeThumbnail[langOption],
         type: 'checkbox',
-        default: true
+        default: false
     },
     swapMainPanelWithPlaylist: {
         label: fieldTexts.swapMainPanelWithPlaylist[langOption],

@@ -1,4 +1,4 @@
-export const debugging = true;
+export const debugging = false;
 
 export function logplus(...logs) {
     if(debugging === false) return;
@@ -12,6 +12,10 @@ export function logplus(...logs) {
             logs.shift();
             for(const data of logs) console.warn('ytmPlus: ' + data);
             break;
+        }
+        case 'green': {
+            logs.shift();
+            for(const data of logs) console.log('%cytmPlus: ' + data, 'background: #006600'); break;
         }
         default: for(const data of logs) console.log('ytmPlus: ' + data); break;
     }

@@ -46,7 +46,7 @@ export function clockEnable(mode) {
     // Trust me this is the way
     const buttonStyle = globals.upgradeButton.style;
     if(mode === 'Digital Clock') {
-        buttonStyle.background = `linear-gradient(${GM_config.get('clockGradientAngle')}deg, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+        buttonStyle.background = `linear-gradient(${GM_config.get('clockGradientAngle')}deg, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%)`;
         buttonStyle.backgroundSize = '200% 200%';
         buttonStyle.backgroundClip = 'text';
         buttonStyle.textFillColor = 'transparent';
