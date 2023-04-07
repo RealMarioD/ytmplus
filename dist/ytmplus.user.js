@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.3.0
+// @version      2.4.0
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -369,7 +369,7 @@ svg text {
             removeThumbnail: {
                 label: fieldTexts.removeThumbnail[langOption],
                 type: 'checkbox',
-                default: true
+                default: false
             },
             swapMainPanelWithPlaylist: {
                 label: fieldTexts.swapMainPanelWithPlaylist[langOption],
@@ -619,32 +619,14 @@ svg text {
             }
         };
 
-        function logplus(...logs) {
-            switch(logs[0]) {
-                case 'error': {
-                    logs.shift();
-                    for(const data of logs) console.error('ytmPlus: ' + data);
-                    break;
-                }
-                case 'warn': {
-                    logs.shift();
-                    for(const data of logs) console.warn('ytmPlus: ' + data);
-                    break;
-                }
-                default: for(const data of logs) console.log('ytmPlus: ' + data); break;
-            }
-        }
-
         function promoEnable(turnOn) {
             let popup;
             clearInterval(globals.noPromoFunction);
             if(!turnOn) return;
             globals.noPromoFunction = setInterval(() => {
                 popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    logplus('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -653,7 +635,6 @@ svg text {
             if(!turnOn) return;
             globals.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                logplus('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -679,7 +660,7 @@ svg text {
             // Trust me this is the way
             const buttonStyle = globals.upgradeButton.style;
             if(mode === 'Digital Clock') {
-                buttonStyle.background = `linear-gradient(${GM_config.get('clockGradientAngle')}deg, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%`;
+                buttonStyle.background = `linear-gradient(${GM_config.get('clockGradientAngle')}deg, ${GM_config.get('clockColor')} 0%, ${GM_config.get('clockGradient') === true ? GM_config.get('clockGradientColor') : GM_config.get('clockColor')} 50%, ${GM_config.get('clockColor')} 100%)`;
                 buttonStyle.backgroundSize = '200% 200%';
                 buttonStyle.backgroundClip = 'text';
                 buttonStyle.textFillColor = 'transparent';
@@ -811,12 +792,19 @@ svg text {
         }
 
         const image = new Image(),
-            thumbnailChild = () => document.getElementById('thumbnail').firstElementChild,
-            currentSongURL = () => document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
-        let imgLoaded = false, fixedVideoURL, currentURL, wRatio, hRatio, loadSD, quality;
+            thumbnailChildSrc = () => {
+                try {
+                    return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src;
+                }
+                catch {
+                    return undefined;
+                }
+            },
+            currentVideoURL = () => document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+        let imgLoaded = false, lastSavedVideoURL, currentURL, wRatio, hRatio, loadSD, quality;
 
         image.onload = () => {
-            if(image.height < 100) {
+            if(quality === 'maxresdefault' && image.height < 100) { // loaded 404 maxresdefault
                 imgLoaded = false;
                 loadSD = true;
                 return replaceImageURL();
@@ -825,60 +813,98 @@ svg text {
             wRatio = image.width / image.height;
             imgLoaded = true;
         };
+
         image.onerror = () => {
-            logplus('warn', 'Visualizer Image couldn\'t be loaded.');
-            currentURL = 'https://imgur.com/Nkj0d6D.png';
-            visualizer.image.customURL = currentURL;
+            if(visualizer.image.type === 'Custom') ;
+            else
+                return;
+
+            visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
+            replaceImageURL();
         };
 
         const observer = new MutationObserver(changes => {
             changes.forEach(change => {
-                if(change.attributeName.includes('href')) replaceImageURL();
+                if(change.attributeName === 'href' && currentVideoURL().href != undefined) replaceImageURL();
             });
         });
-        setTimeout(() => {
-            logplus('Observer set to motion');
-            observer.observe(currentSongURL(), { attributes: true });
-        }, 1000);
+        setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
 
-        function replaceImageURL() {
-            if(visualizer.image.type === 'Thumbnail') {
-                currentURL = thumbnailChild().src;
-                if(currentURL.indexOf('data') === 0) {
-                    imgLoaded = false;
-                    fixedVideoURL = currentSongURL().href;
-                    if(loadSD === true) {
-                        quality = 'sddefault';
-                        logplus('warn', 'replaceImageURL called with loadSD: true');
-                    }
-                    else quality = 'maxresdefault';
-                    currentURL = `https://i.ytimg.com/vi/${fixedVideoURL.split('v=')[1]}/${quality}.jpg`;
-                    loadSD = false;
-                    logplus(fixedVideoURL, currentURL);
-                }
+        function thumbnailEvent() {
+            currentURL = thumbnailChildSrc();
+            if(!currentURL)
+                return;
+
+
+            if(currentURL.indexOf('data') === 0) {
+                if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
+                else if(loadSD === false && quality !== 'custom')
+                    return;
+
+
+                if(!lastSavedVideoURL)
+                    return;
+
+                imgLoaded = false;
+                if(loadSD === true)
+                    quality = 'sddefault';
+
+                else quality = 'maxresdefault';
+                currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
+                loadSD = false;
             }
-            else if(visualizer.image.type === 'Custom') currentURL = visualizer.image.customURL;
-            else return;
+            else if(image.src === currentURL)
+                return;
+
+            finalize();
+        }
+
+        function customEvent() {
+            if(currentURL === visualizer.image.customURL)
+                return;
+
+            currentURL = visualizer.image.customURL;
+            quality = 'custom';
+            finalize();
+        }
+
+        function finalize() {
             imgLoaded = false;
             image.src = currentURL;
         }
 
-        function handleImage() {
-            if(imgLoaded === true) drawVisImage();
+        function replaceImageURL() {
+            if(visualizer.image.type === 'Thumbnail') thumbnailEvent();
+            else if(visualizer.image.type === 'Custom') customEvent();
         }
 
+        const PI2 = Math.PI * 2;
         function drawVisImage() {
             ctx.save();
             ctx.beginPath();
-            ctx.arc(values.WIDTH / 2, values.HEIGHT / 2, values.radius, 0, Math.PI * 2, true);
+            ctx.arc(values.halfWidth, values.halfHeight, values.radius, 0, PI2, true);
             ctx.closePath();
             ctx.clip();
-            if(hRatio === 1) ctx.drawImage(image, values.halfWidth - values.radius, values.halfHeight - values.radius, values.radius * 2, values.radius * 2);
-            else if(quality === 'sddefault') {
-                const radiusMult = values.radius * 1.33;
-                ctx.drawImage(image, values.halfWidth - radiusMult * wRatio, values.halfHeight - radiusMult, radiusMult * 2 * wRatio, radiusMult * 2);
+
+            let radiusMultX = values.radius, radiusMultY = 1; // default values for 1:1 aspect ratio
+
+            if(quality === 'sddefault') { // enlarge image to cut off "cinematic bars"
+                radiusMultX *= 1.33;
+                radiusMultY = wRatio;
             }
-            else ctx.drawImage(image, values.halfWidth - values.radius * wRatio, values.halfHeight - values.radius, values.radius * 2 * wRatio, values.radius * 2);
+            else if(hRatio > 1) { // vertical img handling
+                radiusMultX *= hRatio;
+                radiusMultY = wRatio;
+            }
+            else radiusMultY *= wRatio; // horizontal img handling
+
+            ctx.drawImage(
+                image,
+                values.halfWidth - radiusMultX * radiusMultY,
+                values.halfHeight - radiusMultX,
+                radiusMultX * 2 * radiusMultY,
+                radiusMultX * 2
+            );
             ctx.restore();
         }
 
@@ -891,7 +917,7 @@ svg text {
 
             getRotationValue();
 
-            if(visualizer.image.type !== 'Disabled') handleImage();
+            if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
             values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
             values.barWidth = values.barTotal * 0.45;
@@ -1060,10 +1086,8 @@ svg text {
         function getVideo() {
             video = document.querySelector('video');
             if(video) startVisualizer();
-            else {
-                logplus('warn', 'Query "video" not found, retrying in 100ms.');
+            else
                 setTimeout(getVideo, 100);
-            }
         }
 
         const values = {
@@ -1615,8 +1639,13 @@ svg text {
             const node = document.createElement('iframe');
             node.id = 'ytmPSettings';
             node.src = 'about:blank';
-            node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; z-index: 9999; overflow: hidden;';
-            document.body.appendChild(node);
+            node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; overflow: hidden;';
+            try {
+                document.getElementsByTagName('ytmusic-nav-bar')[0].appendChild(node);
+            }
+            catch {
+                document.body.appendChild(node);
+            }
             setTimeout(function() {
                 const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
                 frameDoc.body.innerHTML = settingsSVG;
@@ -1631,6 +1660,18 @@ svg text {
                     }
                 });
             }, 500);
+
+            const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
+
+            const logoObserver = new MutationObserver(changes => {
+                changes.forEach(change => {
+                    if(change.attributeName === 'logo-src') {
+                        if(navbarLogo.logoSrc.endsWith('logo.svg')) node.style.left = '50px';
+                        else node.style.left = '100px';
+                    }
+                });
+            });
+            logoObserver.observe(navbarLogo, { attributes: true });
         }
 
         window.addEventListener('keydown', (ev) => keydownEvent(ev));
