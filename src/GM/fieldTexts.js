@@ -48,7 +48,7 @@ export const fieldTexts = {
     visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
     visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
     visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
-    visualizerSmoothing: { english: 'Smoothing Time Constant', hungarian: 'Simítási időállandó' },
+    visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
     visualizerCutOff: { english: 'AudioData End Cutoff', hungarian: 'AudioData Vég Levágás' },
     visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
     visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
