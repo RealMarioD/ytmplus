@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.4.1
+// @version      2.4.2
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -317,7 +317,7 @@ svg text {
             visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
             visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
             visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
-            visualizerSmoothing: { english: 'Smoothing Time Constant', hungarian: 'Simítási időállandó' },
+            visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
             visualizerCutOff: { english: 'AudioData End Cutoff', hungarian: 'AudioData Vég Levágás' },
             visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
             visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
@@ -741,13 +741,16 @@ svg text {
 
         function extraButtons(turnOn) {
             const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+            const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
             if(!turnOn) {
                 playbackButtons[1].hidden = true;
                 playbackButtons[4].hidden = true;
+                playbackRateButton.hidden = true;
             }
             else {
                 playbackButtons[1].hidden = false;
                 playbackButtons[4].hidden = false;
+                playbackRateButton.hidden = false;
             }
         }
 
@@ -773,9 +776,19 @@ svg text {
             }, 500);
         }
 
-        function swapMainPanelWithPlaylist(turnOn) {
-            if(turnOn) globals.mainPanel.parentNode.append(globals.mainPanel);
-            else globals.mainPanel.parentNode.prepend(globals.mainPanel);
+        async function swapMainPanelWithPlaylist(turnOn) {
+            if(turnOn) {
+                if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) return;
+                await globals.mainPanel.parentNode.append(globals.mainPanel);
+                globals.mainPanel.style.flexDirection = 'row-reverse';
+                globals.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
+            }
+            else {
+                if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) return;
+                await globals.mainPanel.parentNode.prepend(globals.mainPanel);
+                globals.mainPanel.style.flexDirection = 'row';
+                globals.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
+            }
         }
 
         function averageOfArray(numbers) {
@@ -1577,6 +1590,8 @@ svg text {
 
                 globals.player = document.getElementById('player');
                 removeThumbnail(GM_config.get('removeThumbnail'));
+
+                swapMainPanelWithPlaylist(GM_config.get('swapMainPanelWithPlaylist'));
             }, 500);
 
 
