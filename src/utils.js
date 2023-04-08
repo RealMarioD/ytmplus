@@ -127,13 +127,16 @@ export function skipDisliked(turnOn) {
 
 export function extraButtons(turnOn) {
     const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+    const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
     if(!turnOn) {
         playbackButtons[1].hidden = true;
         playbackButtons[4].hidden = true;
+        playbackRateButton.hidden = true;
     }
     else {
         playbackButtons[1].hidden = false;
         playbackButtons[4].hidden = false;
+        playbackRateButton.hidden = false;
     }
 }
 
@@ -159,9 +162,19 @@ export function removeThumbnail(turnOn) {
     }, 500);
 }
 
-export function swapMainPanelWithPlaylist(turnOn) {
-    if(turnOn) globals.mainPanel.parentNode.append(globals.mainPanel);
-    else globals.mainPanel.parentNode.prepend(globals.mainPanel);
+export async function swapMainPanelWithPlaylist(turnOn) {
+    if(turnOn) {
+        if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) return;
+        await globals.mainPanel.parentNode.append(globals.mainPanel);
+        globals.mainPanel.style.flexDirection = 'row-reverse';
+        globals.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
+    }
+    else {
+        if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) return;
+        await globals.mainPanel.parentNode.prepend(globals.mainPanel);
+        globals.mainPanel.style.flexDirection = 'row';
+        globals.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
+    }
 }
 
 export function averageOfArray(numbers) {

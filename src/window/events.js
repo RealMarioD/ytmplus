@@ -1,5 +1,5 @@
 import { globals } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectStyle, promoEnable, removeThumbnail, skipDisliked } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectStyle, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
@@ -42,6 +42,8 @@ export function loadEvent() {
 
         globals.player = document.getElementById('player');
         removeThumbnail(GM_config.get('removeThumbnail'));
+
+        swapMainPanelWithPlaylist(GM_config.get('swapMainPanelWithPlaylist'));
     }, 500);
 
 
