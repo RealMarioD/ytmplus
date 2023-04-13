@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.5.0
+// @version      2.5.1
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -13,7 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-const vNumber = 'v2.5.0';
+const vNumber = 'v2.5.1';
 try {
     (function() {
         'use strict';
@@ -81,6 +81,8 @@ textarea::-webkit-scrollbar {
 }
 #ytmPlusCfg #ytmPlusCfg_header {
     background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
+    display: flex;
+    flex-direction: column;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: auto 0;
@@ -584,7 +586,7 @@ svg text {
                 type: 'int',
                 min: 1,
                 max: 44100,
-                default: 30000
+                default: 18450
             },
             visualizerBassBounceMinHertz: {
                 label: fieldTexts.visualizerBassBounceMinHertz[langOption],
@@ -598,7 +600,7 @@ svg text {
                 type: 'float',
                 min: 1,
                 max: 44100,
-                default: 110
+                default: 100
             },
             visualizerBassBounceDebug: {
                 label: fieldTexts.visualizerBassBounceDebug[langOption],
@@ -797,6 +799,17 @@ svg text {
             const textNode = document.createTextNode(css);
             node.appendChild(textNode);
             document.head.appendChild(node);
+        }
+
+        function injectElement(type, id, wrapperElm, targetDoc, customStyle) {
+            const node = targetDoc.createElement(type);
+            node.id = id;
+            if(customStyle) node.style = customStyle;
+            if(!wrapperElm)
+                return;
+
+            wrapperElm.appendChild(node);
+            return node;
         }
 
         const image = new Image(),
@@ -1254,7 +1267,7 @@ svg text {
             else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
             else ctx.fillStyle = visualizer.color;
 
-            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= visualizer.bassBounce._barStart) ctx.fillStyle = '#FFF';
+            if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) ctx.fillStyle = '#FFF';
         }
 
         function stylizeConfigWindow(doc, frame) {
@@ -1288,18 +1301,11 @@ svg text {
         </g>
     </svg>`;
 
-        function injectElement(type, id, wrapperId, doc) {
-            const node = doc.createElement(type);
-            node.id = id;
-            const wrapper = doc.getElementById(wrapperId);
-            if(!wrapper) throw new Error(`Wrapper Error: no element with id "${wrapperId}"`);
-            wrapper.appendChild(node);
-            return node;
-        }
-
         function manageUIv2(doc) {
-        // Create categorySelect buttons
-            const categorySelect = injectElement('div', 'categorySelect', 'ytmPlusCfg_wrapper', doc);
+            const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+
+            // Get all categories and make category names into buttons
+            const categorySelect = injectElement('div', 'categorySelect', wrapper, doc);
             const categories = doc.getElementsByClassName('section_header_holder');
             for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
@@ -1317,9 +1323,7 @@ svg text {
                 });
             }
 
-            const currentSettings = injectElement('div', 'currentSettings', 'ytmPlusCfg_wrapper', doc);
-
-            const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+            const currentSettings = injectElement('div', 'currentSettings', wrapper, doc);
             categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
             categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 3]); // Put save/close buttons into categorySelect
             const resetDiv = doc.getElementsByClassName('reset_holder block')[0];
@@ -1404,10 +1408,10 @@ svg text {
             newVisPlace = GM_config.get('visualizerPlace');
 
             if(newVisPlace !== 'Disabled') {
-                if(visualizer.analyser === undefined) return getVideo();
+                if(visualizer.analyser === undefined) return getVideo(); // visualizer was surely not turned on this session, start like usual
                 visualizer.getBufferData();
                 visualizer.initValues();
-                if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame);
+                if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame); // We have an analyser, visualizer was already initialized, resume
                 else replaceImageURL();
             }
             else visualizer.place = 'Disabled';
@@ -1478,8 +1482,9 @@ svg text {
                 _barStart: undefined,
                 _barEnd: undefined,
                 _calcBars() {
-                    this._barStart = Math.floor(visualizer.analyser.frequencyBinCount * (this.minHertz / 44100));
-                    this._barEnd = Math.ceil(visualizer.analyser.frequencyBinCount * (this.maxHertz / 44100));
+                    this._barStart = ~~(this.minHertz / (44100 / visualizer.analyser.fftSize));
+                    this._barEnd = ~~(this.maxHertz / (44100 / visualizer.analyser.fftSize));
+                    if(this._barEnd === 0) this._barEnd++;
                 }
             },
             keepHertz: undefined,
@@ -1491,7 +1496,7 @@ svg text {
             getBufferData() {
                 this.analyser.fftSize = GM_config.get('visualizerFft');
                 this.keepHertz = GM_config.get('visualizerKeepHertz');
-                this.bufferLength = ~~(this.analyser.frequencyBinCount * (this.keepHertz / 44100));
+                this.bufferLength = ~~(this.keepHertz / (44100 / visualizer.analyser.fftSize));
                 this.audioData = new Uint8Array(this.bufferLength);
             },
             /**
@@ -1572,7 +1577,7 @@ svg text {
             globals.navBarBg = document.getElementById('nav-bar-background');
             globals.mainPanel = document.getElementById('main-panel');
 
-            createGradientEffects();
+            injectStyle(animation);
 
             // Checking whether functions are turned on, enabling them if yes
             promoEnable(GM_config.get('noPromo'));
@@ -1609,93 +1614,92 @@ svg text {
             createSettingsFrame();
         }
 
-        function createGradientEffects() {
-            const animation =
-        `@keyframes backgroundGradientHorizontal {
-        0% {
-            background-position: 0% center;
-        }
-
-        100% {
-            background-position: 100% center;
-        }
+        const animation =
+`@keyframes backgroundGradientHorizontal {
+    0% {
+        background-position: 0% center;
     }
-    @keyframes backgroundGradientVertical {
-        0% {
-            background-position: center 0%;
-        }
 
-        100% {
-            background-position: center 100%;
-        }
+    100% {
+        background-position: 100% center;
     }
-    @keyframes clockGradientHorizontal {
-        from {
-            background-position: 0% center;
-        }
-        to {
-            background-position: 200% center;
-        }
+}
+@keyframes backgroundGradientVertical {
+    0% {
+        background-position: center 0%;
     }
-    @keyframes clockGradientVertical {
-        from {
-            background-position: center 0%;
-        }
-        to {
-            background-position: center 200%;
-        }
-    }`;
-            injectStyle(animation);
-        }
 
-        function createSettingsFrame() {
-            const ytmSettingsSvg = document.getElementById('settings').outerHTML;
+    100% {
+        background-position: center 100%;
+    }
+}
+@keyframes clockGradientHorizontal {
+    from {
+        background-position: 0% center;
+    }
+    to {
+        background-position: 200% center;
+    }
+}
+@keyframes clockGradientVertical {
+    from {
+        background-position: center 0%;
+    }
+    to {
+        background-position: center 200%;
+    }
+}`;
+
+        async function createSettingsFrame() {
+            const ytmSettingsSvg = document.getElementById('settings').outerHTML; // Steal YT settings icon
 
             const settingsSVG =
-        `<svg id="openSettings" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
+        `<svg id="settingsSVGButton" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
         ${ytmSettingsSvg}
     </svg>`;
 
-            const node = document.createElement('iframe');
-            node.id = 'ytmPSettings';
-            node.src = 'about:blank';
-            node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; overflow: hidden;';
-            try {
-                document.getElementsByTagName('ytmusic-nav-bar')[0].appendChild(node);
-            }
-            catch {
-                document.body.appendChild(node);
-            }
-            const cogAnim = [{ transform: 'rotate(90deg)' }, { transform: 'rotate(0)' }];
-            const cogAnimOptions = { duration: 100, direction: 'alternate', fill: 'forwards', iterations: 1 };
-            node.addEventListener('mouseenter', () => {
-                node.animate(cogAnim.reverse(), cogAnimOptions);
+            let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0];
+            if(!cogHolder) cogHolder = document.body;
+
+            injectStyle(
+                `#cogRotator {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            left: 100px;
+            opacity: 1;
+            transform: rotate(0);
+            filter: drop-shadow(0px 0px 0px #ff00ff);
+            transition: 0.15s ease-in-out;
+        }
+        #cogRotator:hover {
+            transform: rotate(90deg);
+            filter: drop-shadow(0px 0px 8px #ff00ff);
+        }`
+            );
+            const cogRotator = injectElement('div', 'cogRotator', cogHolder, document);
+            cogRotator.innerHTML = settingsSVG;
+
+            const settingsSVGButton = document.getElementById('settingsSVGButton');
+
+            settingsSVGButton.addEventListener('click', () => {
+                if(globals.settingsOpen === false) {
+                    GM_config.open();
+                    globals.settingsOpen = true;
+                }
+                else {
+                    GM_config.close();
+                    globals.settingsOpen = false;
+                }
             });
-            node.addEventListener('mouseleave', () => {
-                node.animate(cogAnim.reverse(), cogAnimOptions);
-            });
-            setTimeout(function() {
-                const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
-                frameDoc.body.innerHTML = settingsSVG;
-                frameDoc.getElementById('openSettings').addEventListener('click', () => {
-                    if(globals.settingsOpen === false) {
-                        GM_config.open();
-                        globals.settingsOpen = true;
-                    }
-                    else {
-                        GM_config.close();
-                        globals.settingsOpen = false;
-                    }
-                });
-            }, 500);
 
             const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
-
+            // If window width is too thin, navbarLogo.logoSrc ends width logo.svg, if it does, move back cog to look good
             const logoObserver = new MutationObserver(changes => {
                 changes.forEach(change => {
                     if(change.attributeName === 'logo-src') {
-                        if(navbarLogo.logoSrc.endsWith('logo.svg')) node.style.left = '50px';
-                        else node.style.left = '100px';
+                        if(navbarLogo.logoSrc.endsWith('logo.svg')) cogRotator.style.left = '50px';
+                        else cogRotator.style.left = '100px';
                     }
                 });
             });
