@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.4.2
+// @version      2.5.0
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
-// @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
-// @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/ytmplus.user.js
+// @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/dist/ytmplus.user.js
+// @downloadURL  https://github.com/RealMarioD/ytmplus/raw/main/dist/ytmplus.user.js
 // @description  ytmPlus is a userscript that adds multiple visual customizations to YouTube Music.
 // @match        https://music.youtube.com/*
 // @icon         https://imgur.com/gfg6VLJ.png
@@ -13,13 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-
-/**
- * == WARNING ==
- * This script was built by Rollup. It is not recommended to make changes in this file.
- * Visit the GitHub repo (https://github.com/RealMarioD/ytmplus), clone it, make changes then build the script.
- * Otherwise, have fun.
- */
+const vNumber = 'v2.5.0';
 try {
     (function() {
         'use strict';
@@ -183,7 +177,7 @@ svg {
     margin: auto;
 }
 svg text {
-    font-size: 8.5vh;
+    font-size: 9vh;
     animation: stroke 10s infinite alternate linear;
     stroke-width: 2;
     stroke: #aa0000;
@@ -254,6 +248,7 @@ svg text {
     animation: buttonBorder 0.5s infinite forwards linear;
 }
 #currentSettings {
+    width: -moz-available;
     width: -webkit-fill-available;
     overflow: overlay;
     justify-content: center;
@@ -318,9 +313,9 @@ svg text {
             visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
             visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
             visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
-            visualizerCutOff: { english: 'AudioData End Cutoff', hungarian: 'AudioData Vég Levágás' },
-            visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
-            visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
+            visualizerKeepHertz: { english: 'AudioData Max Hertz', hungarian: 'AudioData Max Hertz' },
+            visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
+            visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
             visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
             visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' }
         };
@@ -408,7 +403,7 @@ svg text {
                 label: fieldTexts.bgGradientAnimation[langOption],
                 type: 'select',
                 options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: true
+                default: 'Horizontal'
             },
             clock: {
                 label: fieldTexts.clock[langOption],
@@ -584,26 +579,26 @@ svg text {
                 max: 1,
                 default: 0.3
             },
-            visualizerCutOff: {
-                label: fieldTexts.visualizerCutOff[langOption],
-                type: 'float',
-                min: 0,
-                max: 0.9999,
-                default: 0.1625
+            visualizerKeepHertz: {
+                label: fieldTexts.visualizerKeepHertz[langOption],
+                type: 'int',
+                min: 1,
+                max: 44100,
+                default: 30000
             },
-            visualizerBassBounceSensitivityStart: {
-                label: fieldTexts.visualizerBassBounceSensitivityStart[langOption],
+            visualizerBassBounceMinHertz: {
+                label: fieldTexts.visualizerBassBounceMinHertz[langOption],
                 type: 'float',
                 min: 0,
-                max: 1,
+                max: 44100,
                 default: 0
             },
-            visualizerBassBounceSensitivityEnd: {
-                label: fieldTexts.visualizerBassBounceSensitivityEnd[langOption],
+            visualizerBassBounceMaxHertz: {
+                label: fieldTexts.visualizerBassBounceMaxHertz[langOption],
                 type: 'float',
-                min: 0,
-                max: 1,
-                default: 0.0025
+                min: 1,
+                max: 44100,
+                default: 110
             },
             visualizerBassBounceDebug: {
                 label: fieldTexts.visualizerBassBounceDebug[langOption],
@@ -933,7 +928,8 @@ svg text {
 
             if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-            values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
+
+            values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
             values.barWidth = values.barTotal * 0.45;
             // No need for barSpace
             values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
@@ -948,8 +944,8 @@ svg text {
 
         function calculateBass() {
             values.bass = visualizer.audioData.slice(
-                ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityStart),
-                ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityEnd) + 1
+                visualizer.bassBounce._barStart,
+                visualizer.bassBounce._barEnd
             );
 
             if(visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
@@ -975,7 +971,7 @@ svg text {
             ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
 
             for(let i = 0; i < visualizer.bufferLength; ++i) {
-                if(i === 0 && backwards === true) {
+                if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
                     ctx.rotate(-values.barTotal);
                     continue;
                 }
@@ -1258,7 +1254,7 @@ svg text {
             else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
             else ctx.fillStyle = visualizer.color;
 
-            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+            if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= visualizer.bassBounce._barStart) ctx.fillStyle = '#FFF';
         }
 
         function stylizeConfigWindow(doc, frame) {
@@ -1370,7 +1366,8 @@ svg text {
 
             // Header title svg
             const title = doc.getElementById('ytmPlusCfg_header');
-            title.innerHTML = titleSVG;
+            // eslint-disable-next-line no-undef
+            title.innerHTML = titleSVG + `<span style="-webkit-text-fill-color: white">${vNumber}</span>`; // vNumber hacked in with metadataBuilder
 
             doc.addEventListener('keydown', event => {
                 if(event.key == 'Escape') GM_config.close();
@@ -1474,12 +1471,18 @@ svg text {
             },
             bassBounce: {
                 enabled: undefined,
-                sensitivityStart: undefined,
-                sensitivityEnd: undefined,
+                minHertz: undefined,
+                maxHertz: undefined,
                 smooth: undefined,
-                debug: undefined
+                debug: undefined,
+                _barStart: undefined,
+                _barEnd: undefined,
+                _calcBars() {
+                    this._barStart = Math.floor(visualizer.analyser.frequencyBinCount * (this.minHertz / 44100));
+                    this._barEnd = Math.ceil(visualizer.analyser.frequencyBinCount * (this.maxHertz / 44100));
+                }
             },
-            cutOff: undefined,
+            keepHertz: undefined,
             colorDivergence: undefined,
             analyser: undefined,
             bufferLength: undefined,
@@ -1487,8 +1490,8 @@ svg text {
             resizeInterval: undefined,
             getBufferData() {
                 this.analyser.fftSize = GM_config.get('visualizerFft');
-                this.cutOff = GM_config.get('visualizerCutOff');
-                this.bufferLength = this.analyser.frequencyBinCount - Math.floor(this.analyser.frequencyBinCount * this.cutOff); // We cut off the end because data is 0, making visualizer's end flat
+                this.keepHertz = GM_config.get('visualizerKeepHertz');
+                this.bufferLength = ~~(this.analyser.frequencyBinCount * (this.keepHertz / 44100));
                 this.audioData = new Uint8Array(this.bufferLength);
             },
             /**
@@ -1522,6 +1525,7 @@ svg text {
                         this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
                         this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
                         this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
+                        this.bassBounce._calcBars();
                     }
 
                     this.colorDivergence = this.bufferLength / this.rgb.samples;
@@ -1662,6 +1666,14 @@ svg text {
             catch {
                 document.body.appendChild(node);
             }
+            const cogAnim = [{ transform: 'rotate(90deg)' }, { transform: 'rotate(0)' }];
+            const cogAnimOptions = { duration: 100, direction: 'alternate', fill: 'forwards', iterations: 1 };
+            node.addEventListener('mouseenter', () => {
+                node.animate(cogAnim.reverse(), cogAnimOptions);
+            });
+            node.addEventListener('mouseleave', () => {
+                node.animate(cogAnim.reverse(), cogAnimOptions);
+            });
             setTimeout(function() {
                 const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
                 frameDoc.body.innerHTML = settingsSVG;
