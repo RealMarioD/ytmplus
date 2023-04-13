@@ -114,6 +114,14 @@ function createSettingsFrame() {
     catch {
         document.body.appendChild(node);
     }
+    const cogAnim = [{ transform: 'rotate(90deg)' }, { transform: 'rotate(0)' }];
+    const cogAnimOptions = { duration: 100, direction: 'alternate', fill: 'forwards', iterations: 1 };
+    node.addEventListener('mouseenter', () => {
+        node.animate(cogAnim.reverse(), cogAnimOptions);
+    });
+    node.addEventListener('mouseleave', () => {
+        node.animate(cogAnim.reverse(), cogAnimOptions);
+    });
     setTimeout(function() {
         const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
         frameDoc.body.innerHTML = settingsSVG;
