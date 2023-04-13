@@ -61,6 +61,8 @@ textarea::-webkit-scrollbar {
 }
 #ytmPlusCfg #ytmPlusCfg_header {
     background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
+    display: flex;
+    flex-direction: column;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: auto 0;

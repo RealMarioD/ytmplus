@@ -189,3 +189,15 @@ export function injectStyle(css) {
     node.appendChild(textNode);
     document.head.appendChild(node);
 }
+
+export function injectElement(type, id, wrapperElm, targetDoc, customStyle) {
+    const node = targetDoc.createElement(type);
+    node.id = id;
+    if(customStyle) node.style = customStyle;
+    if(!wrapperElm) {
+        logplus('error', 'injectElement: Wrapper is undefined');
+        return;
+    }
+    wrapperElm.appendChild(node);
+    return node;
+}

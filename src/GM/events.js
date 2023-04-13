@@ -1,5 +1,5 @@
 import { globals, visualizer } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectElement, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
 import { getVideo, renderFrame } from '../visualizer/init';
 import { replaceImageURL } from '../visualizer/image';
 import { GM_config } from './GM_config';
@@ -35,18 +35,11 @@ const titleSVG = // viewBox="0 0 613 99"
         </g>
     </svg>`;
 
-function injectElement(type, id, wrapperId, doc) {
-    const node = doc.createElement(type);
-    node.id = id;
-    const wrapper = doc.getElementById(wrapperId);
-    if(!wrapper) throw new Error(`Wrapper Error: no element with id "${wrapperId}"`);
-    wrapper.appendChild(node);
-    return node;
-}
-
 function manageUIv2(doc) {
-    // Create categorySelect buttons
-    const categorySelect = injectElement('div', 'categorySelect', 'ytmPlusCfg_wrapper', doc);
+    const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+
+    // Get all categories and make category names into buttons
+    const categorySelect = injectElement('div', 'categorySelect', wrapper, doc);
     const categories = doc.getElementsByClassName('section_header_holder');
     for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
@@ -64,9 +57,7 @@ function manageUIv2(doc) {
         });
     }
 
-    const currentSettings = injectElement('div', 'currentSettings', 'ytmPlusCfg_wrapper', doc);
-
-    const wrapper = doc.getElementById('ytmPlusCfg_wrapper');
+    const currentSettings = injectElement('div', 'currentSettings', wrapper, doc);
     categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
     categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 3]); // Put save/close buttons into categorySelect
     const resetDiv = doc.getElementsByClassName('reset_holder block')[0];
@@ -151,10 +142,10 @@ export function saveEvent(oldVisPlace, newVisPlace) {
     newVisPlace = GM_config.get('visualizerPlace');
 
     if(newVisPlace !== 'Disabled') {
-        if(visualizer.analyser === undefined) return getVideo();
+        if(visualizer.analyser === undefined) return getVideo(); // visualizer was surely not turned on this session, start like usual
         visualizer.getBufferData();
         visualizer.initValues();
-        if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame);
+        if(oldVisPlace === 'Disabled') requestAnimationFrame(renderFrame); // We have an analyser, visualizer was already initialized, resume
         else replaceImageURL();
     }
     else visualizer.place = 'Disabled';

@@ -1,5 +1,5 @@
 import { globals } from '../globals';
-import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectStyle, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
+import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectElement, injectStyle, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
 import { getVideo } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
@@ -20,7 +20,7 @@ export function loadEvent() {
     globals.navBarBg = document.getElementById('nav-bar-background');
     globals.mainPanel = document.getElementById('main-panel');
 
-    createGradientEffects();
+    injectStyle(animation);
 
     // Checking whether functions are turned on, enabling them if yes
     promoEnable(GM_config.get('noPromo'));
@@ -57,93 +57,92 @@ export function loadEvent() {
     createSettingsFrame();
 }
 
-function createGradientEffects() {
-    const animation =
-    `@keyframes backgroundGradientHorizontal {
-        0% {
-            background-position: 0% center;
-        }
+const animation =
+`@keyframes backgroundGradientHorizontal {
+    0% {
+        background-position: 0% center;
+    }
 
-        100% {
-            background-position: 100% center;
-        }
+    100% {
+        background-position: 100% center;
     }
-    @keyframes backgroundGradientVertical {
-        0% {
-            background-position: center 0%;
-        }
-
-        100% {
-            background-position: center 100%;
-        }
-    }
-    @keyframes clockGradientHorizontal {
-        from {
-            background-position: 0% center;
-        }
-        to {
-            background-position: 200% center;
-        }
-    }
-    @keyframes clockGradientVertical {
-        from {
-            background-position: center 0%;
-        }
-        to {
-            background-position: center 200%;
-        }
-    }`;
-    injectStyle(animation);
 }
+@keyframes backgroundGradientVertical {
+    0% {
+        background-position: center 0%;
+    }
 
-function createSettingsFrame() {
-    const ytmSettingsSvg = document.getElementById('settings').outerHTML;
+    100% {
+        background-position: center 100%;
+    }
+}
+@keyframes clockGradientHorizontal {
+    from {
+        background-position: 0% center;
+    }
+    to {
+        background-position: 200% center;
+    }
+}
+@keyframes clockGradientVertical {
+    from {
+        background-position: center 0%;
+    }
+    to {
+        background-position: center 200%;
+    }
+}`;
+
+async function createSettingsFrame() {
+    const ytmSettingsSvg = document.getElementById('settings').outerHTML; // Steal YT settings icon
 
     const settingsSVG =
-    `<svg id="openSettings" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
+    `<svg id="settingsSVGButton" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
         ${ytmSettingsSvg}
     </svg>`;
 
-    const node = document.createElement('iframe');
-    node.id = 'ytmPSettings';
-    node.src = 'about:blank';
-    node.style = 'top: 7px; left: 100px; height: 50px; opacity: 1; overflow: auto; padding: 0px; position: fixed; width: 50px; overflow: hidden;';
-    try {
-        document.getElementsByTagName('ytmusic-nav-bar')[0].appendChild(node);
-    }
-    catch {
-        document.body.appendChild(node);
-    }
-    const cogAnim = [{ transform: 'rotate(90deg)' }, { transform: 'rotate(0)' }];
-    const cogAnimOptions = { duration: 100, direction: 'alternate', fill: 'forwards', iterations: 1 };
-    node.addEventListener('mouseenter', () => {
-        node.animate(cogAnim.reverse(), cogAnimOptions);
+    let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0];
+    if(!cogHolder) cogHolder = document.body;
+
+    injectStyle(
+        `#cogRotator {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            left: 100px;
+            opacity: 1;
+            transform: rotate(0);
+            filter: drop-shadow(0px 0px 0px #ff00ff);
+            transition: 0.15s ease-in-out;
+        }
+        #cogRotator:hover {
+            transform: rotate(90deg);
+            filter: drop-shadow(0px 0px 8px #ff00ff);
+        }`
+    );
+    const cogRotator = injectElement('div', 'cogRotator', cogHolder, document);
+    cogRotator.innerHTML = settingsSVG;
+
+    const settingsSVGButton = document.getElementById('settingsSVGButton');
+
+    settingsSVGButton.addEventListener('click', () => {
+        if(globals.settingsOpen === false) {
+            GM_config.open();
+            globals.settingsOpen = true;
+        }
+        else {
+            GM_config.close();
+            globals.settingsOpen = false;
+        }
     });
-    node.addEventListener('mouseleave', () => {
-        node.animate(cogAnim.reverse(), cogAnimOptions);
-    });
-    setTimeout(function() {
-        const frameDoc = document.getElementById('ytmPSettings').contentWindow.document;
-        frameDoc.body.innerHTML = settingsSVG;
-        frameDoc.getElementById('openSettings').addEventListener('click', () => {
-            if(globals.settingsOpen === false) {
-                GM_config.open();
-                globals.settingsOpen = true;
-            }
-            else {
-                GM_config.close();
-                globals.settingsOpen = false;
-            }
-        });
-    }, 500);
 
     const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
-
+    // If window width is too thin, navbarLogo.logoSrc ends width logo.svg, if it does, move back cog to look good
     const logoObserver = new MutationObserver(changes => {
         changes.forEach(change => {
             if(change.attributeName === 'logo-src') {
-                if(navbarLogo.logoSrc.endsWith('logo.svg')) node.style.left = '50px';
-                else node.style.left = '100px';
+                if(navbarLogo.logoSrc.endsWith('logo.svg')) cogRotator.style.left = '50px';
+                else cogRotator.style.left = '100px';
             }
         });
     });
