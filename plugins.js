@@ -51,3 +51,24 @@ export function checkDebug() {
         }
     };
 }
+
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+export function metadataBuilder() {
+    const metadata = `// ==UserScript==
+// @name         ${pkg.metaname}
+// @version      ${pkg.version}
+// @author       ${pkg.author}
+// @license      ${pkg.license}
+// @namespace    ${pkg.namespace}
+// @updateURL    ${pkg.updateURL}
+// @downloadURL  ${pkg.downloadURL}
+// @description  ${pkg.description}
+// @match        ${pkg.match}
+// @icon         ${pkg.icon}
+// @require      ${pkg.require}
+${pkg.grant.map(perm => `// @grant        ${perm}`).join('\n')}
+// ==/UserScript==
+const vNumber = 'v${pkg.version}';
+`;
+    return metadata;
+}

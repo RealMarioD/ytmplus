@@ -157,7 +157,7 @@ svg {
     margin: auto;
 }
 svg text {
-    font-size: 8.5vh;
+    font-size: 9vh;
     animation: stroke 10s infinite alternate linear;
     stroke-width: 2;
     stroke: #aa0000;
@@ -228,6 +228,7 @@ svg text {
     animation: buttonBorder 0.5s infinite forwards linear;
 }
 #currentSettings {
+    width: -moz-available;
     width: -webkit-fill-available;
     overflow: overlay;
     justify-content: center;
