@@ -83,7 +83,7 @@ export const configFields = {
         label: fieldTexts.bgGradientAnimation[langOption],
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
-        default: true
+        default: 'Horizontal'
     },
     clock: {
         label: fieldTexts.clock[langOption],
@@ -259,26 +259,26 @@ export const configFields = {
         max: 1,
         default: 0.3
     },
-    visualizerCutOff: {
-        label: fieldTexts.visualizerCutOff[langOption],
-        type: 'float',
-        min: 0,
-        max: 0.9999,
-        default: 0.1625
+    visualizerKeepHertz: {
+        label: fieldTexts.visualizerKeepHertz[langOption],
+        type: 'int',
+        min: 1,
+        max: 44100,
+        default: 30000
     },
-    visualizerBassBounceSensitivityStart: {
-        label: fieldTexts.visualizerBassBounceSensitivityStart[langOption],
+    visualizerBassBounceMinHertz: {
+        label: fieldTexts.visualizerBassBounceMinHertz[langOption],
         type: 'float',
         min: 0,
-        max: 1,
+        max: 44100,
         default: 0
     },
-    visualizerBassBounceSensitivityEnd: {
-        label: fieldTexts.visualizerBassBounceSensitivityEnd[langOption],
+    visualizerBassBounceMaxHertz: {
+        label: fieldTexts.visualizerBassBounceMaxHertz[langOption],
         type: 'float',
-        min: 0,
-        max: 1,
-        default: 0.0025
+        min: 1,
+        max: 44100,
+        default: 110
     },
     visualizerBassBounceDebug: {
         label: fieldTexts.visualizerBassBounceDebug[langOption],

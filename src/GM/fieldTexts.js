@@ -49,9 +49,9 @@ export const fieldTexts = {
     visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
     visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
     visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
-    visualizerCutOff: { english: 'AudioData End Cutoff', hungarian: 'AudioData Vég Levágás' },
-    visualizerBassBounceSensitivityStart: { english: 'Bass Bounce Sensitivity Start', hungarian: 'Basszusugrálás Érzékenység Kezdőérték' },
-    visualizerBassBounceSensitivityEnd: { english: 'Bass Bounce Sensitivity End', hungarian: 'Basszusugrálás Érzékenység Végérték' },
+    visualizerKeepHertz: { english: 'AudioData Max Hertz', hungarian: 'AudioData Max Hertz' },
+    visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
+    visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
     visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
     visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' }
 };

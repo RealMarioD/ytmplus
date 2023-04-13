@@ -45,12 +45,18 @@ export const visualizer = {
     },
     bassBounce: {
         enabled: undefined,
-        sensitivityStart: undefined,
-        sensitivityEnd: undefined,
+        minHertz: undefined,
+        maxHertz: undefined,
         smooth: undefined,
-        debug: undefined
+        debug: undefined,
+        _barStart: undefined,
+        _barEnd: undefined,
+        _calcBars() {
+            this._barStart = Math.floor(visualizer.analyser.frequencyBinCount * (this.minHertz / 44100));
+            this._barEnd = Math.ceil(visualizer.analyser.frequencyBinCount * (this.maxHertz / 44100));
+        }
     },
-    cutOff: undefined,
+    keepHertz: undefined,
     colorDivergence: undefined,
     analyser: undefined,
     bufferLength: undefined,
@@ -58,8 +64,8 @@ export const visualizer = {
     resizeInterval: undefined,
     getBufferData() {
         this.analyser.fftSize = GM_config.get('visualizerFft');
-        this.cutOff = GM_config.get('visualizerCutOff');
-        this.bufferLength = this.analyser.frequencyBinCount - Math.floor(this.analyser.frequencyBinCount * this.cutOff); // We cut off the end because data is 0, making visualizer's end flat
+        this.keepHertz = GM_config.get('visualizerKeepHertz');
+        this.bufferLength = ~~(this.analyser.frequencyBinCount * (this.keepHertz / 44100));
         this.audioData = new Uint8Array(this.bufferLength);
     },
     /**
@@ -93,6 +99,7 @@ export const visualizer = {
                 this.analyser.smoothingTimeConstant = GM_config.get('visualizerSmoothing');
                 this.analyser.minDecibels = GM_config.get('visualizerMinDecibels');
                 this.analyser.maxDecibels = GM_config.get('visualizerMaxDecibels');
+                this.bassBounce._calcBars();
             }
 
             this.colorDivergence = this.bufferLength / this.rgb.samples;

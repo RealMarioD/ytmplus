@@ -168,5 +168,5 @@ export function getBarColor(i) {
     else if(visualizer.fade === true) ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
     else ctx.fillStyle = visualizer.color;
 
-    if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= ~~(visualizer.bufferLength * visualizer.bassBounce.sensitivityStart)) ctx.fillStyle = '#FFF';
+    if(visualizer.bassBounce.debug === true && i < values.bass.length && i >= visualizer.bassBounce._barStart) ctx.fillStyle = '#FFF';
 }

@@ -14,7 +14,8 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
     if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-    values.barTotal = values.circleSize * Math.PI / visualizer.bufferLength;
+
+    values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
     values.barWidth = values.barTotal * 0.45;
     // No need for barSpace
     values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
@@ -29,8 +30,8 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
 function calculateBass() {
     values.bass = visualizer.audioData.slice(
-        ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityStart),
-        ~~(visualizer.analyser.frequencyBinCount * visualizer.bassBounce.sensitivityEnd) + 1
+        visualizer.bassBounce._barStart,
+        visualizer.bassBounce._barEnd
     );
 
     if(visualizer.bassBounce.smooth === true) values.bassSmoothRadius = ~~((values.bassSmoothRadius + (averageOfArray(values.bass) / 2)) / 2);
@@ -56,7 +57,7 @@ function drawArcs(backwards) {
     ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
 
     for(let i = 0; i < visualizer.bufferLength; ++i) {
-        if(i === 0 && backwards === true) {
+        if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
             ctx.rotate(-values.barTotal);
             continue;
         }
