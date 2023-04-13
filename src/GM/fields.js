@@ -264,7 +264,7 @@ export const configFields = {
         type: 'int',
         min: 1,
         max: 44100,
-        default: 30000
+        default: 18450
     },
     visualizerBassBounceMinHertz: {
         label: fieldTexts.visualizerBassBounceMinHertz[langOption],
@@ -278,7 +278,7 @@ export const configFields = {
         type: 'float',
         min: 1,
         max: 44100,
-        default: 110
+        default: 100
     },
     visualizerBassBounceDebug: {
         label: fieldTexts.visualizerBassBounceDebug[langOption],

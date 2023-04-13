@@ -52,8 +52,9 @@ export const visualizer = {
         _barStart: undefined,
         _barEnd: undefined,
         _calcBars() {
-            this._barStart = Math.floor(visualizer.analyser.frequencyBinCount * (this.minHertz / 44100));
-            this._barEnd = Math.ceil(visualizer.analyser.frequencyBinCount * (this.maxHertz / 44100));
+            this._barStart = ~~(this.minHertz / (44100 / visualizer.analyser.fftSize));
+            this._barEnd = ~~(this.maxHertz / (44100 / visualizer.analyser.fftSize));
+            if(this._barEnd === 0) this._barEnd++;
         }
     },
     keepHertz: undefined,
@@ -65,7 +66,7 @@ export const visualizer = {
     getBufferData() {
         this.analyser.fftSize = GM_config.get('visualizerFft');
         this.keepHertz = GM_config.get('visualizerKeepHertz');
-        this.bufferLength = ~~(this.analyser.frequencyBinCount * (this.keepHertz / 44100));
+        this.bufferLength = ~~(this.keepHertz / (44100 / visualizer.analyser.fftSize));
         this.audioData = new Uint8Array(this.bufferLength);
     },
     /**
