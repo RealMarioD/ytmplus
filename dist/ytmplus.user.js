@@ -1371,7 +1371,7 @@ svg text {
             // Header title svg
             const title = doc.getElementById('ytmPlusCfg_header');
             // eslint-disable-next-line no-undef
-            title.innerHTML = titleSVG + `<span style="-webkit-text-fill-color: white">${vNumber}</span>`; // vNumber hacked in with metadataBuilder
+            title.innerHTML = titleSVG + `<span style="-webkit-text-fill-color: white; font-size: 3vh;">${vNumber}</span>`; // vNumber hacked in with metadataBuilder
 
             doc.addEventListener('keydown', event => {
                 if(event.key == 'Escape') GM_config.close();
