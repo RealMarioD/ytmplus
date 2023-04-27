@@ -14,10 +14,6 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
     if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-
-    values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
-    values.barWidth = values.barTotal * 0.45;
-    // No need for barSpace
     values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
 
     if(visualizer.startsFrom === 'Right') drawArcs(false);
@@ -54,13 +50,14 @@ function getRotationValue() {
 function drawArcs(backwards) {
     ctx.save();
     ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
-    ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
+    if(backwards === true) ctx.rotate(values.startingPoint - (values.barTotal / 2 + values.rotationValue));
+    else ctx.rotate(values.startingPoint + (values.barTotal / 2 + values.rotationValue)); // Set bar starting point to top + rotation
 
     for(let i = 0; i < visualizer.bufferLength; ++i) {
-        if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
-            ctx.rotate(-values.barTotal);
-            continue;
-        }
+        // if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
+        //     ctx.rotate(-values.barTotal);
+        //     continue;
+        // }
 
         getBarColor(i);
 

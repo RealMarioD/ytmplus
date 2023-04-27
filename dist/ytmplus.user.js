@@ -446,7 +446,7 @@ svg text {
                 label: fieldTexts.visualizerPlace[langOption],
                 section: fieldTexts.visualizerPlaceSection[langOption],
                 type: 'select',
-                options: ['Disabled', 'Navbar', 'Album Cover'],
+                options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
                 default: 'Album Cover'
             },
             visualizerStartsFrom: {
@@ -480,7 +480,7 @@ svg text {
                 label: fieldTexts.visualizerEnergySaverType[langOption],
                 type: 'select',
                 options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
-                default: false
+                default: 'Disabled'
             },
             visualizerCircleEnabled: {
                 label: fieldTexts.visualizerCircleEnabled[langOption],
@@ -616,14 +616,36 @@ svg text {
             }
         };
 
+        function logplus(...logs) {
+            switch(logs[0]) {
+                case 'error': {
+                    logs.shift();
+                    for(const data of logs) console.error('ytmPlus: ' + data);
+                    break;
+                }
+                case 'warn': {
+                    logs.shift();
+                    for(const data of logs) console.warn('ytmPlus: ' + data);
+                    break;
+                }
+                case 'green': {
+                    logs.shift();
+                    for(const data of logs) console.log('%cytmPlus: ' + data, 'background: #006600'); break;
+                }
+                default: for(const data of logs) console.log('ytmPlus: ' + data); break;
+            }
+        }
+
         function promoEnable(turnOn) {
             let popup;
             clearInterval(globals.noPromoFunction);
             if(!turnOn) return;
             globals.noPromoFunction = setInterval(() => {
                 popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0)
+                if(popup.length > 0) {
                     popup[0].remove();
+                    logplus('Removed a promotion.');
+                }
             }, 1000);
         }
 
@@ -632,6 +654,7 @@ svg text {
             if(!turnOn) return;
             globals.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                logplus('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -801,14 +824,16 @@ svg text {
             document.head.appendChild(node);
         }
 
-        function injectElement(type, id, wrapperElm, targetDoc, customStyle) {
+        function injectElement(type, id, wrapperElm, targetDoc, customStyle, prepend) {
             const node = targetDoc.createElement(type);
             node.id = id;
             if(customStyle) node.style = customStyle;
-            if(!wrapperElm)
+            if(!wrapperElm) {
+                logplus('error', 'injectElement: Wrapper is undefined');
                 return;
-
-            wrapperElm.appendChild(node);
+            }
+            if(prepend) wrapperElm.prepend(node);
+            else wrapperElm.appendChild(node);
             return node;
         }
 
@@ -836,10 +861,11 @@ svg text {
         };
 
         image.onerror = () => {
-            if(visualizer.image.type === 'Custom') ;
-            else
+            if(visualizer.image.type === 'Custom') logplus('Custom Image URL is not an image');
+            else {
+                logplus('warn', 'Visualizer Image couldn\'t be loaded.');
                 return;
-
+            }
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -853,44 +879,55 @@ svg text {
 
         function thumbnailEvent() {
             currentURL = thumbnailChildSrc();
-            if(!currentURL)
+            if(!currentURL) {
+                logplus('thumbnailChildSrc is undefined');
                 return;
-
+            }
 
             if(currentURL.indexOf('data') === 0) {
+                logplus('Current song has broken thumbnail, might be a video');
+
                 if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-                else if(loadSD === false && quality !== 'custom')
+                else if(loadSD === false && quality !== 'custom') {
+                    logplus('Multiple changes with same URL, loadSD is false, quality is not custom');
                     return;
+                }
 
-
-                if(!lastSavedVideoURL)
+                if(!lastSavedVideoURL) {
+                    logplus('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
                     return;
+                }
 
+                logplus(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
                 imgLoaded = false;
-                if(loadSD === true)
+                if(loadSD === true) {
                     quality = 'sddefault';
-
+                    logplus(`loadSD is true, working with ${quality}`);
+                }
                 else quality = 'maxresdefault';
                 currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
                 loadSD = false;
             }
-            else if(image.src === currentURL)
+            else if(image.src === currentURL) {
+                logplus('Image src is already thumbnail');
                 return;
-
+            }
             lastSavedVideoURL = currentVideoURL().href;
             finalize();
         }
 
         function customEvent() {
-            if(currentURL === visualizer.image.customURL)
+            if(currentURL === visualizer.image.customURL) {
+                logplus('Custom Image change: URL is the same');
                 return;
-
+            }
             currentURL = visualizer.image.customURL;
             quality = 'custom';
             finalize();
         }
 
         function finalize() {
+            logplus('green', `Changed currentURL to: ${currentURL}`);
             imgLoaded = false;
             image.src = currentURL;
         }
@@ -941,10 +978,6 @@ svg text {
 
             if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-
-            values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
-            values.barWidth = values.barTotal * 0.45;
-            // No need for barSpace
             values.reactiveBarHeightMultiplier = 0.3 + values.bassSmoothRadius / 512; // 0.3 . . 0.55
 
             if(visualizer.startsFrom === 'Right') drawArcs(false);
@@ -981,13 +1014,14 @@ svg text {
         function drawArcs(backwards) {
             ctx.save();
             ctx.translate(values.halfWidth, values.halfHeight); // move to center of circle
-            ctx.rotate(values.startingPoint + values.rotationValue); // Set bar starting point to top + rotation
+            if(backwards === true) ctx.rotate(values.startingPoint - (values.barTotal / 2 + values.rotationValue));
+            else ctx.rotate(values.startingPoint + (values.barTotal / 2 + values.rotationValue)); // Set bar starting point to top + rotation
 
             for(let i = 0; i < visualizer.bufferLength; ++i) {
-                if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
-                    ctx.rotate(-values.barTotal);
-                    continue;
-                }
+            // if(values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
+            //     ctx.rotate(-values.barTotal);
+            //     continue;
+            // }
 
                 getBarColor(i);
 
@@ -1014,7 +1048,7 @@ svg text {
         }
 
         function visualizerNavbar() {
-            if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
+            if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth + values.barSpace / 2; // Centers 1 bar
             else if(visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
             else values.xPosOffset = 0;
 
@@ -1023,8 +1057,8 @@ svg text {
             firstDraw(maxBarHeight);
 
             if(visualizer.startsFrom === 'Center') {
-                values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
-                secondDraw(maxBarHeight, 1);
+                values.xPosOffset = values.halfWidth + values.barSpace / 2; // Reset pos to center + skip first bar
+                secondDraw(maxBarHeight, 0);
             }
             else if(visualizer.startsFrom === 'Edges') {
                 values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
@@ -1105,12 +1139,30 @@ svg text {
             }
         }
 
+        const canvases = {
+            navbar: undefined,
+            albumCover: undefined,
+            background: undefined,
+            playerBackground: undefined
+        };
+        async function setupVisualizer() {
+        // Injecting visualizer canvases
+            canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', globals.navBarBg, document, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
+            canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.mainPanel, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;');
+            globals.navBarBg.style.opacity = 1;
+            canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('browse-page'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: 100vh;', true);
+            canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), document, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+            if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
+        }
+
         let video;
         function getVideo() {
             video = document.querySelector('video');
             if(video) startVisualizer();
-            else
+            else {
+                logplus('warn', 'Query "video" not found, retrying in 100ms.');
                 setTimeout(getVideo, 100);
+            }
         }
 
         const values = {
@@ -1144,8 +1196,9 @@ svg text {
             visualizer.analyser = context.createAnalyser();
 
             switch(visualizer.place) {
-                case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
-                case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
+                case 'Navbar': default: canvas = canvases.navbar; break;
+                case 'Album Cover': canvas = canvases.albumCover; break;
+                case 'Background': canvas = canvases.playerBackground; break;
             }
             ctx = canvas.getContext('2d');
 
@@ -1167,32 +1220,17 @@ svg text {
         }
 
         function visualizerResizeFix() {
-            switch(visualizer.place) {
-                case 'Navbar': default: {
+            switch(canvas.id) {
+                case canvases.navbar.id: {
+                    logplus('Fixing NAVBAR');
                     if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
                     if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
-                    canvas.style.width = '';
-                    canvas.style.height = '';
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
-
-                    if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
-                    else values.barTotal = values.WIDTH / visualizer.bufferLength;
-                    values.barSpace = values.barTotal * 0.05;
-                    values.barWidth = values.barTotal * 0.95;
                     break;
                 }
-                case 'Album Cover': {
+                case canvases.albumCover.id: {
+                    logplus('Fixing ALBUM COVER');
                     if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
                     if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
-                    canvas.style.width = globals.player.offsetWidth + 'px';
-                    canvas.style.height = globals.player.offsetHeight + 'px';
-                    values.WIDTH = canvas.width;
-                    values.halfWidth = values.WIDTH / 2;
-                    values.HEIGHT = canvas.height;
-                    values.halfHeight = values.HEIGHT / 2;
-
                     if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
                         canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
                         canvas.style.left = getComputedStyle(globals.player).left;
@@ -1201,21 +1239,44 @@ svg text {
                         canvas.style.removeProperty('bottom'); // else completely remove properties because html
                         canvas.style.removeProperty('left');
                     }
-
-                    if(visualizer.circleEnabled === false) {
-                        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
-                        else values.barTotal = values.WIDTH / visualizer.bufferLength;
-                        values.barSpace = values.barTotal * 0.05;
-                        values.barWidth = values.barTotal * 0.95;
-                    }
-                    else if(visualizer.bassBounce.enabled === false) {
-                        values.radius = ~~(values.HEIGHT / 4);
-                        values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
-                    }
-                    else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
                     break;
                 }
-                case 'Disabled': break;
+                case canvases.playerBackground.id: {
+                    logplus('Fixing PLAYERBACKGROUND');
+                    if(canvas.width !== canvases.playerBackground.offsetWidth) canvas.width = canvases.playerBackground.offsetWidth;
+                    if(canvas.height !== canvases.playerBackground.offsetHeight) canvas.height = canvases.playerBackground.offsetHeight;
+                    break;
+                }
+                case canvases.background.id: {
+                    logplus('Fixing BACKGROUND');
+                    if(canvas.width !== canvases.background.offsetWidth) canvas.width = canvases.background.offsetWidth;
+                    if(canvas.height !== canvases.background.offsetHeight) canvas.height = canvases.background.offsetHeight;
+                    break;
+                }
+            }
+
+            values.WIDTH = canvas.width;
+            values.halfWidth = values.WIDTH / 2;
+            values.HEIGHT = canvas.height;
+            values.halfHeight = values.HEIGHT / 2;
+
+            globals.player.style.margin = 'auto 0px';
+
+            if(visualizer.circleEnabled === true && canvas.id !== canvases.navbar.id) {
+                if(visualizer.bassBounce.enabled === false) {
+                    values.radius = ~~(values.HEIGHT / 4);
+                    values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
+                }
+                else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
+
+                values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
+                values.barWidth = values.barTotal * 0.45;
+            }
+            else {
+                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
+                else values.barTotal = values.WIDTH / visualizer.bufferLength;
+                values.barSpace = values.barTotal * 0.05;
+                values.barWidth = values.barTotal * 0.95;
             }
         }
 
@@ -1240,16 +1301,32 @@ svg text {
             }
 
             if(visualizer.place === 'Navbar') {
-                if(canvas.id !== 'visualizerNavbarCanvas') {
-                    canvas = document.getElementById('visualizerNavbarCanvas');
+                if(canvas.id !== canvases.navbar.id) {
+                    canvas = canvases.navbar;
                     ctx = canvas.getContext('2d');
                 }
                 visualizerNavbar();
             }
             else if(visualizer.place === 'Album Cover') {
-                if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-                    canvas = document.getElementById('visualizerAlbumCoverCanvas');
+                if(canvas.id !== canvases.albumCover.id) {
+                    canvas = canvases.albumCover;
                     ctx = canvas.getContext('2d');
+                }
+                if(visualizer.circleEnabled === true) visualizerCircle();
+                else visualizerNavbar();
+            }
+            else if(visualizer.place === 'Background') {
+                if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
+                    if(canvas.id !== canvases.background.id) {
+                        canvas = canvases.background;
+                        ctx = canvas.getContext('2d');
+                        logplus('Switched canvas to background');
+                    }
+                }
+                else if(canvas.id !== canvases.playerBackground.id) {
+                    canvas = canvases.playerBackground;
+                    ctx = canvas.getContext('2d');
+                    logplus('Switched canvas to playerBackground');
                 }
                 if(visualizer.circleEnabled === true) visualizerCircle();
                 else visualizerNavbar();
@@ -1433,6 +1510,7 @@ svg text {
 
         const globals = {
             settingsOpen: false, // Used to track if config window is open or not
+            playerPage: undefined,
             playerPageDiv: undefined, // Set to the player "overlay" in window.onload
             player: undefined, // Has the sizes we need for album cover canvas
             upgradeButton: undefined, // Set to the upgrade "button" in window.onload
@@ -1572,10 +1650,12 @@ svg text {
             }
         }
 
-        function loadEvent() {
-            globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
-            globals.navBarBg = document.getElementById('nav-bar-background');
-            globals.mainPanel = document.getElementById('main-panel');
+        async function loadEvent() {
+            globals.player = await document.getElementById('player');
+            globals.playerPage = await document.getElementById('player-page');
+            globals.playerPageDiv = globals.playerPage.firstElementChild;
+            globals.navBarBg = await document.getElementById('nav-bar-background');
+            globals.mainPanel = await document.getElementById('main-panel');
 
             injectStyle(animation);
 
@@ -1592,23 +1672,17 @@ svg text {
 
             fixLayout(GM_config.get('padding'));
 
-            setTimeout(() => {
-                globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
+            setTimeout(async () => {
+                globals.upgradeButton = await document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
                 globals.originalUpgradeText = globals.upgradeButton.textContent;
                 clockEnable(GM_config.get('clock'));
 
-                globals.player = document.getElementById('player');
                 removeThumbnail(GM_config.get('removeThumbnail'));
 
                 swapMainPanelWithPlaylist(GM_config.get('swapMainPanelWithPlaylist'));
             }, 500);
 
-
-            // Injecting visualizer canvases
-            globals.navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
-            globals.navBarBg.style.opacity = 1;
-            globals.mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none; visibility: visible"></canvas>';
-            if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
+            setupVisualizer();
 
             // Adds a settings button on the navbar
             createSettingsFrame();

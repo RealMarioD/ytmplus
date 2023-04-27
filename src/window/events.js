@@ -1,6 +1,6 @@
 import { globals } from '../globals';
 import { afkEnable, changeBackground, clockEnable, extraButtons, fixLayout, injectElement, injectStyle, promoEnable, removeThumbnail, skipDisliked, swapMainPanelWithPlaylist } from '../utils';
-import { getVideo } from '../visualizer/init';
+import { setupVisualizer } from '../visualizer/init';
 import { GM_config } from '../GM/GM_config';
 
 export function keydownEvent(ev) {
@@ -15,10 +15,12 @@ export function keydownEvent(ev) {
     }
 }
 
-export function loadEvent() {
-    globals.playerPageDiv = document.getElementsByClassName('content style-scope ytmusic-player-page')[0];
-    globals.navBarBg = document.getElementById('nav-bar-background');
-    globals.mainPanel = document.getElementById('main-panel');
+export async function loadEvent() {
+    globals.player = await document.getElementById('player');
+    globals.playerPage = await document.getElementById('player-page');
+    globals.playerPageDiv = globals.playerPage.firstElementChild;
+    globals.navBarBg = await document.getElementById('nav-bar-background');
+    globals.mainPanel = await document.getElementById('main-panel');
 
     injectStyle(animation);
 
@@ -35,23 +37,17 @@ export function loadEvent() {
 
     fixLayout(GM_config.get('padding'));
 
-    setTimeout(() => {
-        globals.upgradeButton = document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
+    setTimeout(async () => {
+        globals.upgradeButton = await document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
         globals.originalUpgradeText = globals.upgradeButton.textContent;
         clockEnable(GM_config.get('clock'));
 
-        globals.player = document.getElementById('player');
         removeThumbnail(GM_config.get('removeThumbnail'));
 
         swapMainPanelWithPlaylist(GM_config.get('swapMainPanelWithPlaylist'));
     }, 500);
 
-
-    // Injecting visualizer canvases
-    globals.navBarBg.innerHTML = '<canvas id="visualizerNavbarCanvas" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none"></canvas>';
-    globals.navBarBg.style.opacity = 1;
-    globals.mainPanel.innerHTML += '<canvas id="visualizerAlbumCoverCanvas" style="position: absolute; z-index: 9999; pointer-events: none; visibility: visible"></canvas>';
-    if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
+    setupVisualizer();
 
     // Adds a settings button on the navbar
     createSettingsFrame();

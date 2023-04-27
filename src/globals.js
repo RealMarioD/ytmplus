@@ -3,6 +3,7 @@ import { visualizerResizeFix } from './visualizer/init';
 
 export const globals = {
     settingsOpen: false, // Used to track if config window is open or not
+    playerPage: undefined,
     playerPageDiv: undefined, // Set to the player "overlay" in window.onload
     player: undefined, // Has the sizes we need for album cover canvas
     upgradeButton: undefined, // Set to the upgrade "button" in window.onload

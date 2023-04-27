@@ -124,7 +124,7 @@ export const configFields = {
         label: fieldTexts.visualizerPlace[langOption],
         section: fieldTexts.visualizerPlaceSection[langOption],
         type: 'select',
-        options: ['Disabled', 'Navbar', 'Album Cover'],
+        options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
         default: 'Album Cover'
     },
     visualizerStartsFrom: {
@@ -158,7 +158,7 @@ export const configFields = {
         label: fieldTexts.visualizerEnergySaverType[langOption],
         type: 'select',
         options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
-        default: false
+        default: 'Disabled'
     },
     visualizerCircleEnabled: {
         label: fieldTexts.visualizerCircleEnabled[langOption],

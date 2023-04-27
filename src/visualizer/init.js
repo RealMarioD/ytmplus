@@ -3,8 +3,26 @@ import { logplus } from '../debug';
 import { visualizerCircle } from './circle';
 import { replaceImageURL } from './image';
 import { visualizerNavbar } from './navbar';
+import { GM_config } from '../GM/GM_config';
+import { injectElement } from '../utils';
 
-export let video;
+const canvases = {
+    navbar: undefined,
+    albumCover: undefined,
+    background: undefined,
+    playerBackground: undefined
+};
+export async function setupVisualizer() {
+    // Injecting visualizer canvases
+    canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', globals.navBarBg, document, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
+    canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.mainPanel, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;');
+    globals.navBarBg.style.opacity = 1;
+    canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('browse-page'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: 100vh;', true);
+    canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), document, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+    if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
+}
+
+let video;
 export function getVideo() {
     video = document.querySelector('video');
     if(video) startVisualizer();
@@ -45,8 +63,9 @@ export function startVisualizer() {
     visualizer.analyser = context.createAnalyser();
 
     switch(visualizer.place) {
-        case 'Navbar': default: canvas = document.getElementById('visualizerNavbarCanvas'); break;
-        case 'Album Cover': canvas = document.getElementById('visualizerAlbumCoverCanvas'); break;
+        case 'Navbar': default: canvas = canvases.navbar; break;
+        case 'Album Cover': canvas = canvases.albumCover; break;
+        case 'Background': canvas = canvases.playerBackground; break;
     }
     ctx = canvas.getContext('2d');
 
@@ -68,55 +87,69 @@ export function startVisualizer() {
 }
 
 export function visualizerResizeFix() {
-    switch(visualizer.place) {
-        case 'Navbar': default: {
+    switch(canvas.id) {
+        case canvases.navbar.id: {
+            logplus('Fixing NAVBAR');
             if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
             if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
-            canvas.style.width = '';
-            canvas.style.height = '';
-            values.WIDTH = canvas.width;
-            values.halfWidth = values.WIDTH / 2;
-            values.HEIGHT = canvas.height;
-
-            if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
-            else values.barTotal = values.WIDTH / visualizer.bufferLength;
-            values.barSpace = values.barTotal * 0.05;
-            values.barWidth = values.barTotal * 0.95;
             break;
         }
-        case 'Album Cover': {
+        case canvases.albumCover.id: {
+            logplus('Fixing ALBUM COVER');
             if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
             if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
-            canvas.style.width = globals.player.offsetWidth + 'px';
-            canvas.style.height = globals.player.offsetHeight + 'px';
-            values.WIDTH = canvas.width;
-            values.halfWidth = values.WIDTH / 2;
-            values.HEIGHT = canvas.height;
-            values.halfHeight = values.HEIGHT / 2;
 
-            if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
-                canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
+            // if miniplayer == true
+            if(globals.player.playerPageOpen_ === false) {
+                // move the canvas over the miniplayer
+                canvas.style.bottom = getComputedStyle(globals.player).bottom;
                 canvas.style.left = getComputedStyle(globals.player).left;
             }
             else {
-                canvas.style.removeProperty('bottom'); // else completely remove properties because html
+                // completely remove properties because html
+                canvas.style.removeProperty('bottom');
                 canvas.style.removeProperty('left');
             }
-
-            if(visualizer.circleEnabled === false) {
-                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
-                else values.barTotal = values.WIDTH / visualizer.bufferLength;
-                values.barSpace = values.barTotal * 0.05;
-                values.barWidth = values.barTotal * 0.95;
-            }
-            else if(visualizer.bassBounce.enabled === false) {
-                values.radius = ~~(values.HEIGHT / 4);
-                values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
-            }
-            else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
             break;
         }
-        case 'Disabled': break;
+        case canvases.playerBackground.id: {
+            logplus('Fixing PLAYERBACKGROUND');
+            if(canvas.width !== canvases.playerBackground.offsetWidth) canvas.width = canvases.playerBackground.offsetWidth;
+            if(canvas.height !== canvases.playerBackground.offsetHeight) canvas.height = canvases.playerBackground.offsetHeight;
+            break;
+        }
+        case canvases.background.id: {
+            logplus('Fixing BACKGROUND');
+            if(canvas.width !== canvases.background.offsetWidth) canvas.width = canvases.background.offsetWidth;
+            if(canvas.height !== canvases.background.offsetHeight) canvas.height = canvases.background.offsetHeight;
+            break;
+        }
+        default: break;
+    }
+
+    values.WIDTH = canvas.width;
+    values.halfWidth = values.WIDTH / 2;
+    values.HEIGHT = canvas.height;
+    values.halfHeight = values.HEIGHT / 2;
+
+    // Fixes visualizer offset / Fixes album cover constantly getting smaller if brought to a smaller resolution display
+    globals.player.style.margin = 'auto 0px';
+
+    if(visualizer.circleEnabled === true && canvas.id !== canvases.navbar.id) {
+        if(visualizer.bassBounce.enabled === false) {
+            values.radius = ~~(values.HEIGHT / 4);
+            values.heightModifier = (values.HEIGHT - values.radius) / 2 / 255;
+        }
+        else values.heightModifier = (values.HEIGHT - ~~(values.HEIGHT / 8)) / 2 / 255;
+
+        values.barTotal = values.circleSize * Math.PI / (visualizer.bufferLength - 2 + values.circleSize);
+        values.barWidth = values.barTotal * 0.45;
+    }
+    else {
+        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') values.barTotal = values.halfWidth / visualizer.bufferLength;
+        else values.barTotal = values.WIDTH / visualizer.bufferLength;
+        values.barSpace = values.barTotal * 0.05;
+        values.barWidth = values.barTotal * 0.95;
     }
 }
 
@@ -141,16 +174,33 @@ export function renderFrame(time) { // Never remove time var from here
     }
 
     if(visualizer.place === 'Navbar') {
-        if(canvas.id !== 'visualizerNavbarCanvas') {
-            canvas = document.getElementById('visualizerNavbarCanvas');
+        if(canvas.id !== canvases.navbar.id) {
+            canvas = canvases.navbar;
             ctx = canvas.getContext('2d');
         }
         visualizerNavbar(ctx);
     }
     else if(visualizer.place === 'Album Cover') {
-        if(canvas.id !== 'visualizerAlbumCoverCanvas') {
-            canvas = document.getElementById('visualizerAlbumCoverCanvas');
+        if(canvas.id !== canvases.albumCover.id) {
+            canvas = canvases.albumCover;
             ctx = canvas.getContext('2d');
+        }
+        if(visualizer.circleEnabled === true) visualizerCircle(ctx);
+        else visualizerNavbar(ctx);
+    }
+    else if(visualizer.place === 'Background') {
+        // if miniplayer == true
+        if(globals.player.playerPageOpen_ === false) {
+            if(canvas.id !== canvases.background.id) {
+                canvas = canvases.background;
+                ctx = canvas.getContext('2d');
+                logplus('Switched canvas to background');
+            }
+        }
+        else if(canvas.id !== canvases.playerBackground.id) {
+            canvas = canvases.playerBackground;
+            ctx = canvas.getContext('2d');
+            logplus('Switched canvas to playerBackground');
         }
         if(visualizer.circleEnabled === true) visualizerCircle(ctx);
         else visualizerNavbar(ctx);

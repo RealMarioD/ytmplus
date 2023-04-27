@@ -2,7 +2,7 @@ import { visualizer } from '../globals';
 import { getBarColor, values, ctx } from './init';
 
 export function visualizerNavbar() {
-    if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth / 2; // Centers 1 bar
+    if(visualizer.startsFrom === 'Center') values.xPosOffset = values.barWidth + values.barSpace / 2; // Centers 1 bar
     else if(visualizer.startsFrom === 'Edges') values.xPosOffset = values.barSpace / 2; // Both sides are offset a bit for perfect centering
     else values.xPosOffset = 0;
 
@@ -11,8 +11,8 @@ export function visualizerNavbar() {
     firstDraw(maxBarHeight);
 
     if(visualizer.startsFrom === 'Center') {
-        values.xPosOffset = values.halfWidth + values.barWidth / 2 + values.barSpace; // Reset pos to center + skip first bar
-        secondDraw(maxBarHeight, 1);
+        values.xPosOffset = values.halfWidth + values.barSpace / 2; // Reset pos to center + skip first bar
+        secondDraw(maxBarHeight, 0);
     }
     else if(visualizer.startsFrom === 'Edges') {
         values.xPosOffset = values.barWidth + (values.barSpace / 2); // Reset pos to right + offset for perfect center
