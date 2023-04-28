@@ -154,11 +154,17 @@ export function fixLayout(turnOn) {
 }
 
 export function removeThumbnail(turnOn) {
-    globals.player.style.backgroundColor = '#01010101';
+    globals.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
     const songImage = document.getElementById('song-image');
     setTimeout(() => {
-        if(!turnOn) songImage.style.opacity = 1;
-        else songImage.style.opacity = 0.001;
+        if(!turnOn) {
+            songImage.style.opacity = 1;
+            songImage.style.removeProperty('background');
+        }
+        else {
+            songImage.style.opacity = 0.001;
+            songImage.style.background = '#0000';
+        }
     }, 500);
 }
 

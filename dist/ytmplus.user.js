@@ -788,11 +788,17 @@ svg text {
         }
 
         function removeThumbnail(turnOn) {
-            globals.player.style.backgroundColor = '#01010101';
+            globals.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
             const songImage = document.getElementById('song-image');
             setTimeout(() => {
-                if(!turnOn) songImage.style.opacity = 1;
-                else songImage.style.opacity = 0.001;
+                if(!turnOn) {
+                    songImage.style.opacity = 1;
+                    songImage.style.removeProperty('background');
+                }
+                else {
+                    songImage.style.opacity = 0.001;
+                    songImage.style.background = '#0000';
+                }
             }, 500);
         }
 
@@ -1231,13 +1237,17 @@ svg text {
                     logplus('Fixing ALBUM COVER');
                     if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
                     if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
-                    if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
-                        canvas.style.bottom = getComputedStyle(globals.player).bottom; // move the canvas over the miniplayer
+
+                    // if miniplayer == true
+                    if(globals.player.playerPageOpen_ === false) {
+                    // move the canvas over the miniplayer
+                        canvas.style.bottom = getComputedStyle(globals.player).bottom;
                         canvas.style.left = getComputedStyle(globals.player).left;
                     }
                     else {
-                        canvas.style.removeProperty('bottom'); // else completely remove properties because html
-                        canvas.style.removeProperty('left');
+                    // completely remove properties because html
+                        if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
+                        if(canvas.style.left !== '') canvas.style.removeProperty('left');
                     }
                     break;
                 }
@@ -1260,6 +1270,7 @@ svg text {
             values.HEIGHT = canvas.height;
             values.halfHeight = values.HEIGHT / 2;
 
+            // Fixes visualizer offset / Fixes album cover constantly getting smaller if brought to a smaller resolution display
             globals.player.style.margin = 'auto 0px';
 
             if(visualizer.circleEnabled === true && canvas.id !== canvases.navbar.id) {
@@ -1316,7 +1327,8 @@ svg text {
                 else visualizerNavbar();
             }
             else if(visualizer.place === 'Background') {
-                if(globals.player.playerPageOpen_ === false) { // if miniplayer == true
+            // if miniplayer == true
+                if(globals.player.playerPageOpen_ === false) {
                     if(canvas.id !== canvases.background.id) {
                         canvas = canvases.background;
                         ctx = canvas.getContext('2d');

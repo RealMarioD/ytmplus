@@ -107,8 +107,8 @@ export function visualizerResizeFix() {
             }
             else {
                 // completely remove properties because html
-                canvas.style.removeProperty('bottom');
-                canvas.style.removeProperty('left');
+                if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
+                if(canvas.style.left !== '') canvas.style.removeProperty('left');
             }
             break;
         }
