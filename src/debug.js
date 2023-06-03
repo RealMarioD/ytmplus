@@ -1,4 +1,4 @@
-export const debugging = true;
+export const debugging = false;
 
 export function logplus(...logs) {
     if(debugging === false) return;

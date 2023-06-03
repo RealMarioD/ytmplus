@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      2.5.1
+// @version      2.6.0
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -13,7 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-const vNumber = 'v2.5.1';
+const vNumber = 'v2.6.0';
 try {
     (function() {
         'use strict';
@@ -295,7 +295,7 @@ svg text {
             visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
             visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
             visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Bar Amount⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Sáv mennyiség⚠</span>' },
+            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
             visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
             visualizerCircleEnabled: { english: 'Enable (Album Cover Only)', hungarian: 'Engedélyez (Csak Album Borítón)' },
             visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
@@ -613,28 +613,13 @@ svg text {
                 min: 1,
                 max: 144,
                 default: 30,
+            },
+            lastOpenCategory: {
+                section: 'backend',
+                type: 'hidden',
+                default: -1
             }
         };
-
-        function logplus(...logs) {
-            switch(logs[0]) {
-                case 'error': {
-                    logs.shift();
-                    for(const data of logs) console.error('ytmPlus: ' + data);
-                    break;
-                }
-                case 'warn': {
-                    logs.shift();
-                    for(const data of logs) console.warn('ytmPlus: ' + data);
-                    break;
-                }
-                case 'green': {
-                    logs.shift();
-                    for(const data of logs) console.log('%cytmPlus: ' + data, 'background: #006600'); break;
-                }
-                default: for(const data of logs) console.log('ytmPlus: ' + data); break;
-            }
-        }
 
         function promoEnable(turnOn) {
             let popup;
@@ -642,10 +627,8 @@ svg text {
             if(!turnOn) return;
             globals.noPromoFunction = setInterval(() => {
                 popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    logplus('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -654,7 +637,6 @@ svg text {
             if(!turnOn) return;
             globals.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                logplus('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -775,42 +757,41 @@ svg text {
         }
 
         function fixLayout(turnOn) {
-            if(turnOn) {
-                globals.playerPageDiv.style.paddingTop = '0px';
-                globals.mainPanel.style.marginTop = '8vh';
-                globals.mainPanel.style.marginBottom = '8vh';
-            }
-            else {
-                globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
-                globals.mainPanel.style.marginTop = '0';
-                globals.mainPanel.style.marginBottom = 'var(--ytmusic-player-page-vertical-padding)';
-            }
+            if(turnOn) globals.playerPageDiv.style.paddingTop = '0px';
+            else globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
         }
 
         function removeThumbnail(turnOn) {
             globals.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
             const songImage = document.getElementById('song-image');
+            const songMediaControls = globals.player.children[globals.player.children.length - 2];
             setTimeout(() => {
                 if(!turnOn) {
                     songImage.style.opacity = 1;
-                    songImage.style.removeProperty('background');
+                    songMediaControls.style.removeProperty('background');
                 }
                 else {
                     songImage.style.opacity = 0.001;
-                    songImage.style.background = '#0000';
+                    songMediaControls.style.background = '#0000';
                 }
             }, 500);
         }
 
         async function swapMainPanelWithPlaylist(turnOn) {
             if(turnOn) {
-                if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) return;
+                if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) {
+                    globals.mainPanel.parentNode.children[1].style.zIndex = 9999;
+                    return;
+                }
                 await globals.mainPanel.parentNode.append(globals.mainPanel);
                 globals.mainPanel.style.flexDirection = 'row-reverse';
                 globals.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
             }
             else {
-                if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) return;
+                if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) {
+                    globals.mainPanel.parentNode.children[2].style.zIndex = 9999;
+                    return;
+                }
                 await globals.mainPanel.parentNode.prepend(globals.mainPanel);
                 globals.mainPanel.style.flexDirection = 'row';
                 globals.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
@@ -834,10 +815,9 @@ svg text {
             const node = targetDoc.createElement(type);
             node.id = id;
             if(customStyle) node.style = customStyle;
-            if(!wrapperElm) {
-                logplus('error', 'injectElement: Wrapper is undefined');
+            if(!wrapperElm)
                 return;
-            }
+
             if(prepend) wrapperElm.prepend(node);
             else wrapperElm.appendChild(node);
             return node;
@@ -867,11 +847,10 @@ svg text {
         };
 
         image.onerror = () => {
-            if(visualizer.image.type === 'Custom') logplus('Custom Image URL is not an image');
-            else {
-                logplus('warn', 'Visualizer Image couldn\'t be loaded.');
+            if(visualizer.image.type === 'Custom') ;
+            else
                 return;
-            }
+
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -885,55 +864,44 @@ svg text {
 
         function thumbnailEvent() {
             currentURL = thumbnailChildSrc();
-            if(!currentURL) {
-                logplus('thumbnailChildSrc is undefined');
+            if(!currentURL)
                 return;
-            }
+
 
             if(currentURL.indexOf('data') === 0) {
-                logplus('Current song has broken thumbnail, might be a video');
-
                 if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-                else if(loadSD === false && quality !== 'custom') {
-                    logplus('Multiple changes with same URL, loadSD is false, quality is not custom');
+                else if(loadSD === false && quality !== 'custom')
                     return;
-                }
 
-                if(!lastSavedVideoURL) {
-                    logplus('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
+
+                if(!lastSavedVideoURL)
                     return;
-                }
 
-                logplus(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
                 imgLoaded = false;
-                if(loadSD === true) {
+                if(loadSD === true)
                     quality = 'sddefault';
-                    logplus(`loadSD is true, working with ${quality}`);
-                }
+
                 else quality = 'maxresdefault';
                 currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
                 loadSD = false;
             }
-            else if(image.src === currentURL) {
-                logplus('Image src is already thumbnail');
+            else if(image.src === currentURL)
                 return;
-            }
+
             lastSavedVideoURL = currentVideoURL().href;
             finalize();
         }
 
         function customEvent() {
-            if(currentURL === visualizer.image.customURL) {
-                logplus('Custom Image change: URL is the same');
+            if(currentURL === visualizer.image.customURL)
                 return;
-            }
+
             currentURL = visualizer.image.customURL;
             quality = 'custom';
             finalize();
         }
 
         function finalize() {
-            logplus('green', `Changed currentURL to: ${currentURL}`);
             imgLoaded = false;
             image.src = currentURL;
         }
@@ -1154,9 +1122,11 @@ svg text {
         async function setupVisualizer() {
         // Injecting visualizer canvases
             canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', globals.navBarBg, document, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
-            canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.mainPanel, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;');
+            canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.player, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
             globals.navBarBg.style.opacity = 1;
-            canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('browse-page'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: 100vh;', true);
+
+            // 64px is navbar, 72px is bottom player controls
+            canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
             canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), document, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
             if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
         }
@@ -1165,10 +1135,8 @@ svg text {
         function getVideo() {
             video = document.querySelector('video');
             if(video) startVisualizer();
-            else {
-                logplus('warn', 'Query "video" not found, retrying in 100ms.');
+            else
                 setTimeout(getVideo, 100);
-            }
         }
 
         const values = {
@@ -1214,7 +1182,7 @@ svg text {
             visualizer.getBufferData();
             visualizer.initValues();
 
-            // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
+            // Helps set the canvas resolution to the correct size
             visualizer.resizeInterval = setInterval(() => {
                 visualizerResizeFix();
             }, 1000);
@@ -1228,37 +1196,33 @@ svg text {
         function visualizerResizeFix() {
             switch(canvas.id) {
                 case canvases.navbar.id: {
-                    logplus('Fixing NAVBAR');
                     if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
                     if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
                     break;
                 }
                 case canvases.albumCover.id: {
-                    logplus('Fixing ALBUM COVER');
                     if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
                     if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
 
-                    // if miniplayer == true
-                    if(globals.player.playerPageOpen_ === false) {
-                    // move the canvas over the miniplayer
-                        canvas.style.bottom = getComputedStyle(globals.player).bottom;
-                        canvas.style.left = getComputedStyle(globals.player).left;
-                    }
-                    else {
-                    // completely remove properties because html
-                        if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
-                        if(canvas.style.left !== '') canvas.style.removeProperty('left');
-                    }
+                    // // if miniplayer == true
+                    // if(globals.player.playerPageOpen_ === false) {
+                    //     // move the canvas over the miniplayer
+                    //     canvas.style.bottom = getComputedStyle(globals.player).bottom;
+                    //     canvas.style.left = getComputedStyle(globals.player).left;
+                    // }
+                    // else {
+                    //     // completely remove properties because html
+                    //     if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
+                    //     if(canvas.style.left !== '') canvas.style.removeProperty('left');
+                    // }
                     break;
                 }
                 case canvases.playerBackground.id: {
-                    logplus('Fixing PLAYERBACKGROUND');
                     if(canvas.width !== canvases.playerBackground.offsetWidth) canvas.width = canvases.playerBackground.offsetWidth;
                     if(canvas.height !== canvases.playerBackground.offsetHeight) canvas.height = canvases.playerBackground.offsetHeight;
                     break;
                 }
                 case canvases.background.id: {
-                    logplus('Fixing BACKGROUND');
                     if(canvas.width !== canvases.background.offsetWidth) canvas.width = canvases.background.offsetWidth;
                     if(canvas.height !== canvases.background.offsetHeight) canvas.height = canvases.background.offsetHeight;
                     break;
@@ -1292,7 +1256,9 @@ svg text {
         }
 
         let lastFrameTime = 0;
-        function renderFrame(time) { // Never remove time var from here
+
+        // Never remove time var from here
+        function renderFrame(time) {
         // Don't do anything if True Pause energy saver is on and playback is paused
             if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
 
@@ -1302,11 +1268,14 @@ svg text {
 
             ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-            if(visualizer.place === 'Disabled') return; // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see GM's save event
+            // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see GM's save event
+            if(visualizer.place === 'Disabled') return;
 
-            visualizer.analyser.getByteFrequencyData(visualizer.audioData); // Get audio data
+            // Get audio data
+            visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-            if(visualizer.rgb.enabled === true) { // Color cycle effect
+            // Color cycle effect
+            if(visualizer.rgb.enabled === true) {
                 visualizer.rgb._data.push(visualizer.rgb._data[0]);
                 visualizer.rgb._data.shift();
             }
@@ -1332,13 +1301,11 @@ svg text {
                     if(canvas.id !== canvases.background.id) {
                         canvas = canvases.background;
                         ctx = canvas.getContext('2d');
-                        logplus('Switched canvas to background');
                     }
                 }
                 else if(canvas.id !== canvases.playerBackground.id) {
                     canvas = canvases.playerBackground;
                     ctx = canvas.getContext('2d');
-                    logplus('Switched canvas to playerBackground');
                 }
                 if(visualizer.circleEnabled === true) visualizerCircle();
                 else visualizerNavbar();
@@ -1349,7 +1316,9 @@ svg text {
 
         function getBarColor(i) {
             if(visualizer.rgb.enabled === true) {
-                const color = ~~(i / visualizer.colorDivergence); // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+            // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+                const color = ~~(i / visualizer.colorDivergence);
+
                 if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
                 else ctx.fillStyle = `rgb(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue})`;
             }
@@ -1396,13 +1365,14 @@ svg text {
             // Get all categories and make category names into buttons
             const categorySelect = injectElement('div', 'categorySelect', wrapper, doc);
             const categories = doc.getElementsByClassName('section_header_holder');
-            for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
+            for(let i = 0, len = categories.length - 1; i < len; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
             // Handle changeCategoryButtons
             const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
             let lastOpenSetting;
             for(let i = 0; i < changeCategoryButton.length; i++) {
                 changeCategoryButton[i].addEventListener('click', () => {
+                    GM_config.set('lastOpenCategory', i);
                     for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
                     changeCategoryButton[i].disabled = true; // "Disable" current button for styling
                     const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
@@ -1424,6 +1394,7 @@ svg text {
                 configVars.removeChild(configVars.firstElementChild);
                 currentSettings.appendChild(configVars); // Move category to currentSettings and await to be visible
             }
+            if(GM_config.get('lastOpenCategory') !== -1) changeCategoryButton[GM_config.get('lastOpenCategory')].click();
         }
 
         function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
