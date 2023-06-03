@@ -15,9 +15,11 @@ const canvases = {
 export async function setupVisualizer() {
     // Injecting visualizer canvases
     canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', globals.navBarBg, document, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
-    canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.mainPanel, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;');
+    canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', globals.player, document, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
     globals.navBarBg.style.opacity = 1;
-    canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('browse-page'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: 100vh;', true);
+
+    // 64px is navbar, 72px is bottom player controls
+    canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), document, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
     canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), document, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
     if(GM_config.get('visualizerPlace') !== 'Disabled') getVideo();
 }
@@ -75,7 +77,7 @@ export function startVisualizer() {
     visualizer.getBufferData();
     visualizer.initValues();
 
-    // Helps set the canvas size to the correct values (navbar width, rectangle or square album cover, etc)
+    // Helps set the canvas resolution to the correct size
     visualizer.resizeInterval = setInterval(() => {
         visualizerResizeFix();
     }, 1000);
@@ -89,37 +91,33 @@ export function startVisualizer() {
 export function visualizerResizeFix() {
     switch(canvas.id) {
         case canvases.navbar.id: {
-            logplus('Fixing NAVBAR');
             if(canvas.width !== globals.navBarBg.offsetWidth) canvas.width = globals.navBarBg.offsetWidth;
             if(canvas.height !== globals.navBarBg.offsetHeight) canvas.height = globals.navBarBg.offsetHeight;
             break;
         }
         case canvases.albumCover.id: {
-            logplus('Fixing ALBUM COVER');
             if(canvas.width !== globals.player.offsetWidth) canvas.width = globals.player.offsetWidth;
             if(canvas.height !== globals.player.offsetHeight) canvas.height = globals.player.offsetHeight;
 
-            // if miniplayer == true
-            if(globals.player.playerPageOpen_ === false) {
-                // move the canvas over the miniplayer
-                canvas.style.bottom = getComputedStyle(globals.player).bottom;
-                canvas.style.left = getComputedStyle(globals.player).left;
-            }
-            else {
-                // completely remove properties because html
-                if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
-                if(canvas.style.left !== '') canvas.style.removeProperty('left');
-            }
+            // // if miniplayer == true
+            // if(globals.player.playerPageOpen_ === false) {
+            //     // move the canvas over the miniplayer
+            //     canvas.style.bottom = getComputedStyle(globals.player).bottom;
+            //     canvas.style.left = getComputedStyle(globals.player).left;
+            // }
+            // else {
+            //     // completely remove properties because html
+            //     if(canvas.style.bottom !== '') canvas.style.removeProperty('bottom');
+            //     if(canvas.style.left !== '') canvas.style.removeProperty('left');
+            // }
             break;
         }
         case canvases.playerBackground.id: {
-            logplus('Fixing PLAYERBACKGROUND');
             if(canvas.width !== canvases.playerBackground.offsetWidth) canvas.width = canvases.playerBackground.offsetWidth;
             if(canvas.height !== canvases.playerBackground.offsetHeight) canvas.height = canvases.playerBackground.offsetHeight;
             break;
         }
         case canvases.background.id: {
-            logplus('Fixing BACKGROUND');
             if(canvas.width !== canvases.background.offsetWidth) canvas.width = canvases.background.offsetWidth;
             if(canvas.height !== canvases.background.offsetHeight) canvas.height = canvases.background.offsetHeight;
             break;
@@ -154,7 +152,9 @@ export function visualizerResizeFix() {
 }
 
 let lastFrameTime = 0;
-export function renderFrame(time) { // Never remove time var from here
+
+// Never remove time var from here
+export function renderFrame(time) {
     // Don't do anything if True Pause energy saver is on and playback is paused
     if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
 
@@ -164,11 +164,14 @@ export function renderFrame(time) { // Never remove time var from here
 
     ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-    if(visualizer.place === 'Disabled') return; // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see GM's save event
+    // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see GM's save event
+    if(visualizer.place === 'Disabled') return;
 
-    visualizer.analyser.getByteFrequencyData(visualizer.audioData); // Get audio data
+    // Get audio data
+    visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-    if(visualizer.rgb.enabled === true) { // Color cycle effect
+    // Color cycle effect
+    if(visualizer.rgb.enabled === true) {
         visualizer.rgb._data.push(visualizer.rgb._data[0]);
         visualizer.rgb._data.shift();
     }
@@ -211,7 +214,9 @@ export function renderFrame(time) { // Never remove time var from here
 
 export function getBarColor(i) {
     if(visualizer.rgb.enabled === true) {
-        const color = ~~(i / visualizer.colorDivergence); // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+        // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+        const color = ~~(i / visualizer.colorDivergence);
+
         if(visualizer.fade === true) ctx.fillStyle = `rgba(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
         else ctx.fillStyle = `rgb(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue})`;
     }

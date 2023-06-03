@@ -141,42 +141,41 @@ export function extraButtons(turnOn) {
 }
 
 export function fixLayout(turnOn) {
-    if(turnOn) {
-        globals.playerPageDiv.style.paddingTop = '0px';
-        globals.mainPanel.style.marginTop = '8vh';
-        globals.mainPanel.style.marginBottom = '8vh';
-    }
-    else {
-        globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
-        globals.mainPanel.style.marginTop = '0';
-        globals.mainPanel.style.marginBottom = 'var(--ytmusic-player-page-vertical-padding)';
-    }
+    if(turnOn) globals.playerPageDiv.style.paddingTop = '0px';
+    else globals.playerPageDiv.style.padding = 'var(--ytmusic-player-page-vertical-padding) var(--ytmusic-player-page-horizontal-padding) 0';
 }
 
 export function removeThumbnail(turnOn) {
     globals.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
     const songImage = document.getElementById('song-image');
+    const songMediaControls = globals.player.children[globals.player.children.length - 2];
     setTimeout(() => {
         if(!turnOn) {
             songImage.style.opacity = 1;
-            songImage.style.removeProperty('background');
+            songMediaControls.style.removeProperty('background');
         }
         else {
             songImage.style.opacity = 0.001;
-            songImage.style.background = '#0000';
+            songMediaControls.style.background = '#0000';
         }
     }, 500);
 }
 
 export async function swapMainPanelWithPlaylist(turnOn) {
     if(turnOn) {
-        if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) return;
+        if(globals.mainPanel.parentNode.lastElementChild.id === globals.mainPanel.id) {
+            globals.mainPanel.parentNode.children[1].style.zIndex = 9999;
+            return;
+        }
         await globals.mainPanel.parentNode.append(globals.mainPanel);
         globals.mainPanel.style.flexDirection = 'row-reverse';
         globals.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
     }
     else {
-        if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) return;
+        if(globals.mainPanel.parentNode.firstElementChild.id === globals.mainPanel.id) {
+            globals.mainPanel.parentNode.children[2].style.zIndex = 9999;
+            return;
+        }
         await globals.mainPanel.parentNode.prepend(globals.mainPanel);
         globals.mainPanel.style.flexDirection = 'row';
         globals.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
