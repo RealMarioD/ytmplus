@@ -291,5 +291,10 @@ export const configFields = {
         min: 1,
         max: 144,
         default: 30,
+    },
+    lastOpenCategory: {
+        section: 'backend',
+        type: 'hidden',
+        default: -1
     }
 };

@@ -41,13 +41,14 @@ function manageUIv2(doc) {
     // Get all categories and make category names into buttons
     const categorySelect = injectElement('div', 'categorySelect', wrapper, doc);
     const categories = doc.getElementsByClassName('section_header_holder');
-    for(let i = 0; i < categories.length; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
+    for(let i = 0, len = categories.length - 1; i < len; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton" value="${categories[i].children[0].innerHTML}">`;
 
     // Handle changeCategoryButtons
     const changeCategoryButton = doc.getElementsByClassName('changeCategoryButton');
     let lastOpenSetting;
     for(let i = 0; i < changeCategoryButton.length; i++) {
         changeCategoryButton[i].addEventListener('click', () => {
+            GM_config.set('lastOpenCategory', i);
             for(let j = 0; j < changeCategoryButton.length; j++) changeCategoryButton[j].disabled = false;
             changeCategoryButton[i].disabled = true; // "Disable" current button for styling
             const currentSetting = doc.getElementById('ytmPlusCfg_section_' + i);
@@ -69,6 +70,7 @@ function manageUIv2(doc) {
         configVars.removeChild(configVars.firstElementChild);
         currentSettings.appendChild(configVars); // Move category to currentSettings and await to be visible
     }
+    if(GM_config.get('lastOpenCategory') !== -1) changeCategoryButton[GM_config.get('lastOpenCategory')].click();
 }
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
