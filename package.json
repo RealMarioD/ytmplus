@@ -1,7 +1,7 @@
 {
   "name": "ytmplus",
   "metaname": "ytmPlus",
-  "version": "2.6.0",
+  "version": "Alpha3.0.0",
   "author": "Mario_D#7052",
   "license": "MIT",
   "namespace": "http://tampermonkey.net/",
@@ -11,17 +11,23 @@
   "match": "https://music.youtube.com/*",
   "icon": "https://imgur.com/gfg6VLJ.png",
   "require": "https://openuserjs.org/src/libs/sizzle/GM_config.js",
-  "grant": ["GM_getValue", "GM_setValue"],
+  "grant": [
+    "GM_getValue",
+    "GM_setValue"
+  ],
   "type": "module",
   "scripts": {
-    "build": "rollup -c"
+    "build-release": "rollup -c rollup.releaseConfig.mjs",
+    "build": "rollup -c rollup.devConfig.mjs"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.3",
-    "eslint": "^8.36.0",
-    "rollup": "^3.19.1"
+    "@rollup/plugin-strip": "^3.0.2",
+    "eslint": "^8.42.0",
+    "rollup": "^3.19.1",
+    "rollup-plugin-import-css": "^3.2.1"
   },
-  "main": "src/index.js",
+  "main": "newSrc/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RealMarioD/ytmplus.git"

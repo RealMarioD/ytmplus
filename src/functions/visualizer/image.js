@@ -1,6 +1,4 @@
-import { visualizer } from '../globals';
-import { logplus } from '../debug';
-import { ctx, values } from './init';
+import { visualizer } from '../../globals/visualizer';
 
 const image = new Image(),
     thumbnailChildSrc = () => {
@@ -26,9 +24,9 @@ image.onload = () => {
 };
 
 image.onerror = () => {
-    if(visualizer.image.type === 'Custom') logplus('Custom Image URL is not an image');
+    if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
     else {
-        logplus('warn', 'Visualizer Image couldn\'t be loaded.');
+        console.log('Visualizer Image couldn\'t be loaded.');
         return;
     }
     visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
@@ -45,36 +43,36 @@ setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000
 function thumbnailEvent() {
     currentURL = thumbnailChildSrc();
     if(!currentURL) {
-        logplus('thumbnailChildSrc is undefined');
+        console.log('thumbnailChildSrc is undefined');
         return;
     }
 
     if(currentURL.indexOf('data') === 0) {
-        logplus('Current song has broken thumbnail, might be a video');
+        console.log('Current song has broken thumbnail, might be a video');
 
         if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
         else if(loadSD === false && quality !== 'custom') {
-            logplus('Multiple changes with same URL, loadSD is false, quality is not custom');
+            console.log('Multiple changes with same URL, loadSD is false, quality is not custom');
             return;
         }
 
         if(!lastSavedVideoURL) {
-            logplus('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
+            console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
             return;
         }
 
-        logplus(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
+        console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
         imgLoaded = false;
         if(loadSD === true) {
             quality = 'sddefault';
-            logplus(`loadSD is true, working with ${quality}`);
+            console.log(`loadSD is true, working with ${quality}`);
         }
         else quality = 'maxresdefault';
         currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
         loadSD = false;
     }
     else if(image.src === currentURL) {
-        logplus('Image src is already thumbnail');
+        console.log('Image src is already thumbnail');
         return;
     }
     lastSavedVideoURL = currentVideoURL().href;
@@ -83,7 +81,7 @@ function thumbnailEvent() {
 
 function customEvent() {
     if(currentURL === visualizer.image.customURL) {
-        logplus('Custom Image change: URL is the same');
+        console.log('Custom Image change: URL is the same');
         return;
     }
     currentURL = visualizer.image.customURL;
@@ -92,25 +90,26 @@ function customEvent() {
 }
 
 function finalize() {
-    logplus('green', `Changed currentURL to: ${currentURL}`);
+    console.log(`Changed currentURL to: ${currentURL}`);
     imgLoaded = false;
     image.src = currentURL;
 }
 
 export function replaceImageURL() {
+    if(visualizer.circleEnabled === false) return;
     if(visualizer.image.type === 'Thumbnail') thumbnailEvent();
     else if(visualizer.image.type === 'Custom') customEvent();
 }
 
 const PI2 = Math.PI * 2;
 export function drawVisImage() {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(values.halfWidth, values.halfHeight, values.radius, 0, PI2, true);
-    ctx.closePath();
-    ctx.clip();
+    visualizer.ctx.save();
+    visualizer.ctx.beginPath();
+    visualizer.ctx.arc(visualizer.values.halfWidth, visualizer.values.halfHeight, visualizer.values.radius, 0, PI2, true);
+    visualizer.ctx.closePath();
+    visualizer.ctx.clip();
 
-    let radiusMultX = values.radius, radiusMultY = 1; // default values for 1:1 aspect ratio
+    let radiusMultX = visualizer.values.radius, radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
 
     if(quality === 'sddefault') { // enlarge image to cut off "cinematic bars"
         radiusMultX *= 1.33;
@@ -122,12 +121,12 @@ export function drawVisImage() {
     }
     else radiusMultY *= wRatio; // horizontal img handling
 
-    ctx.drawImage(
+    visualizer.ctx.drawImage(
         image,
-        values.halfWidth - radiusMultX * radiusMultY,
-        values.halfHeight - radiusMultX,
+        visualizer.values.halfWidth - radiusMultX * radiusMultY,
+        visualizer.values.halfHeight - radiusMultX,
         radiusMultX * 2 * radiusMultY,
         radiusMultX * 2
     );
-    ctx.restore();
+    visualizer.ctx.restore();
 }

@@ -1,0 +1,460 @@
+#ytmPlusCfg {
+    background-color: rgba(0, 0, 0, 0.925);
+    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);
+    border: 0;
+    border-radius: 12px;
+    font-size: 18px;
+    /* GM_config sets a lot of things to element, we can only change it in JS no? */
+}
+
+#ytmPlusCfg * {
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#ytmPlusCfg_wrapper {
+    display: flex;
+    height: inherit;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: space-evenly;
+}
+
+#ytmPlusCfg_titlebar {
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: rgb(66, 66, 66, 0.925);
+    width: 100%;
+    height: 52px;
+    align-items: center;
+}
+
+#titlebar_x {
+    font-size: 1.5em;
+    padding: 0;
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.925);
+    transition: 100ms linear;
+}
+
+#titlebar_x:hover {
+    background-color: rgb(170, 25, 25);
+}
+
+#supportMePls {
+    height: 100%;
+    aspect-ratio: 1;
+    border-left: 1px solid rgba(0, 0, 0, 0.925);
+    transition: 100ms linear;
+}
+
+#supportMePls:hover {
+    background: #00CAFE;
+}
+
+#goToKofi {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#supportMePls img {
+    height: 100%;
+}
+
+#titlebar_draggable {
+    width: 100%;
+    height: inherit;
+    cursor: move;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#titlebar_icon {
+    height: 80%;
+    margin: 0 6px;
+}
+
+#sideBySide {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    height: calc(100% - 52px);
+    align-content: space-evenly;
+}
+
+#categorySelect {
+    width: 40%;
+    justify-content: space-evenly;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    flex-wrap: wrap;
+    align-content: space-evenly;
+}
+
+#ytmPlusCfg #ytmPlusCfg_header {
+    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    width: 100%;
+}
+
+#ytmPlusCfg .config_header {
+    font-size: 1em;
+}
+
+#ytmPlusCfg .changeCategoryButton {
+    padding: 3.25%;
+    width: 95%;
+    height: auto;
+    white-space: pre-wrap;
+    animation: buttonBorder 2s infinite forwards linear;
+}
+
+.changeCategoryButton:disabled {
+    --borderColor1: #dd0055ee;
+    --borderColor2: #5500ddee;
+    animation: buttonBorder 2s infinite forwards linear;
+}
+
+.changeCategoryButton:hover {
+    --borderColor1: #ff0077ff;
+    --borderColor2: #7700ffff;
+    animation: buttonBorder 1s infinite forwards linear;
+}
+
+.changeCategoryButton:active {
+    --borderColor1: #6600eecc;
+    --borderColor2: #ee0066cc;
+    animation: buttonBorder 0.5s infinite forwards linear;
+}
+
+/* #ytmPlusCfg_buttons_holder {
+    text-align: center;
+}
+#ytmPlusCfg #ytmPlusCfg_saveBtn {
+    margin-right: 2%;
+}
+#ytmPlusCfg .saveclose_buttons {
+    margin: 0;
+    width: 49%;
+    padding: 1.5vh;
+    background: rgba(66, 66, 66, 0.8);
+    animation: buttonBorder 2s infinite forwards linear;
+}
+#ytmPlusCfg .saveclose_buttons:disabled {
+    --borderColor1: #dd0055ee;
+    --borderColor2: #5500ddee;
+    animation: buttonBorder 2s infinite forwards linear;
+}
+#ytmPlusCfg .saveclose_buttons:hover {
+    --borderColor1: #ff0077ff;
+    --borderColor2: #7700ffff;
+    animation: buttonBorder 1s infinite forwards linear;
+}
+#ytmPlusCfg .saveclose_buttons:active {
+    --borderColor1: #6600eecc;
+    --borderColor2: #ee0066cc;
+    animation: buttonBorder 0.5s infinite forwards linear;
+} */
+
+#ytmPlusCfg .reset_holder {
+    text-align: center;
+}
+
+#ytmPlusCfg .reset {
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#divider {
+    background: #aaaaaa;
+    width: 2px;
+    height: 100%;
+}
+
+#currentSettings {
+    width: 60%;
+    height: 100%;
+    overflow: overlay;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+}
+
+#ytmPlusCfg .section_header_holder {
+    margin-top: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+#ytmPlusCfg .config_var {
+    text-align: left;
+    height: auto;
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: solid 1px #6666;
+    margin: 0;
+}
+
+#ytmPlusCfg .field_label {
+    font-size: 1.23em;
+    display: flex;
+    align-items: center;
+    margin-right: 0;
+    padding: 12px 0;
+}
+
+#ytmPlusCfg input[type="color"] {
+    color: #89befe;
+    background: #62666F;
+    display: flex;
+    align-items: center;
+    width: 20%;
+    height: 75%;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    cursor: pointer;
+}
+
+#ytmPlusCfg input[type="color"]:before {
+    content: "CHANGE";
+    padding: 0 7.5%;
+}
+
+#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+#ytmPlusCfg input[type="color"]::-webkit-color-swatch {
+    border: 0;
+}
+
+#ytmPlusCfg input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+    width: 20%;
+    height: 75%;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #313338;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+input[type="checkbox"]:before {
+    font-size: 1.5em;
+    content: "OFF";
+    width: 50%;
+    height: 100%;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #62666F;
+    color: #313338;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #8175fe, #89befe);
+}
+
+input[type="checkbox"]:checked:before {
+    content: "ON";
+    color: #89befe;
+    margin-left: 51%;
+}
+
+#ytmPlusCfg input[type="text"] {
+    width: 15%;
+    height: 75%;
+    padding: 0 2.5%;
+}
+
+input {
+    background-color: rgba(66, 66, 66, 0.8);
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: inherit;
+}
+
+#ytmPlusCfg textarea {
+    background-color: rgba(66, 66, 66, 0.8);
+    width: 100%;
+    height: 25%;
+    resize: none;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    border: none;
+    border-radius: 8px;
+    padding: 1%;
+    scrollbar-width: none;
+    font-size: inherit;
+}
+
+#ytmPlusCfg textarea::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#ytmPlusCfg select {
+    background-color: rgba(66, 66, 66, 0.8);
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    font-size: inherit;
+    width: 20%;
+    height: 75%;
+    text-overflow: ellipsis;
+}
+
+#ytmPlusCfg *::-webkit-scrollbar {
+    width: 12px;
+}
+
+#ytmPlusCfg *::-webkit-scrollbar-track {
+    background: #313338;
+}
+
+#ytmPlusCfg *::-webkit-scrollbar-thumb {
+    background: #62666F;
+}
+
+#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {
+    background: #b4bbbf;
+}
+
+#header_svg {
+    width: 100%;
+    height: 90px;
+}
+
+#vnumber_header {
+    -webkit-text-fill-color: white;
+}
+
+svg text {
+    font-size: 5em;
+    animation: stroke 10s infinite alternate linear;
+    stroke-width: 2;
+    stroke: #aa0000;
+}
+
+@keyframes stroke {
+    0% {
+        fill: rgba(200, 0, 85, 0.25);
+        stroke: rgba(170, 0, 85, 1);
+        stroke-dashoffset: 25%;
+        stroke-dasharray: 10%;
+        stroke-width: 3;
+    }
+
+    100% {
+        fill: rgba(200, 0, 85, 0.25);
+        stroke: rgba(170, 0, 85, 1);
+        stroke-dashoffset: -25%;
+        stroke-dasharray: 10%;
+    }
+}
+
+:root {
+    --borderColor1: #66003366;
+    --borderColor2: #33006666;
+}
+
+@keyframes buttonBorder {
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@-moz-document url-prefix() {
+    #currentSettings {
+        overflow: scroll;
+    }
+}
+
+#ytmPlusCfg .ytmPlusBorder {
+    border-radius: 10px;
+    border: solid 3px transparent;
+    box-shadow: 2px 1000px 1px #333 inset;
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));
+    background-size: 200% 100%;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+}
+
+#ytmPlusCfg #reset_warning {
+    border: 3px solid;
+    border-radius: 8px;
+    background: #333138;
+    position: absolute;
+    inset: 25% 0 0 25%;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: space-around;
+    animation: buttonBorder 1s infinite forwards linear;
+}
+
+#warning_text {
+    font-size: 1.5em;
+    width: fit-content;
+    text-align: center;
+}
+
+.warning_buttons {
+    transition: 100ms linear;
+}
+
+#yes_reset_button {
+    background-color: #f77;
+}
+
+#yes_reset_button:hover {
+    background-color: #a00;
+}
+
+#no_goback_button {
+    background-color: #77f;
+}
+
+#no_goback_button:hover {
+    background-color: #00a;
+}

@@ -11,7 +11,8 @@
 		"sourceType": "module"
 	},
 	"globals": {
-		"GM_configStruct": "readonly"
+		"GM_configStruct": "readonly",
+		"getEventListeners": "readonly"
 	},
 	"rules": {
 		"arrow-spacing": ["error", { "before": true, "after": true }],

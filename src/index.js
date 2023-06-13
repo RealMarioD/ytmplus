@@ -1,5 +1,6 @@
-import { keydownEvent, loadEvent } from './window/events';
+import { keydownEvent } from './events/settingsOpenClose';
+import { setup } from './events/windowLoad';
 
-window.addEventListener('keydown', (ev) => keydownEvent(ev));
+window.addEventListener('keydown', (e) => keydownEvent(e));
 
-window.addEventListener('load', () => loadEvent());
+window.addEventListener('load', () => setup());

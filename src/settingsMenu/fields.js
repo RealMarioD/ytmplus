@@ -2,26 +2,26 @@ import { fieldTexts } from './fieldTexts';
 
 export let langOption = GM_getValue('ytmPlusCfg', 'english');
 if(langOption != 'english') {
-    langOption = JSON.parse(langOption).lang;
+    langOption = JSON.parse(langOption).language;
     if(!langOption) langOption = 'english';
     else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
 }
 
 // 'type': 'color'; just results in a text input, they are later converted to actual color input, see open event
 export const configFields = {
-    lang: {
+    language: {
         label: fieldTexts.lang[langOption],
         section: fieldTexts.langSection[langOption],
         type: 'select',
         options: ['English', 'Hungarian'],
         default: 'English'
     },
-    noAfk: {
+    neverAfk: {
         label: fieldTexts.noAfk[langOption],
         type: 'checkbox',
         default: true
     },
-    noPromo: {
+    noPromotions: {
         label: fieldTexts.noPromo[langOption],
         type: 'checkbox',
         default: true
@@ -31,17 +31,17 @@ export const configFields = {
         type: 'checkbox',
         default: false
     },
-    padding: {
+    fixLayout: {
         label: fieldTexts.padding[langOption],
         type: 'checkbox',
         default: true
     },
-    extraButtons: {
+    extraPlaybackButtons: {
         label: fieldTexts.extraButtons[langOption],
         type: 'checkbox',
         default: true
     },
-    removeThumbnail: {
+    removeAlbumCover: {
         label: fieldTexts.removeThumbnail[langOption],
         type: 'checkbox',
         default: false
@@ -51,7 +51,7 @@ export const configFields = {
         type: 'checkbox',
         default: false
     },
-    bg: {
+    changeBackground: {
         label: fieldTexts.bg[langOption],
         section: fieldTexts.bgSection[langOption],
         type: 'checkbox',
@@ -85,7 +85,7 @@ export const configFields = {
         options: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal'
     },
-    clock: {
+    changeUpgradeButton: {
         label: fieldTexts.clock[langOption],
         section: fieldTexts.clockSection[langOption],
         type: 'select',
@@ -152,7 +152,7 @@ export const configFields = {
         label: fieldTexts.visualizerFft[langOption],
         type: 'select',
         options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-        default: '1024',
+        default: '4096',
     },
     visualizerEnergySaverType: {
         label: fieldTexts.visualizerEnergySaverType[langOption],
@@ -203,7 +203,7 @@ export const configFields = {
     visualizerImageCustomURL: {
         label: fieldTexts.visualizerImageCustomURL[langOption],
         type: 'textarea',
-        default: 'https://yt3.googleusercontent.com/ytc/AL5GRJX3OEex8FqN1gogsXQZNB7fV9TVHfda2EynDiW9_g=s900-c-k-c0x00ffffff-no-rj'
+        default: 'https://imgur.com/HSTpR8R.png'
     },
     attention1: {
         label: fieldTexts.attention1[langOption],
@@ -257,10 +257,17 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.3
+        default: 0.75
     },
-    visualizerKeepHertz: {
-        label: fieldTexts.visualizerKeepHertz[langOption],
+    visualizerMinHertz: {
+        label: fieldTexts.visualizerMinHertz[langOption],
+        type: 'int',
+        min: 0,
+        max: 44100,
+        default: 0
+    },
+    visualizerMaxHertz: {
+        label: fieldTexts.visualizerMaxHertz[langOption],
         type: 'int',
         min: 1,
         max: 44100,
