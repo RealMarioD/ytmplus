@@ -1,9 +1,21 @@
+@media screen and (max-height: 768px) {
+    #ytmPlusCfg {
+        height: 512px;
+        font-size: 12px;
+    }
+}
+@media screen and (min-height: 769px) {
+    #ytmPlusCfg {
+        height: 768px;
+        font-size: 18px;
+    }
+}
+
 #ytmPlusCfg {
     background-color: rgba(0, 0, 0, 0.925);
     box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);
     border: 0;
-    border-radius: 12px;
-    font-size: 18px;
+    border-radius: 1%;
     /* GM_config sets a lot of things to element, we can only change it in JS no? */
 }
 
@@ -26,7 +38,7 @@
     flex-direction: row-reverse;
     background-color: rgb(66, 66, 66, 0.925);
     width: 100%;
-    height: 52px;
+    height: 7.68%;
     align-items: center;
 }
 
@@ -68,7 +80,7 @@
 
 #titlebar_draggable {
     width: 100%;
-    height: inherit;
+    height: 100%;
     cursor: move;
     display: flex;
     flex-direction: row;
@@ -78,7 +90,7 @@
 
 #titlebar_icon {
     height: 80%;
-    margin: 0 6px;
+    margin: 0 0.675%;
 }
 
 #sideBySide {
@@ -176,6 +188,7 @@
 }
 
 #ytmPlusCfg .reset {
+    font-size: 1em;
     color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
     text-decoration: underline;
@@ -183,7 +196,7 @@
 
 #divider {
     background: #aaaaaa;
-    width: 2px;
+    width: 0.1%;
     height: 100%;
 }
 
@@ -222,7 +235,7 @@
     display: flex;
     align-items: center;
     margin-right: 0;
-    padding: 12px 0;
+    padding: 2% 0;
 }
 
 #ytmPlusCfg input[type="color"] {

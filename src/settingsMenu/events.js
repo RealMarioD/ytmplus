@@ -11,25 +11,7 @@ import { startVisualizer } from '../functions/visualizer/init';
 import { ytmpConfig } from '../ytmpConfig';
 import { manageUI } from './ui/init';
 import { injectElement } from '../functions/backend/injectElement';
-
-const headerSVG = // viewBox="0 0 613 99"
-    `<svg id="header_svg">
-        <g style="overflow:hidden; text-anchor: middle;">
-            <defs>
-                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="5" result="glow"/>
-                    <feMerge>
-                    <feMergeNode in="glow"/>
-                    <feMergeNode in="glow"/>
-                    <feMergeNode in="glow"/>
-                    </feMerge>
-                </filter>
-            </defs>
-            <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
-            <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
-        </g>
-    </svg>`;
-
+import headerSVG from './ui/ytmpTitle.svg';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Every color input we want has to be 'manually set' (ytmpConfig's customType would come in handy but how the hell do it work)

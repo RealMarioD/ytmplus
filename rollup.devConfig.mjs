@@ -2,6 +2,7 @@ import fs from 'fs';
 import { announceVersion, lint, metadataBuilder } from './plugins.js';
 // import strip from '@rollup/plugin-strip';
 import css from 'rollup-plugin-import-css';
+import { string } from 'rollup-plugin-string';
 
 const catcherBlock = fs.readFileSync('./catcher.js', 'utf8').split('undefined');
 
@@ -20,6 +21,9 @@ export default {
     },
     plugins: [
         css(),
+        string({
+            include: 'src/settingsMenu/ui/ytmpTitle.svg',
+        }),
         // strip({
         //     functions: [ 'console.log', 'console.error', 'console.warn' ]
         // }),

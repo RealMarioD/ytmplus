@@ -25,7 +25,8 @@
     "@rollup/plugin-strip": "^3.0.2",
     "eslint": "^8.42.0",
     "rollup": "^3.19.1",
-    "rollup-plugin-import-css": "^3.2.1"
+    "rollup-plugin-import-css": "^3.2.1",
+    "rollup-plugin-string": "^3.0.0"
   },
   "main": "newSrc/index.js",
   "repository": {

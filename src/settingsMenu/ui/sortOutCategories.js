@@ -24,7 +24,7 @@ export async function sortOutCategories(wrapper) {
         });
     }
 
-    injectElement('div', 'divider', sideBySide, null, 'background: #fff; width: 2px; height: 90%;');
+    injectElement('div', 'divider', sideBySide);
 
     const currentSettings = injectElement('div', 'currentSettings', sideBySide);
     categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect

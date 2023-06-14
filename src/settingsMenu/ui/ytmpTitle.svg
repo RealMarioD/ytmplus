@@ -1,0 +1,16 @@
+<svg id="header_svg">
+    <g style="overflow:hidden; text-anchor: middle;">
+        <defs>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="5" result="glow"/>
+                <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="glow"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>
+        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>
+    </g>
+</svg>
