@@ -2,12 +2,18 @@ import { injectElement } from '../../functions/backend/injectElement';
 import { ytmpConfig } from '../../ytmpConfig';
 
 export async function sortOutCategories(wrapper) {
-    const sideBySide = injectElement('div', 'sideBySide', wrapper);
-    const categorySelect = injectElement('div', 'categorySelect', sideBySide);
+    const sideBySide = await injectElement('div', 'sideBySide', wrapper);
+    const categorySelect = await injectElement('div', 'categorySelect', sideBySide);
 
     // Get all categories and make category names into buttons
     const categories = document.getElementsByClassName('section_header_holder');
-    for(let i = 0, len = categories.length - 1; i < len; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton ytmPlusBorder" value="${categories[i].children[0].innerHTML}">`;
+    for(let i = 0, len = categories.length - 1; i < len; i++) {
+        const sectionName = categories[i].children[0].innerHTML;
+
+        const newCategoryButton = await injectElement('input', undefined, categorySelect, ['changeCategoryButton', 'ytmPlusBorder']);
+        newCategoryButton.type = 'button';
+        newCategoryButton.value = sectionName;
+    }
 
     // Set click events to each category button
     const changeCategoryButton = document.getElementsByClassName('changeCategoryButton');
@@ -24,9 +30,9 @@ export async function sortOutCategories(wrapper) {
         });
     }
 
-    injectElement('div', 'divider', sideBySide);
+    await injectElement('div', 'divider', sideBySide);
 
-    const currentSettings = injectElement('div', 'currentSettings', sideBySide);
+    const currentSettings = await injectElement('div', 'currentSettings', sideBySide);
     categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
     categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
     categorySelect.lastElementChild.style.display = 'none'; // V3: remove save and close buttons, everything auto saves, close button is now X in top right

@@ -3,7 +3,7 @@ import { ytmpConfig } from '../../ytmpConfig';
 
 export async function createResetWarning(frame, resetLink) {
     // Creating window that pops up if you press reset
-    const resetWarning = await injectElement('div', 'reset_warning', frame, null, 'display: none');
+    const resetWarning = await injectElement('div', 'reset_warning', frame, undefined, 'display: none');
     const warningText = await injectElement('span', 'warning_text', resetWarning);
     warningText.innerHTML = 'WAIT!<br>RESET EVERYTHING TO DEFAULT?';
     const yesResetButton = await injectElement('input', 'yes_reset_button', resetWarning, 'warning_buttons');

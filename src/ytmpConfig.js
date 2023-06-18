@@ -12,5 +12,5 @@ export const ytmpConfig = new GM_configStruct({
         open: openEvent,
         save: saveEvent
     },
-    frame: injectElement('div', 'ytmPlusCfg', document.body, null, 'display: flex')
+    frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
 });

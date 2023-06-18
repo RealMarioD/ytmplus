@@ -3,7 +3,7 @@ import { ytmpConfig } from '../../ytmpConfig';
 
 export async function createTitlebar(wrapper, frame) {
     // Creating titlebar
-    const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, null, null, true);
+    const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
     const closeButton = await injectElement('input', 'titlebar_x', titlebar);
     closeButton.type = 'button';
     closeButton.value = 'X';

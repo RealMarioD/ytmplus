@@ -8,13 +8,13 @@ import { getBufferData, initValues, visualizerResizeFix } from './utils';
 
 export async function setupVisualizer() {
     // Injecting visualizer visualizer.canvases
-    visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, null, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
-    visualizer.canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', elements.player, null, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+    visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, undefined, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
+    visualizer.canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', elements.player, undefined, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
     elements.navBarBg.style.opacity = 1;
 
     // 64px is navbar, 72px is bottom player controls
-    visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), null, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
-    visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), null, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+    visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), undefined, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
+    visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), undefined, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
     getVideo();
 }
 

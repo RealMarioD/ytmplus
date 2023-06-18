@@ -18,7 +18,7 @@ try {
     (function() {
         'use strict';
 
-        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1%;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#divider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow: overlay;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 20%;\r\n    height: 75%;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    border: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 20%;\r\n    height: 75%;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1.5em;\r\n    content: "OFF";\r\n    width: 50%;\r\n    height: 100%;\r\n    border-radius: 8px;\r\n    font-size: 1em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #8175fe, #89befe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "ON";\r\n    color: #89befe;\r\n    margin-left: 51%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 20%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 10px;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 8px;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}';
+        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1%;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#divider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 20%;\r\n    height: 75%;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    border: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 20%;\r\n    height: 75%;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1.5em;\r\n    content: "OFF";\r\n    width: 50%;\r\n    height: 100%;\r\n    border-radius: 8px;\r\n    font-size: 1em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #8175fe, #89befe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "ON";\r\n    color: #89befe;\r\n    margin-left: 51%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 8px;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 20%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 10px;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 8px;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}';
 
         const fieldTexts = {
             lang: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
@@ -30,10 +30,13 @@ try {
             extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
             removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
             swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
-            bg: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
-            bgSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
+            changeNavbarBackground: { english: 'Change Navbar Background' },
+            navbarBackgroundColor: { english: 'Color' },
+            themeSection: { english: 'Theme Settings' },
+            changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
+            changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
             bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
-            bgEnableGradient: { english: 'Enable Gradient', hungarian: 'Háttér színátmenet engedélyezése' },
+            bgEnableGradient: { english: 'Enable Background Gradient', hungarian: 'Háttér színátmenet engedélyezése' },
             bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
             bgGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
             bgGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színátmenet Animáció' },
@@ -53,8 +56,7 @@ try {
             visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
             visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
             visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
-            visualizerCircleEnabled: { english: 'Enable (Disabled on Navbar)', hungarian: 'Engedélyez (Navbaron Kikapcsolva)' },
-            visualizerCircleEnabledSection: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
+            visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
             visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
             visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
             visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
@@ -71,7 +73,7 @@ try {
             visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
             visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
             visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
-            visualizerMinHertz: { english: 'Audiodata Min Hertz', hungarian: 'AudioData Min Hertz' },
+            visualizerMinHertz: { english: 'AudioData Min Hertz', hungarian: 'AudioData Min Hertz' },
             visualizerMaxHertz: { english: 'AudioData Max Hertz', hungarian: 'AudioData Max Hertz' },
             visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
             visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
@@ -130,16 +132,28 @@ try {
                 type: 'checkbox',
                 default: false
             },
+            changeNavbarBackground: {
+                label: fieldTexts.changeNavbarBackground[langOption],
+                section: fieldTexts.themeSection[langOption],
+                type: 'checkbox',
+                default: false
+            },
+            navbarBackgroundColor: {
+                label: fieldTexts.navbarBackgroundColor[langOption],
+                type: 'color',
+                default: '#030303',
+                subCheckbox: 'changeNavbarBackground'
+            },
             changeBackground: {
-                label: fieldTexts.bg[langOption],
-                section: fieldTexts.bgSection[langOption],
+                label: fieldTexts.changeBackground[langOption],
                 type: 'checkbox',
                 default: true
             },
             bgColor: {
                 label: fieldTexts.bgColor[langOption],
                 type: 'color',
-                default: '#AA0000'
+                default: '#AA0000',
+                subCheckbox: 'changeBackground'
             },
             bgEnableGradient: {
                 label: fieldTexts.bgEnableGradient[langOption],
@@ -149,24 +163,26 @@ try {
             bgGradient: {
                 label: fieldTexts.bgGradient[langOption],
                 type: 'color',
-                default: '#0000AA'
+                default: '#0000AA',
+                subCheckbox: 'bgEnableGradient'
             },
             bgGradientAngle: {
                 label: fieldTexts.bgGradientAngle[langOption],
                 type: 'int',
                 min: -360,
                 max: 360,
-                default: 45
+                default: 45,
+                subCheckbox: 'bgEnableGradient'
             },
             bgGradientAnimation: {
                 label: fieldTexts.bgGradientAnimation[langOption],
                 type: 'select',
                 options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: 'Horizontal'
+                default: 'Horizontal',
+                subCheckbox: 'bgEnableGradient'
             },
             changeUpgradeButton: {
                 label: fieldTexts.clock[langOption],
-                section: fieldTexts.clockSection[langOption],
                 type: 'select',
                 options: ['Original', 'Remove Button', 'Digital Clock'],
                 default: 'Digital Clock'
@@ -174,30 +190,35 @@ try {
             clockColor: {
                 label: fieldTexts.clockColor[langOption],
                 type: 'color',
-                default: '#AA3333'
+                default: '#AA3333',
+                subOption: 'changeUpgradeButton.2'
             },
             clockGradient: {
                 label: fieldTexts.clockGradient[langOption],
                 type: 'checkbox',
-                default: true
+                default: true,
+                subOption: 'changeUpgradeButton.2'
             },
             clockGradientColor: {
                 label: fieldTexts.clockGradientColor[langOption],
                 type: 'color',
-                default: '#3333AA'
+                default: '#3333AA',
+                subOption: 'changeUpgradeButton.2'
             },
             clockGradientAngle: {
                 label: fieldTexts.clockGradientAngle[langOption],
                 type: 'int',
                 min: -360,
                 max: 360,
-                default: 90
+                default: 90,
+                subOption: 'changeUpgradeButton.2'
             },
             clockGradientAnimation: {
                 label: fieldTexts.clockGradientAnimation[langOption],
                 type: 'select',
                 options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: 'Horizontal'
+                default: 'Horizontal',
+                subOption: 'changeUpgradeButton.2'
             },
             visualizerPlace: {
                 label: fieldTexts.visualizerPlace[langOption],
@@ -241,48 +262,54 @@ try {
             },
             visualizerCircleEnabled: {
                 label: fieldTexts.visualizerCircleEnabled[langOption],
-                section: fieldTexts.visualizerCircleEnabledSection[langOption],
                 type: 'checkbox',
-                default: true
+                default: true,
             },
             visualizerRotate: {
                 label: fieldTexts.visualizerRotate[langOption],
                 type: 'select',
                 options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-                default: 'Disabled'
+                default: 'Disabled',
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerRotateDirection: {
                 label: fieldTexts.visualizerRotateDirection[langOption],
                 type: 'select',
                 options: ['Clockwise', 'Counter-Clockwise'],
-                default: 'Clockwise'
+                default: 'Clockwise',
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerMove: {
                 label: fieldTexts.visualizerMove[langOption],
                 type: 'select',
                 options: ['Inside', 'Outside', 'Both Sides'],
-                default: 'Outside'
+                default: 'Outside',
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerBassBounceEnabled: {
                 label: fieldTexts.visualizerBassBounceEnabled[langOption],
                 type: 'checkbox',
-                default: true
+                default: true,
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerBassBounceSmooth: {
                 label: fieldTexts.visualizerBassBounceSmooth[langOption],
                 type: 'checkbox',
-                default: true
+                default: true,
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerImageType: {
                 label: fieldTexts.visualizerImageType[langOption],
                 type: 'select',
                 options: ['Disabled', 'Thumbnail', 'Custom'],
-                default: 'Thumbnail'
+                default: 'Thumbnail',
+                subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerImageCustomURL: {
                 label: fieldTexts.visualizerImageCustomURL[langOption],
                 type: 'textarea',
-                default: 'https://imgur.com/HSTpR8R.png'
+                default: 'https://imgur.com/HSTpR8R.png',
+                subCheckbox: 'visualizerCircleEnabled'
             },
             attention1: {
                 label: fieldTexts.attention1[langOption],
@@ -659,8 +686,13 @@ try {
 
         function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
             const node = document.createElement(type);
-            node.id = id;
-            if(customClass) node.classList.add(customClass);
+            if(id) node.id = id;
+            if(typeof customClass === 'object') {
+                customClass.forEach(c => {
+                    node.classList.add(c);
+                });
+            }
+            else if(customClass) node.classList.add(customClass);
             if(customStyle) node.style = customStyle;
             if(!wrapperElm) {
                 console.error('injectElement: Wrapper is undefined');
@@ -1125,13 +1157,13 @@ try {
 
         async function setupVisualizer() {
         // Injecting visualizer visualizer.canvases
-            visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, null, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
-            visualizer.canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', elements.player, null, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+            visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, undefined, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
+            visualizer.canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', elements.player, undefined, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
             elements.navBarBg.style.opacity = 1;
 
             // 64px is navbar, 72px is bottom player controls
-            visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), null, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
-            visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), null, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+            visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), undefined, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
+            visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), undefined, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
             getVideo();
         }
 
@@ -1237,7 +1269,7 @@ try {
 
         async function createResetWarning(frame, resetLink) {
         // Creating window that pops up if you press reset
-            const resetWarning = await injectElement('div', 'reset_warning', frame, null, 'display: none');
+            const resetWarning = await injectElement('div', 'reset_warning', frame, undefined, 'display: none');
             const warningText = await injectElement('span', 'warning_text', resetWarning);
             warningText.innerHTML = 'WAIT!<br>RESET EVERYTHING TO DEFAULT?';
             const yesResetButton = await injectElement('input', 'yes_reset_button', resetWarning, 'warning_buttons');
@@ -1261,12 +1293,18 @@ try {
         }
 
         async function sortOutCategories(wrapper) {
-            const sideBySide = injectElement('div', 'sideBySide', wrapper);
-            const categorySelect = injectElement('div', 'categorySelect', sideBySide);
+            const sideBySide = await injectElement('div', 'sideBySide', wrapper);
+            const categorySelect = await injectElement('div', 'categorySelect', sideBySide);
 
             // Get all categories and make category names into buttons
             const categories = document.getElementsByClassName('section_header_holder');
-            for(let i = 0, len = categories.length - 1; i < len; i++) categorySelect.innerHTML += `<input type="button" class="changeCategoryButton ytmPlusBorder" value="${categories[i].children[0].innerHTML}">`;
+            for(let i = 0, len = categories.length - 1; i < len; i++) {
+                const sectionName = categories[i].children[0].innerHTML;
+
+                const newCategoryButton = await injectElement('input', undefined, categorySelect, ['changeCategoryButton', 'ytmPlusBorder']);
+                newCategoryButton.type = 'button';
+                newCategoryButton.value = sectionName;
+            }
 
             // Set click events to each category button
             const changeCategoryButton = document.getElementsByClassName('changeCategoryButton');
@@ -1283,9 +1321,9 @@ try {
                 });
             }
 
-            injectElement('div', 'divider', sideBySide);
+            await injectElement('div', 'divider', sideBySide);
 
-            const currentSettings = injectElement('div', 'currentSettings', sideBySide);
+            const currentSettings = await injectElement('div', 'currentSettings', sideBySide);
             categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
             categorySelect.append(wrapper.childNodes[wrapper.childNodes.length - 2]); // Put save/close buttons into categorySelect
             categorySelect.lastElementChild.style.display = 'none'; // V3: remove save and close buttons, everything auto saves, close button is now X in top right
@@ -1308,9 +1346,47 @@ try {
             return resetLink;
         }
 
+        function sortSubs() {
+            try {
+                for(const field in ytmpConfig.fields) {
+                    const currentField = ytmpConfig.fields[field];
+
+                    let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
+                    if(!sub) continue;
+
+                    currentField.wrapper.firstElementChild.style.paddingLeft = '4%';
+
+                    let selectOption;
+                    sub = sub.split('.');
+                    const subToggle = ytmpConfig.fields[sub[0]];
+                    if(sub.length === 2) selectOption = parseInt(sub[1]);
+
+                    if(subToggle.settings.type === 'checkbox') {
+                        if(subToggle.value === true) currentField.wrapper.style.display = 'flex';
+                        else currentField.wrapper.style.display = 'none';
+                        subToggle.node.addEventListener('change', e => {
+                            if(e.target.checked === true) currentField.wrapper.style.display = 'flex';
+                            else currentField.wrapper.style.display = 'none';
+                        });
+                    }
+                    else if(subToggle.settings.type === 'select') {
+                        if(subToggle.node.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
+                        else currentField.wrapper.style.display = 'none';
+                        subToggle.node.addEventListener('change', e => {
+                            if(e.target.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
+                            else currentField.wrapper.style.display = 'none';
+                        });
+                    }
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+
         async function createTitlebar(wrapper, frame) {
         // Creating titlebar
-            const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, null, null, true);
+            const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
             const closeButton = await injectElement('input', 'titlebar_x', titlebar);
             closeButton.type = 'button';
             closeButton.value = 'X';
@@ -1371,6 +1447,8 @@ try {
             }
         }
 
+        const headerSVG = '<svg id="header_svg">\r\n    <g style="overflow:hidden; text-anchor: middle;">\r\n        <defs>\r\n            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">\r\n                <feGaussianBlur stdDeviation="5" result="glow"/>\r\n                <feMerge>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                </feMerge>\r\n            </filter>\r\n        </defs>\r\n        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>\r\n        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>\r\n    </g>\r\n</svg>';
+
         async function manageUI(frame) {
             frame.style.overflow = 'hidden';
             frame.style.aspectRatio = '4 / 3';
@@ -1382,30 +1460,25 @@ try {
 
             const wrapper = document.getElementById('ytmPlusCfg_wrapper');
 
+            // Header title svg
+            const title = document.getElementById('ytmPlusCfg_header');
+            title.innerHTML = headerSVG;
+            const vnumberHeader = injectElement('span', 'vnumber_header', title);
+            // eslint-disable-next-line no-undef
+            vnumberHeader.innerHTML = vNumber; // vNumber hacked in with metadataBuilder
+
             const resetLink = await sortOutCategories(wrapper);
+
+            sortSubs();
 
             createTitlebar(wrapper, frame);
 
             createResetWarning(frame, resetLink);
         }
 
-        const headerSVG = '<svg id="header_svg">\r\n    <g style="overflow:hidden; text-anchor: middle;">\r\n        <defs>\r\n            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">\r\n                <feGaussianBlur stdDeviation="5" result="glow"/>\r\n                <feMerge>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                </feMerge>\r\n            </filter>\r\n        </defs>\r\n        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>\r\n        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>\r\n    </g>\r\n</svg>';
-
-        function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
-        // Every color input we want has to be 'manually set' (ytmpConfig's customType would come in handy but how the hell do it work)
-            const colorTypeFields = [
-                'bgColor',
-                'bgGradient',
-                'clockColor',
-                'clockGradientColor',
-                'visualizerColor'
-            ];
-            for(let i = 0; i < colorTypeFields.length; i++) doc.getElementById('ytmPlusCfg_field_' + colorTypeFields[i]).type = 'color';
-
-            manageUI(frame);
-
-            // Live change for input tags + Adding info to int/float settings
-            const inputs = doc.getElementsByTagName('input');
+        function setupAutosave() {
+        // Autosave for input tags + Adding info to int/float settings
+            const inputs = document.getElementsByTagName('input');
             for(let i = 0; i < inputs.length; i++) {
                 inputs[i].addEventListener('change', () => ytmpConfig.save());
                 if(!isNaN(parseInt(inputs[i].value, 10))) {
@@ -1413,26 +1486,31 @@ try {
                     inputs[i].title = `type: ${fieldSettings.type} | default: ${fieldSettings.default} | ${fieldSettings.min} . . ${fieldSettings.max}`;
                 }
             }
-            // Live change for select tags
-            const selects = doc.getElementsByTagName('select');
+            // Autosave for select tags
+            const selects = document.getElementsByTagName('select');
             for(let i = 0; i < selects.length; i++) selects[i].addEventListener('change', () => ytmpConfig.save());
 
-            // Live change for textarea tags + 1 row height
-            const textareas = doc.getElementsByTagName('textarea');
+            // Autosave for textarea tags + adjustments for full width
+            const textareas = document.getElementsByTagName('textarea');
             for(let i = 0; i < textareas.length; i++) {
                 textareas[i].parentElement.style.alignItems = 'stretch';
                 textareas[i].previousSibling.style.padding = 0;
                 textareas[i].addEventListener('change', () => ytmpConfig.save());
             }
+        }
 
-            // Header title svg
-            const title = doc.getElementById('ytmPlusCfg_header');
-            title.innerHTML = headerSVG;
-            const vnumberHeader = injectElement('span', 'vnumber_header', title);
-            // eslint-disable-next-line no-undef
-            vnumberHeader.innerHTML = vNumber; // vNumber hacked in with metadataBuilder
+        function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
+        // Quick hack for color fields
+            for(const key in configFields) {
+                if(configFields[key].type !== 'color') continue;
+                document.getElementById(`ytmPlusCfg_field_${key}`).type = 'color';
+            }
 
-            doc.addEventListener('keydown', event => {
+            manageUI(frame);
+
+            setupAutosave();
+
+            document.addEventListener('keydown', event => {
                 if(event.key == 'Escape') ytmpConfig.close();
             });
         }
@@ -1471,7 +1549,7 @@ try {
                 open: openEvent,
                 save: saveEvent
             },
-            frame: injectElement('div', 'ytmPlusCfg', document.body, null, 'display: flex')
+            frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
         });
 
         function keydownEvent(ev) {

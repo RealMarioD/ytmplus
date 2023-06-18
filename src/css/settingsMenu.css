@@ -203,7 +203,7 @@
 #currentSettings {
     width: 60%;
     height: 100%;
-    overflow: overlay;
+    overflow-y: scroll;
     justify-content: flex-start;
     display: flex;
     flex-direction: column;

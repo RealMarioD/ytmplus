@@ -51,16 +51,28 @@ export const configFields = {
         type: 'checkbox',
         default: false
     },
+    changeNavbarBackground: {
+        label: fieldTexts.changeNavbarBackground[langOption],
+        section: fieldTexts.themeSection[langOption],
+        type: 'checkbox',
+        default: false
+    },
+    navbarBackgroundColor: {
+        label: fieldTexts.navbarBackgroundColor[langOption],
+        type: 'color',
+        default: '#030303',
+        subCheckbox: 'changeNavbarBackground'
+    },
     changeBackground: {
-        label: fieldTexts.bg[langOption],
-        section: fieldTexts.bgSection[langOption],
+        label: fieldTexts.changeBackground[langOption],
         type: 'checkbox',
         default: true
     },
     bgColor: {
         label: fieldTexts.bgColor[langOption],
         type: 'color',
-        default: '#AA0000'
+        default: '#AA0000',
+        subCheckbox: 'changeBackground'
     },
     bgEnableGradient: {
         label: fieldTexts.bgEnableGradient[langOption],
@@ -70,24 +82,26 @@ export const configFields = {
     bgGradient: {
         label: fieldTexts.bgGradient[langOption],
         type: 'color',
-        default: '#0000AA'
+        default: '#0000AA',
+        subCheckbox: 'bgEnableGradient'
     },
     bgGradientAngle: {
         label: fieldTexts.bgGradientAngle[langOption],
         type: 'int',
         min: -360,
         max: 360,
-        default: 45
+        default: 45,
+        subCheckbox: 'bgEnableGradient'
     },
     bgGradientAnimation: {
         label: fieldTexts.bgGradientAnimation[langOption],
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
-        default: 'Horizontal'
+        default: 'Horizontal',
+        subCheckbox: 'bgEnableGradient'
     },
     changeUpgradeButton: {
         label: fieldTexts.clock[langOption],
-        section: fieldTexts.clockSection[langOption],
         type: 'select',
         options: ['Original', 'Remove Button', 'Digital Clock'],
         default: 'Digital Clock'
@@ -95,30 +109,35 @@ export const configFields = {
     clockColor: {
         label: fieldTexts.clockColor[langOption],
         type: 'color',
-        default: '#AA3333'
+        default: '#AA3333',
+        subOption: 'changeUpgradeButton.2'
     },
     clockGradient: {
         label: fieldTexts.clockGradient[langOption],
         type: 'checkbox',
-        default: true
+        default: true,
+        subOption: 'changeUpgradeButton.2'
     },
     clockGradientColor: {
         label: fieldTexts.clockGradientColor[langOption],
         type: 'color',
-        default: '#3333AA'
+        default: '#3333AA',
+        subOption: 'changeUpgradeButton.2'
     },
     clockGradientAngle: {
         label: fieldTexts.clockGradientAngle[langOption],
         type: 'int',
         min: -360,
         max: 360,
-        default: 90
+        default: 90,
+        subOption: 'changeUpgradeButton.2'
     },
     clockGradientAnimation: {
         label: fieldTexts.clockGradientAnimation[langOption],
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
-        default: 'Horizontal'
+        default: 'Horizontal',
+        subOption: 'changeUpgradeButton.2'
     },
     visualizerPlace: {
         label: fieldTexts.visualizerPlace[langOption],
@@ -162,48 +181,54 @@ export const configFields = {
     },
     visualizerCircleEnabled: {
         label: fieldTexts.visualizerCircleEnabled[langOption],
-        section: fieldTexts.visualizerCircleEnabledSection[langOption],
         type: 'checkbox',
-        default: true
+        default: true,
     },
     visualizerRotate: {
         label: fieldTexts.visualizerRotate[langOption],
         type: 'select',
         options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-        default: 'Disabled'
+        default: 'Disabled',
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerRotateDirection: {
         label: fieldTexts.visualizerRotateDirection[langOption],
         type: 'select',
         options: ['Clockwise', 'Counter-Clockwise'],
-        default: 'Clockwise'
+        default: 'Clockwise',
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerMove: {
         label: fieldTexts.visualizerMove[langOption],
         type: 'select',
         options: ['Inside', 'Outside', 'Both Sides'],
-        default: 'Outside'
+        default: 'Outside',
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerBassBounceEnabled: {
         label: fieldTexts.visualizerBassBounceEnabled[langOption],
         type: 'checkbox',
-        default: true
+        default: true,
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerBassBounceSmooth: {
         label: fieldTexts.visualizerBassBounceSmooth[langOption],
         type: 'checkbox',
-        default: true
+        default: true,
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerImageType: {
         label: fieldTexts.visualizerImageType[langOption],
         type: 'select',
         options: ['Disabled', 'Thumbnail', 'Custom'],
-        default: 'Thumbnail'
+        default: 'Thumbnail',
+        subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerImageCustomURL: {
         label: fieldTexts.visualizerImageCustomURL[langOption],
         type: 'textarea',
-        default: 'https://imgur.com/HSTpR8R.png'
+        default: 'https://imgur.com/HSTpR8R.png',
+        subCheckbox: 'visualizerCircleEnabled'
     },
     attention1: {
         label: fieldTexts.attention1[langOption],
