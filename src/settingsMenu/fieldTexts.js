@@ -1,16 +1,18 @@
+import { configFields } from './fields';
+
 export const fieldTexts = {
-    lang: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
+    language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
     langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
-    noAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
-    noPromo: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
+    neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
+    noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
-    padding: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
-    extraButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
-    removeThumbnail: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
+    fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
+    extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
+    removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
     swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
     changeNavbarBackground: { english: 'Change Navbar Background' },
-    navbarBackgroundColor: { english: 'Color' },
-    themeSection: { english: 'Theme Settings' },
+    themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },
+    navbarBackgroundColor: { english: 'Color', hungarian: 'Szín' },
     changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
     changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
     bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
@@ -18,7 +20,7 @@ export const fieldTexts = {
     bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
     bgGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
     bgGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színátmenet Animáció' },
-    clock: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
+    changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
     clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
     clockColor: { english: 'Clock Color', hungarian: 'Óra Színe' },
     clockGradient: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
@@ -56,5 +58,27 @@ export const fieldTexts = {
     visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
     visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
     visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
-    visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' }
+    visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
+    backendSection: { english: 'You are not supposed to see this.' },
+    lastOpenCategory: { english: 'You are not supposed to see this.' }
 };
+
+export let langOption = GM_getValue('ytmPlusCfg', 'english');
+if(langOption != 'english') {
+    langOption = JSON.parse(langOption).language;
+    if(!langOption) langOption = 'english';
+    else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
+}
+
+export function fixupFields() {
+    for(const field in configFields) {
+        if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
+        const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+        configFields[field] = Object.assign(newLabel, configFields[field]);
+
+        if(configFields[field].section === undefined) continue;
+
+        configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
+    }
+    return configFields;
+}

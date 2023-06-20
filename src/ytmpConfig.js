@@ -1,12 +1,12 @@
 import settingsMenu from './css/settingsMenu.css';
-import { configFields } from './settingsMenu/fields';
 import { openEvent, saveEvent } from './settingsMenu/events';
 import { injectElement } from './functions/backend/injectElement';
+import { fixupFields } from './settingsMenu/fieldTexts';
 
 export const ytmpConfig = new GM_configStruct({
     id: 'ytmPlusCfg',
     title: 'ytmPlus',
-    fields: configFields,
+    fields: fixupFields(),
     css: settingsMenu,
     events: {
         open: openEvent,

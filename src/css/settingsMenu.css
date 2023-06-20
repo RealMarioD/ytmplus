@@ -231,6 +231,7 @@
 }
 
 #ytmPlusCfg .field_label {
+    width: 80%;
     font-size: 1.23em;
     display: flex;
     align-items: center;
@@ -270,7 +271,7 @@
     margin: 0;
     padding: 0;
     width: 20%;
-    height: 75%;
+    height: 2em;
     -webkit-appearance: none;
     appearance: none;
     background-color: #313338;

@@ -8,7 +8,8 @@ export function sortSubs() {
             let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
             if(!sub) continue;
 
-            currentField.wrapper.firstElementChild.style.paddingLeft = '4%';
+            currentField.wrapper.firstElementChild.style.paddingLeft = '5%';
+            currentField.wrapper.firstElementChild.style.width = '75%';
 
             let selectOption;
             sub = sub.split('.');
