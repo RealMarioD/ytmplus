@@ -114,7 +114,7 @@ export function visualizerResizeFix() {
     visualizer.values.halfHeight = visualizer.values.HEIGHT / 2;
 
     // Fixes visualizer offset / Fixes album cover getting incosistent sizes if moved to different resolution displays
-    elements.player.style.margin = 'auto 0px';
+    // elements.player.style.margin = 'auto 0px';
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
         if(visualizer.bassBounce.enabled === false) {

@@ -12,6 +12,8 @@ import { ytmpConfig } from '../ytmpConfig';
 import { manageUI } from './ui/init';
 import { configFields } from './fields';
 import { setupAutosave } from './ui/autosave';
+import { changeNavbarBackground } from '../functions/utils/changeNavbarBackground';
+import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Quick hack for color fields
@@ -31,6 +33,8 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
 
 export function saveEvent() {
     // Updates updateable stuff on save
+    changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
+
     changeBackground(ytmpConfig.get('changeBackground'));
 
     changeUpgradeButton(ytmpConfig.get('changeUpgradeButton'));
@@ -44,6 +48,8 @@ export function saveEvent() {
     extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
 
     fixLayout(ytmpConfig.get('fixLayout'));
+
+    videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
 
     removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
 

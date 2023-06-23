@@ -6,8 +6,7 @@ export function changeBackground(turnOn, firstRun) {
         if(document.body.style.backgroundImage !== '') {
             document.body.style.backgroundColor = '#000000';
             document.body.style.backgroundImage = '';
-            elements.playerPageDiv.style.backgroundColor = '#000000';
-            elements.playerPageDiv.style.backgroundImage = '';
+            elements.playerPageDiv.style.background = '';
         }
         return;
     }
@@ -19,7 +18,7 @@ export function changeBackground(turnOn, firstRun) {
     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
     const animation = ytmpConfig.get('bgGradientAnimation');
     animateBackground(document.body.style, true, animation);
-    animateBackground(elements.playerPageDiv.style, false, animation);
+    animateBackground(elements.playerPage.style, false, animation);
 }
 
 export function animateBackground(element, overflowOn, animation) {
@@ -36,5 +35,5 @@ export function animateBackground(element, overflowOn, animation) {
         element.backgroundPosition = 'center center';
     }
 
-    if(overflowOn === false) element.overflow = 'hidden';
+    // if(overflowOn === false) element.overflow = 'hidden';
 }

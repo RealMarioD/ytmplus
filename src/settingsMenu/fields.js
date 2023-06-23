@@ -28,6 +28,10 @@ export const configFields = {
         type: 'checkbox',
         default: true
     },
+    videoSongSwitcher: {
+        type: 'checkbox',
+        default: true
+    },
     removeAlbumCover: {
         type: 'checkbox',
         default: false

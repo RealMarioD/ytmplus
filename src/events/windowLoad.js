@@ -13,6 +13,8 @@ import { swapMainPanelWithPlaylist } from '../functions/utils/swapMainPanelWithP
 import { changeUpgradeButton } from '../functions/utils/changeUpgradeButton';
 import { setupVisualizer } from '../functions/visualizer/init';
 import { createCogFrame } from '../settingsMenu/createCogFrame';
+import { changeNavbarBackground } from '../functions/utils/changeNavbarBackground';
+import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 
 export async function setup() {
     elements.player = await document.getElementById('player');
@@ -34,6 +36,10 @@ export async function setup() {
     fixLayout(ytmpConfig.get('fixLayout'));
 
     extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
+
+    videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
+
+    changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
 
     changeBackground(ytmpConfig.get('changeBackground'), true);
 

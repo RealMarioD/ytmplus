@@ -35,7 +35,7 @@ You can bring up the settings by clicking on the cog in the top left, or by pres
 - Anti-AFK feature, meaning music playback won't stop after a while if you don't interact with the site
 - Disabling YouTube Premium promotions in the bottom left
 - Skipping disliked songs
-- Fixing weird padding with playlist
+- Fix the horrible layout on player page (somewhat)
 - Enabling hidden playback buttons
 - Changing or removing the "Upgrade" button in the top navigation bar
 

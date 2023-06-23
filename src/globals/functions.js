@@ -3,4 +3,5 @@ export const functions = {
     neverAfk: undefined, // Holds the anti-afk interval function
     noPromotions: undefined, // Holds the no promotions function
     skipDisliked: undefined, // Holds the skip disliked songs function
+    fixLayout: undefined
 };

@@ -7,7 +7,6 @@ export async function swapMainPanelWithPlaylist(turnOn) {
             return;
         }
         await elements.mainPanel.parentNode.append(elements.mainPanel);
-        elements.mainPanel.style.flexDirection = 'row-reverse';
         elements.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
     }
     else {
@@ -16,7 +15,6 @@ export async function swapMainPanelWithPlaylist(turnOn) {
             return;
         }
         await elements.mainPanel.parentNode.prepend(elements.mainPanel);
-        elements.mainPanel.style.flexDirection = 'row';
         elements.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
     }
 }
