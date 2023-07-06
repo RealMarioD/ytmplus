@@ -22,6 +22,8 @@ export async function setup() {
     elements.playerPageDiv = elements.playerPage.firstElementChild;
     elements.navBarBg = await document.getElementById('nav-bar-background');
     elements.mainPanel = await document.getElementById('main-panel');
+    const playlistFinder = await document.getElementsByClassName('side-panel modular style-scope ytmusic-player-page');
+    elements.playlist = playlistFinder[0];
 
     // Injecting animations for background and clock gradients
     injectStyle(keyframes);

@@ -26,7 +26,7 @@ function firstDraw(maxBarHeight) {
 
         getBarColor(i);
 
-        // To this day I don't get the Y and visualizer.values.HEIGHT visualizer.values
+        // To this day I don't get the Y and height values
         if(visualizer.startsFrom === 'Left') {
             visualizer.ctx.fillRect( // Draws rect from left to right
                 visualizer.values.xPosOffset,

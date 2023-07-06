@@ -7,8 +7,9 @@ export function sortSubs() {
         let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
         if(!sub) continue;
 
-        currentField.wrapper.firstElementChild.style.paddingLeft = '5%';
-        currentField.wrapper.firstElementChild.style.width = '65%';
+        const currentLabel = currentField.wrapper.firstElementChild;
+        currentLabel.style.paddingLeft = '5%';
+        currentLabel.style.width = '65%';
 
         let selectOption;
         sub = sub.split('.');

@@ -51,11 +51,6 @@ function drawArcs(backwards) {
     visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
     for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; ++i) {
-        // if(visualizer.values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
-        //     visualizer.ctx.rotate(-visualizer.values.barTotal);
-        //     continue;
-        // }
-
         getBarColor(i);
 
         if(visualizer.bassBounce.enabled === true) visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;

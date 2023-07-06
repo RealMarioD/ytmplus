@@ -60,6 +60,7 @@ export const visualizer = {
         reactiveBarHeightMultiplier: undefined,
         startingPoint: -(0.5 * Math.PI)
     },
+    video: undefined,
     audioContext: undefined,
     src: undefined,
     canvas: undefined,

@@ -28,6 +28,7 @@ try {
             originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
             navBarBg: undefined, // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
             mainPanel: undefined, // Holds something from around the album cover, - - | | - -
+            playlist: undefined,
         };
 
         function changeBackground(turnOn, firstRun) {
@@ -230,20 +231,14 @@ try {
 
         async function swapMainPanelWithPlaylist(turnOn) {
             if(turnOn) {
-                if(elements.mainPanel.parentNode.lastElementChild.id === elements.mainPanel.id) {
-                    elements.mainPanel.parentNode.children[1].style.zIndex = 9999;
-                    return;
-                }
+                if(elements.mainPanel.parentNode.lastElementChild.id === elements.mainPanel.id) return;
                 await elements.mainPanel.parentNode.append(elements.mainPanel);
-                elements.mainPanel.parentNode.children[1].style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
+                elements.playlist.style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
             }
             else {
-                if(elements.mainPanel.parentNode.firstElementChild.id === elements.mainPanel.id) {
-                    elements.mainPanel.parentNode.children[2].style.zIndex = 9999;
-                    return;
-                }
+                if(elements.mainPanel.parentNode.firstElementChild.id === elements.mainPanel.id) return;
                 await elements.mainPanel.parentNode.prepend(elements.mainPanel);
-                elements.mainPanel.parentNode.lastElementChild.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
+                elements.playlist.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
             }
         }
 
@@ -309,6 +304,7 @@ try {
                 reactiveBarHeightMultiplier: undefined,
                 startingPoint: -(0.5 * Math.PI)
             },
+            video: undefined,
             audioContext: undefined,
             src: undefined,
             canvas: undefined,
@@ -578,12 +574,16 @@ try {
                 }
             }
 
+            if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
+            else elements.playlist.style.opacity = '';
+
             visualizer.values.WIDTH = visualizer.canvas.width;
             visualizer.values.halfWidth = visualizer.values.WIDTH / 2;
             visualizer.values.HEIGHT = visualizer.canvas.height;
             visualizer.values.halfHeight = visualizer.values.HEIGHT / 2;
 
             // Fixes visualizer offset / Fixes album cover getting incosistent sizes if moved to different resolution displays
+            // Commented out because it breaks more shit than it fixes
             // elements.player.style.margin = 'auto 0px';
 
             if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
@@ -673,11 +673,6 @@ try {
             visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
             for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; ++i) {
-            // if(visualizer.values.circleSize === 1 && backwards === true && (i === 0 || i === visualizer.bufferLength - 1)) {
-            //     visualizer.ctx.rotate(-visualizer.values.barTotal);
-            //     continue;
-            // }
-
                 getBarColor(i);
 
                 if(visualizer.bassBounce.enabled === true) visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
@@ -727,7 +722,7 @@ try {
 
                 getBarColor(i);
 
-                // To this day I don't get the Y and visualizer.values.HEIGHT visualizer.values
+                // To this day I don't get the Y and height values
                 if(visualizer.startsFrom === 'Left') {
                     visualizer.ctx.fillRect( // Draws rect from left to right
                         visualizer.values.xPosOffset,
@@ -794,6 +789,68 @@ try {
             }
         }
 
+        let lastFrameTime = 0;
+
+        // NEVER REMOVE TIME VAR FROM HERE
+        function renderFrame(time) {
+        // Don't do anything if True Pause energy saver is on and playback is paused
+            if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
+
+            // If render would be faster than max fps (60 by default if energy saver is off) come back later
+            if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+            lastFrameTime = time;
+
+            visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
+
+            // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see 1's save event
+            if(visualizer.place === 'Disabled') return;
+
+            // Get audio data
+            visualizer.analyser.getByteFrequencyData(visualizer.audioData);
+
+            // Color cycle effect
+            if(visualizer.rgb.enabled === true) {
+                visualizer.rgb._data.push(visualizer.rgb._data[0]);
+                visualizer.rgb._data.shift();
+            }
+
+            // Check if canvas corresponds to selected place
+            if(visualizer.place === 'Navbar' && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
+                visualizer.canvas = visualizer.canvases.navbar;
+                visualizer.ctx = visualizer.canvas.getContext('2d');
+            }
+            else if(visualizer.place === 'Album Cover' && visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
+                visualizer.canvas = visualizer.canvases.albumCover;
+                visualizer.ctx = visualizer.canvas.getContext('2d');
+            }
+            else if(visualizer.place === 'Background') {
+                if(elements.player.playerUiState_ === 'MINIPLAYER') {
+                    if(visualizer.canvas.id !== visualizer.canvases.background.id) {
+                        visualizer.canvas = visualizer.canvases.background;
+                        visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to background');
+                    }
+                }
+                else if(elements.player.playerUiState_ === 'FULLSCREEN') {
+                    if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
+                        visualizer.canvas = visualizer.canvases.albumCover;
+                        visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to albumCover');
+                    }
+                }
+                else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
+                    visualizer.canvas = visualizer.canvases.playerBackground;
+                    visualizer.ctx = visualizer.canvas.getContext('2d');
+                    console.log('Switched visualizer.canvas to playerBackground');
+                }
+            }
+
+            if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
+            else visualizerNavbar(visualizer.ctx);
+
+            requestAnimationFrame(renderFrame);
+        }
+
         async function setupVisualizer() {
         // Injecting visualizer visualizer.canvases
             visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, undefined, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
@@ -801,15 +858,17 @@ try {
             elements.navBarBg.style.opacity = 1;
 
             // 64px is navbar, 72px is bottom player controls
-            visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), undefined, 'position: fixed; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
-            visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), undefined, 'position: absolute; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
+            visualizer.canvases.background = await injectElement('canvas', 'visualizerBackgroundCanvas', document.getElementById('content'), undefined, 'position: fixed; z-index: -1; pointer-events: none; visibility: visible; width: 100%; height: calc(100vh - (64px + 72px)); margin-top: 64px;', true);
+            visualizer.canvases.playerBackground = await injectElement('canvas', 'visualizerPlayerBackgroundCanvas', document.getElementById('player-page'), undefined, 'position: absolute; z-index: -1; pointer-events: none; visibility: visible; width: inherit; height: inherit;', true);
             getVideo();
         }
 
-        let video;
         function getVideo() {
-            video = document.querySelector('video');
-            if(video) startVisualizer();
+            visualizer.video = document.querySelector('video');
+            if(visualizer.video) {
+                visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
+                startVisualizer();
+            }
             else {
                 console.warn('Query "video" not found, retrying in 100ms.');
                 setTimeout(getVideo, 100);
@@ -820,7 +879,7 @@ try {
         // Init, connecting yt audio to visualizer.canvas
             if(visualizer.audioContext === undefined) {
                 visualizer.audioContext = new AudioContext();
-                visualizer.src = visualizer.audioContext.createMediaElementSource(video);
+                visualizer.src = visualizer.audioContext.createMediaElementSource(visualizer.video);
                 visualizer.analyser = visualizer.audioContext.createAnalyser();
             }
 
@@ -844,73 +903,11 @@ try {
             requestAnimationFrame(renderFrame);
         }
 
-        let lastFrameTime = 0;
-
-        // NEVER REMOVE TIME VAR FROM HERE
-        function renderFrame(time) {
-        // Don't do anything if True Pause energy saver is on and playback is paused
-            if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && video.paused === true) return requestAnimationFrame(renderFrame);
-
-            // If render would be faster than max fps (60 by default if energy saver is off) come back later
-            if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
-            lastFrameTime = time;
-
-            visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
-
-            // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see 1's save event
-            if(visualizer.place === 'Disabled') return;
-
-            // Get audio data
-            visualizer.analyser.getByteFrequencyData(visualizer.audioData);
-
-            // Color cycle effect
-            if(visualizer.rgb.enabled === true) {
-                visualizer.rgb._data.push(visualizer.rgb._data[0]);
-                visualizer.rgb._data.shift();
-            }
-
-            if(visualizer.place === 'Navbar') {
-            // If visualizer place was changed to X but it's not yet X, change to X
-                if(visualizer.canvas.id !== visualizer.canvases.navbar.id) {
-                    visualizer.canvas = visualizer.canvases.navbar;
-                    visualizer.ctx = visualizer.canvas.getContext('2d');
-                }
-                visualizerNavbar(visualizer.ctx);
-            }
-            else if(visualizer.place === 'Album Cover') {
-                if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
-                    visualizer.canvas = visualizer.canvases.albumCover;
-                    visualizer.ctx = visualizer.canvas.getContext('2d');
-                }
-                if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
-                else visualizerNavbar(visualizer.ctx);
-            }
-            else if(visualizer.place === 'Background') {
-            // if miniplayer == true
-                if(elements.player.playerPageOpen_ === false) {
-                    if(visualizer.canvas.id !== visualizer.canvases.background.id) {
-                        visualizer.canvas = visualizer.canvases.background;
-                        visualizer.ctx = visualizer.canvas.getContext('2d');
-                        console.log('Switched visualizer.canvas to background');
-                    }
-                }
-                else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
-                    visualizer.canvas = visualizer.canvases.playerBackground;
-                    visualizer.ctx = visualizer.canvas.getContext('2d');
-                    console.log('Switched visualizer.canvas to playerBackground');
-                }
-                if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
-                else visualizerNavbar(visualizer.ctx);
-            }
-
-            requestAnimationFrame(renderFrame);
-        }
-
         async function createResetWarning(frame, resetLink) {
         // Creating window that pops up if you press reset
             const resetWarning = await injectElement('div', 'reset_warning', frame, undefined, 'display: none');
             const warningText = await injectElement('span', 'warning_text', resetWarning);
-            warningText.innerHTML = 'WAIT!<br>RESET EVERYTHING TO DEFAULT?';
+            warningText.innerText = 'WAIT!\nRESET EVERYTHING TO DEFAULT?';
             const yesResetButton = await injectElement('input', 'yes_reset_button', resetWarning, 'warning_buttons');
             yesResetButton.type = 'button';
             yesResetButton.value = 'Yes, reset';
@@ -986,41 +983,37 @@ try {
         }
 
         function sortSubs() {
-            try {
-                for(const field in ytmpConfig.fields) {
-                    const currentField = ytmpConfig.fields[field];
+            for(const field in ytmpConfig.fields) {
+                const currentField = ytmpConfig.fields[field];
 
-                    let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
-                    if(!sub) continue;
+                let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
+                if(!sub) continue;
 
-                    currentField.wrapper.firstElementChild.style.paddingLeft = '5%';
-                    currentField.wrapper.firstElementChild.style.width = '65%';
+                const currentLabel = currentField.wrapper.firstElementChild;
+                currentLabel.style.paddingLeft = '5%';
+                currentLabel.style.width = '65%';
 
-                    let selectOption;
-                    sub = sub.split('.');
-                    const subToggle = ytmpConfig.fields[sub[0]];
-                    if(sub.length === 2) selectOption = parseInt(sub[1]);
+                let selectOption;
+                sub = sub.split('.');
+                const subToggle = ytmpConfig.fields[sub[0]];
+                if(sub.length === 2) selectOption = parseInt(sub[1]);
 
-                    if(subToggle.settings.type === 'checkbox') {
-                        if(subToggle.value === true) currentField.wrapper.style.display = 'flex';
+                if(subToggle.settings.type === 'checkbox') {
+                    if(subToggle.value === true) currentField.wrapper.style.display = 'flex';
+                    else currentField.wrapper.style.display = 'none';
+                    subToggle.node.addEventListener('change', e => {
+                        if(e.target.checked === true) currentField.wrapper.style.display = 'flex';
                         else currentField.wrapper.style.display = 'none';
-                        subToggle.node.addEventListener('change', e => {
-                            if(e.target.checked === true) currentField.wrapper.style.display = 'flex';
-                            else currentField.wrapper.style.display = 'none';
-                        });
-                    }
-                    else if(subToggle.settings.type === 'select') {
-                        if(subToggle.node.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
-                        else currentField.wrapper.style.display = 'none';
-                        subToggle.node.addEventListener('change', e => {
-                            if(e.target.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
-                            else currentField.wrapper.style.display = 'none';
-                        });
-                    }
+                    });
                 }
-            }
-            catch (error) {
-                console.error(error);
+                else if(subToggle.settings.type === 'select') {
+                    if(subToggle.node.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
+                    else currentField.wrapper.style.display = 'none';
+                    subToggle.node.addEventListener('change', e => {
+                        if(e.target.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
+                        else currentField.wrapper.style.display = 'none';
+                    });
+                }
             }
         }
 
@@ -1629,6 +1622,8 @@ try {
             elements.playerPageDiv = elements.playerPage.firstElementChild;
             elements.navBarBg = await document.getElementById('nav-bar-background');
             elements.mainPanel = await document.getElementById('main-panel');
+            const playlistFinder = await document.getElementsByClassName('side-panel modular style-scope ytmusic-player-page');
+            elements.playlist = playlistFinder[0];
 
             // Injecting animations for background and clock gradients
             injectStyle(keyframes);

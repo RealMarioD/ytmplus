@@ -6,4 +6,5 @@ export const elements = {
     originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
     navBarBg: undefined, // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
     mainPanel: undefined, // Holds something from around the album cover, - - | | - -
+    playlist: undefined,
 };

@@ -108,12 +108,16 @@ export function visualizerResizeFix() {
         default: break;
     }
 
+    if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
+    else elements.playlist.style.opacity = '';
+
     visualizer.values.WIDTH = visualizer.canvas.width;
     visualizer.values.halfWidth = visualizer.values.WIDTH / 2;
     visualizer.values.HEIGHT = visualizer.canvas.height;
     visualizer.values.halfHeight = visualizer.values.HEIGHT / 2;
 
     // Fixes visualizer offset / Fixes album cover getting incosistent sizes if moved to different resolution displays
+    // Commented out because it breaks more shit than it fixes
     // elements.player.style.margin = 'auto 0px';
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
