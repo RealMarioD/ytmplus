@@ -11,17 +11,17 @@ export async function createCogFrame() {
         ${ytmSettingsSvg}
     </svg>`;
 
-    let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0];
+    // let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0]; // Legacy
+    let cogHolder = document.getElementById('right-content');
     if(!cogHolder) cogHolder = document.body;
 
 
     injectStyle(cogFrame);
-    const cogRotator = injectElement('div', 'cogRotator', cogHolder);
+    const cogBigHolder = injectElement('div', 'cogBigHolder', cogHolder);
+    const cogRotator = injectElement('div', 'cogRotator', cogBigHolder);
     cogRotator.innerHTML = settingsSVG;
 
-    const settingsSVGButton = document.getElementById('settingsSVGButton');
-
-    settingsSVGButton.addEventListener('click', () => {
+    cogBigHolder.addEventListener('click', () => {
         if(ytmpConfig.isOpen === false) ytmpConfig.open();
         else ytmpConfig.close();
     });

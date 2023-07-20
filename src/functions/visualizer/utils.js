@@ -120,7 +120,7 @@ export function visualizerResizeFix() {
     // Commented out because it breaks more shit than it fixes
     // elements.player.style.margin = 'auto 0px';
 
-    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
+    if(visualizer.circleEnabled === true) {
         if(visualizer.bassBounce.enabled === false) {
             visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
             visualizer.values.heightModifier = (visualizer.values.HEIGHT - visualizer.values.radius) / 2 / 255;
@@ -147,13 +147,37 @@ export function averageOfArray(numbers) {
 export function getBarColor(i) {
     if(visualizer.rgb.enabled === true) {
         // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
-        const color = ~~(i / visualizer.colorDivergence);
+        const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
 
-        if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
-        else visualizer.ctx.fillStyle = `rgb(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue})`;
+        if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
+        else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
     }
     else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
     else visualizer.ctx.fillStyle = visualizer.color;
 
+    // This might not actually be correct
     if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) visualizer.ctx.fillStyle = '#FFF';
+}
+
+export function calculateBass() {
+    visualizer.values.bass = visualizer.audioData.slice(
+        visualizer.bassBounce._barStart,
+        visualizer.bassBounce._barEnd
+    );
+
+    if(visualizer.bassBounce.smooth === true) visualizer.values.bassSmoothRadius = ~~((visualizer.values.bassSmoothRadius + (averageOfArray(visualizer.values.bass) / 2)) / 2);
+    else visualizer.values.bassSmoothRadius = ~~(averageOfArray(visualizer.values.bass) / 2);
+
+    if(visualizer.bassBounce.enabled === true) visualizer.values.radius = ~~(visualizer.values.HEIGHT / 8) + visualizer.values.bassSmoothRadius * visualizer.values.heightModifier * 1.25;
+}
+
+export function getRotationValue() {
+    const direction = (visualizer.rotateDirection === 'Clockwise') ? 1 : -1;
+
+    switch(visualizer.rotate) {
+        case 'Disabled': default: { visualizer.values.rotationValue = 0; } break;
+        case 'On': { visualizer.values.rotationValue += 0.005 * direction; } break;
+        case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
+        case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
+    }
 }

@@ -1,5 +1,5 @@
 import { changeBackground } from '../functions/utils/changeBackground';
-import { changeUpgradeButton } from '../functions/utils/changeUpgradeButton';
+import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
 import { neverAfk } from '../functions/utils/neverAfk';
 import { noPromotions } from '../functions/utils/noPromotions';
 import { skipDisliked } from '../functions/utils/skipDisliked';
@@ -37,7 +37,7 @@ export function saveEvent() {
 
     changeBackground(ytmpConfig.get('changeBackground'));
 
-    changeUpgradeButton(ytmpConfig.get('changeUpgradeButton'));
+    removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
 
     neverAfk(ytmpConfig.get('neverAfk'));
 

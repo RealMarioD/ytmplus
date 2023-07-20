@@ -6,15 +6,18 @@ export function changeBackground(turnOn, firstRun) {
         if(document.body.style.backgroundImage !== '') {
             document.body.style.backgroundColor = '#000000';
             document.body.style.backgroundImage = '';
-            elements.playerPageDiv.style.background = '';
+            elements.playerPage.style.background = '';
         }
         return;
     }
     try {
         if(firstRun === true) document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
+    }
+    catch {}
+    try {
         document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
     }
-    catch { }
+    catch {}
     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
     const animation = ytmpConfig.get('bgGradientAnimation');
     animateBackground(document.body.style, true, animation);

@@ -7,4 +7,6 @@ export const elements = {
     navBarBg: undefined, // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
     mainPanel: undefined, // Holds something from around the album cover, - - | | - -
     playlist: undefined,
+    miniGuide: undefined,
+    bigGuide: undefined
 };

@@ -30,7 +30,7 @@ export async function sortOutCategories(wrapper) {
         });
     }
 
-    await injectElement('div', 'divider', sideBySide);
+    await injectElement('div', 'ytmpDivider', sideBySide);
 
     const currentSettings = await injectElement('div', 'currentSettings', sideBySide);
     categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect

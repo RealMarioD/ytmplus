@@ -1,6 +1,6 @@
 import { visualizer } from '../../globals/visualizer';
 import { drawVisImage, imgLoaded } from './image';
-import { averageOfArray, getBarColor } from './utils';
+import { calculateBass, getRotationValue, getBarColor } from './utils';
 
 export function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
     if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.visualizer.values.circleSize = 2; // 2(pi) = full
@@ -19,29 +19,6 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
     else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
         drawArcs(false);
         drawArcs(true);
-    }
-}
-
-function calculateBass() {
-    visualizer.values.bass = visualizer.audioData.slice(
-        visualizer.bassBounce._barStart,
-        visualizer.bassBounce._barEnd
-    );
-
-    if(visualizer.bassBounce.smooth === true) visualizer.values.bassSmoothRadius = ~~((visualizer.values.bassSmoothRadius + (averageOfArray(visualizer.values.bass) / 2)) / 2);
-    else visualizer.values.bassSmoothRadius = ~~(averageOfArray(visualizer.values.bass) / 2);
-
-    if(visualizer.bassBounce.enabled === true) visualizer.values.radius = ~~(visualizer.values.HEIGHT / 8) + visualizer.values.bassSmoothRadius * visualizer.values.heightModifier * 1.25;
-}
-
-function getRotationValue() {
-    const direction = (visualizer.rotateDirection === 'Clockwise') ? 1 : -1;
-
-    switch(visualizer.rotate) {
-        case 'Disabled': default: { visualizer.values.rotationValue = 0; } break;
-        case 'On': { visualizer.values.rotationValue += 0.005 * direction; } break;
-        case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
-        case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
     }
 }
 

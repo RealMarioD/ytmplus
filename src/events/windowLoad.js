@@ -10,11 +10,12 @@ import { extraPlaybackButtons } from '../functions/utils/extraPlaybackButtons';
 import { changeBackground } from '../functions/utils/changeBackground';
 import { removeAlbumCover } from '../functions/utils/removeAlbumCover';
 import { swapMainPanelWithPlaylist } from '../functions/utils/swapMainPanelWithPlaylist';
-import { changeUpgradeButton } from '../functions/utils/changeUpgradeButton';
+// import { changeUpgradeButton } from '../functions/utils/changeUpgradeButton';
 import { setupVisualizer } from '../functions/visualizer/init';
 import { createCogFrame } from '../settingsMenu/createCogFrame';
 import { changeNavbarBackground } from '../functions/utils/changeNavbarBackground';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
+import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
 
 export async function setup() {
     elements.player = await document.getElementById('player');
@@ -47,17 +48,24 @@ export async function setup() {
 
     // These functions are timed out so needed elements can load
     setTimeout(async () => {
+        try {
+            const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+            elements.bigGuide = guides[0].children[2];
+            elements.miniGuide = guides[2].children[2];
+        }
+        catch {
+            if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+        }
+
+        // Adds a settings button on the navbar
+        createCogFrame();
+
         removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
 
         swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
 
-        elements.upgradeButton = await document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
-        elements.originalUpgradeText = elements.upgradeButton.textContent;
-        changeUpgradeButton(ytmpConfig.get('changeUpgradeButton'));
+        removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
     }, 500);
 
     setupVisualizer();
-
-    // Adds a settings button on the navbar
-    createCogFrame();
 }

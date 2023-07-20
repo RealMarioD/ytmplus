@@ -81,39 +81,43 @@ export const configFields = {
         default: 'Horizontal',
         subCheckbox: 'bgEnableGradient'
     },
-    changeUpgradeButton: {
-        type: 'select',
-        options: ['Original', 'Remove Button', 'Digital Clock'],
-        default: 'Digital Clock'
-    },
-    clockColor: {
-        type: 'color',
-        default: '#AA3333',
-        subOption: 'changeUpgradeButton.2'
-    },
-    clockGradient: {
+    // changeUpgradeButton: {
+    //     type: 'select',
+    //     options: ['Original', 'Remove Button', 'Digital Clock'],
+    //     default: 'Digital Clock'
+    // },
+    removeUpgradeButton: {
         type: 'checkbox',
-        default: true,
-        subOption: 'changeUpgradeButton.2'
+        default: true
     },
-    clockGradientColor: {
-        type: 'color',
-        default: '#3333AA',
-        subOption: 'changeUpgradeButton.2'
-    },
-    clockGradientAngle: {
-        type: 'int',
-        min: -360,
-        max: 360,
-        default: 90,
-        subOption: 'changeUpgradeButton.2'
-    },
-    clockGradientAnimation: {
-        type: 'select',
-        options: ['Disabled', 'Horizontal', 'Vertical'],
-        default: 'Horizontal',
-        subOption: 'changeUpgradeButton.2'
-    },
+    // clockColor: {
+    //     type: 'color',
+    //     default: '#AA3333',
+    //     subOption: 'changeUpgradeButton.2'
+    // },
+    // clockGradient: {
+    //     type: 'checkbox',
+    //     default: true,
+    //     subOption: 'changeUpgradeButton.2'
+    // },
+    // clockGradientColor: {
+    //     type: 'color',
+    //     default: '#3333AA',
+    //     subOption: 'changeUpgradeButton.2'
+    // },
+    // clockGradientAngle: {
+    //     type: 'int',
+    //     min: -360,
+    //     max: 360,
+    //     default: 90,
+    //     subOption: 'changeUpgradeButton.2'
+    // },
+    // clockGradientAnimation: {
+    //     type: 'select',
+    //     options: ['Disabled', 'Horizontal', 'Vertical'],
+    //     default: 'Horizontal',
+    //     subOption: 'changeUpgradeButton.2'
+    // },
     visualizerPlace: {
         section: fieldTexts.visualizerPlaceSection,
         type: 'select',
