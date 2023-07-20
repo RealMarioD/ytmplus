@@ -1,14 +1,7 @@
-# Alpha V3
+# V3 Beta
 
-Hey! If you are seeing this, you are on the staging branch (or looking at commit history, hi!)
-
-This is an alpha version of V3, which includes kind of rewriting ytmPlus (again) to be easier to develop.
-
-There are a lot of things that can, should and will be improved soon:tm:
-
-**I personally can't recommend installing this version. It's still a WIP, might have more bugs and doesn't represent the V3 I envisioned.**
-
-If you'd still like to, go to dist folder, click `ytmplus.user.js`, then click `Raw` above the code to quick install it.
+Due to breaking changes on YouTube Music's side, I'm pushing out V3 earlier than I'd wanted to, thus the "beta" tag.
+If you encounter any bugs, please message me on [Discord!](https://discord.gg/68Waxa4Qxz)
 
 # ytmPlus
 

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      Alpha3.0.0
+// @version      3.0.0-beta
 // @author       Mario_D#7052
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -13,12 +13,12 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-const vNumber = 'vAlpha3.0.0';
+const vNumber = 'v3.0.0-beta';
 try {
     (function() {
         'use strict';
 
-        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#divider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 20%;\r\n    height: 75%;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    border: 1px solid #fff;\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1.5em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    font-size: 1em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 0.75em;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}';
+        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1.5em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    font-size: 1em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 0.75em;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}';
 
         const elements = {
             player: undefined, // Has the sizes we need for album cover canvas
@@ -29,6 +29,8 @@ try {
             navBarBg: undefined, // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
             mainPanel: undefined, // Holds something from around the album cover, - - | | - -
             playlist: undefined,
+            miniGuide: undefined,
+            bigGuide: undefined
         };
 
         function changeBackground(turnOn, firstRun) {
@@ -36,15 +38,18 @@ try {
                 if(document.body.style.backgroundImage !== '') {
                     document.body.style.backgroundColor = '#000000';
                     document.body.style.backgroundImage = '';
-                    elements.playerPageDiv.style.background = '';
+                    elements.playerPage.style.background = '';
                 }
                 return;
             }
             try {
                 if(firstRun === true) document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
+            }
+            catch {}
+            try {
                 document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
             }
-            catch { }
+            catch {}
             document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
             const animation = ytmpConfig.get('bgGradientAnimation');
             animateBackground(document.body.style, true, animation);
@@ -68,6 +73,69 @@ try {
         // if(overflowOn === false) element.overflow = 'hidden';
         }
 
+        // import { elements } from '../../globals/elements';
+
+        async function removeUpgradeButton(turnOn) {
+            if(!turnOn) {
+                elements.bigGuide.lastElementChild.style.display = 'inline-block';
+                elements.miniGuide.lastElementChild.style.display = 'inline-block';
+                return;
+            }
+
+            elements.bigGuide.lastElementChild.style.display = 'none';
+
+            if(!elements.miniGuide) {
+                const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+                if(guides.length < 3) return;
+                elements.miniGuide = guides[2].children[2];
+            }
+
+            elements.miniGuide.lastElementChild.style.display = 'none';
+        }
+
+        // let currentTime;
+        // clearInterval(functions.clockFunction);
+        // if(mode === 'Original') {
+        //     elements.upgradeButton.textContent = elements.originalUpgradeText;
+        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        // }
+        // else if(mode === 'Digital Clock') {
+        //     functions.clockFunction = setInterval(() => {
+        //         currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        //         elements.upgradeButton.textContent = currentTime;
+        //     }, 1000);
+        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        // }
+        // else {
+        //     elements.upgradeButton.textContent = '';
+        //     elements.upgradeButton.parentElement.style.margin = '0px';
+        // }
+
+        // // Trust me this is the way
+        // const buttonStyle = elements.upgradeButton.style;
+        // if(mode === 'Digital Clock') {
+        //     buttonStyle.background = `linear-gradient(${ytmpConfig.get('clockGradientAngle')}deg, ${ytmpConfig.get('clockColor')} 0%, ${ytmpConfig.get('clockGradient') === true ? ytmpConfig.get('clockGradientColor') : ytmpConfig.get('clockColor')} 50%, ${ytmpConfig.get('clockColor')} 100%)`;
+        //     buttonStyle.backgroundSize = '200% 200%';
+        //     buttonStyle.backgroundClip = 'text';
+        //     buttonStyle.textFillColor = 'transparent';
+        //     buttonStyle.webkitBackgroundClip = 'text';
+        //     buttonStyle.webkitTextFillColor = 'transparent';
+        //     buttonStyle.fontSize = '50px';
+        //     const animation = ytmpConfig.get('clockGradientAnimation');
+        //     if(animation === 'Horizontal') buttonStyle.animation = 'clockGradientHorizontal 2s linear infinite normal';
+        //     else if(animation === 'Vertical') buttonStyle.animation = 'clockGradientVertical 2s linear infinite normal';
+        //     else buttonStyle.animation = '';
+        // }
+        // else {
+        //     buttonStyle.background = '';
+        //     buttonStyle.backgroundSize = '';
+        //     buttonStyle.backgroundClip = '';
+        //     buttonStyle.textFillColor = '';
+        //     buttonStyle.webkitBackgroundClip = '';
+        //     buttonStyle.webkitTextFillColor = '';
+        //     buttonStyle.fontSize = '20px';
+        // }
+
         const functions = {
             clock: undefined, // Holds the interval function that updates the digital clock
             neverAfk: undefined, // Holds the anti-afk interval function
@@ -76,57 +144,11 @@ try {
             fixLayout: undefined
         };
 
-        function changeUpgradeButton(mode) {
-            let currentTime;
-            clearInterval(functions.clockFunction);
-            if(mode === 'Original') {
-                elements.upgradeButton.textContent = elements.originalUpgradeText;
-                elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-            }
-            else if(mode === 'Digital Clock') {
-                functions.clockFunction = setInterval(() => {
-                    currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    elements.upgradeButton.textContent = currentTime;
-                }, 1000);
-                elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-            }
-            else {
-                elements.upgradeButton.textContent = '';
-                elements.upgradeButton.parentElement.style.margin = '0px';
-            }
-
-            // Trust me this is the way
-            const buttonStyle = elements.upgradeButton.style;
-            if(mode === 'Digital Clock') {
-                buttonStyle.background = `linear-gradient(${ytmpConfig.get('clockGradientAngle')}deg, ${ytmpConfig.get('clockColor')} 0%, ${ytmpConfig.get('clockGradient') === true ? ytmpConfig.get('clockGradientColor') : ytmpConfig.get('clockColor')} 50%, ${ytmpConfig.get('clockColor')} 100%)`;
-                buttonStyle.backgroundSize = '200% 200%';
-                buttonStyle.backgroundClip = 'text';
-                buttonStyle.textFillColor = 'transparent';
-                buttonStyle.webkitBackgroundClip = 'text';
-                buttonStyle.webkitTextFillColor = 'transparent';
-                buttonStyle.fontSize = '50px';
-                const animation = ytmpConfig.get('clockGradientAnimation');
-                if(animation === 'Horizontal') buttonStyle.animation = 'clockGradientHorizontal 2s linear infinite normal';
-                else if(animation === 'Vertical') buttonStyle.animation = 'clockGradientVertical 2s linear infinite normal';
-                else buttonStyle.animation = '';
-            }
-            else {
-                buttonStyle.background = '';
-                buttonStyle.backgroundSize = '';
-                buttonStyle.backgroundClip = '';
-                buttonStyle.textFillColor = '';
-                buttonStyle.webkitBackgroundClip = '';
-                buttonStyle.webkitTextFillColor = '';
-                buttonStyle.fontSize = '20px';
-            }
-        }
-
         function neverAfk(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
             clearInterval(functions.noAfkFunction);
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -135,10 +157,8 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    console.log('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -329,10 +349,9 @@ try {
             }
             else if(customClass) node.classList.add(customClass);
             if(customStyle) node.style = customStyle;
-            if(!wrapperElm) {
-                console.error('injectElement: Wrapper is undefined');
+            if(!wrapperElm)
                 return;
-            }
+
             if(prepend) wrapperElm.prepend(node);
             else wrapperElm.appendChild(node);
             return node;
@@ -362,11 +381,10 @@ try {
         };
 
         image.onerror = () => {
-            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
-            else {
-                console.log('Visualizer Image couldn\'t be loaded.');
+            if(visualizer.image.type === 'Custom') ;
+            else
                 return;
-            }
+
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -380,55 +398,44 @@ try {
 
         function thumbnailEvent() {
             currentURL = thumbnailChildSrc();
-            if(!currentURL) {
-                console.log('thumbnailChildSrc is undefined');
+            if(!currentURL)
                 return;
-            }
+
 
             if(currentURL.indexOf('data') === 0) {
-                console.log('Current song has broken thumbnail, might be a video');
-
                 if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-                else if(loadSD === false && quality !== 'custom') {
-                    console.log('Multiple changes with same URL, loadSD is false, quality is not custom');
+                else if(loadSD === false && quality !== 'custom')
                     return;
-                }
 
-                if(!lastSavedVideoURL) {
-                    console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
+
+                if(!lastSavedVideoURL)
                     return;
-                }
 
-                console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
                 imgLoaded = false;
-                if(loadSD === true) {
+                if(loadSD === true)
                     quality = 'sddefault';
-                    console.log(`loadSD is true, working with ${quality}`);
-                }
+
                 else quality = 'maxresdefault';
                 currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
                 loadSD = false;
             }
-            else if(image.src === currentURL) {
-                console.log('Image src is already thumbnail');
+            else if(image.src === currentURL)
                 return;
-            }
+
             lastSavedVideoURL = currentVideoURL().href;
             finalize();
         }
 
         function customEvent() {
-            if(currentURL === visualizer.image.customURL) {
-                console.log('Custom Image change: URL is the same');
+            if(currentURL === visualizer.image.customURL)
                 return;
-            }
+
             currentURL = visualizer.image.customURL;
             quality = 'custom';
             finalize();
         }
 
         function finalize() {
-            console.log(`Changed currentURL to: ${currentURL}`);
             imgLoaded = false;
             image.src = currentURL;
         }
@@ -586,7 +593,7 @@ try {
             // Commented out because it breaks more shit than it fixes
             // elements.player.style.margin = 'auto 0px';
 
-            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
+            if(visualizer.circleEnabled === true) {
                 if(visualizer.bassBounce.enabled === false) {
                     visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
                     visualizer.values.heightModifier = (visualizer.values.HEIGHT - visualizer.values.radius) / 2 / 255;
@@ -613,35 +620,16 @@ try {
         function getBarColor(i) {
             if(visualizer.rgb.enabled === true) {
             // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
-                const color = ~~(i / visualizer.colorDivergence);
+                const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
 
-                if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
-                else visualizer.ctx.fillStyle = `rgb(${visualizer.rgb._data[color].red}, ${visualizer.rgb._data[color].green}, ${visualizer.rgb._data[color].blue})`;
+                if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
+                else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
             }
             else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
             else visualizer.ctx.fillStyle = visualizer.color;
 
+            // This might not actually be correct
             if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) visualizer.ctx.fillStyle = '#FFF';
-        }
-
-        function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-            if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.visualizer.values.circleSize = 2; // 2(pi) = full
-            else visualizer.values.circleSize = 1; // 1(pi) = half;
-
-            if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
-
-            getRotationValue();
-
-            if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
-
-            visualizer.values.reactiveBarHeightMultiplier = 0.3 + visualizer.values.bassSmoothRadius / 512; // 0.3 . . 0.55
-
-            if(visualizer.startsFrom === 'Right') drawArcs(false);
-            else if(visualizer.startsFrom === 'Left') drawArcs(true);
-            else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
-                drawArcs(false);
-                drawArcs(true);
-            }
         }
 
         function calculateBass() {
@@ -664,6 +652,26 @@ try {
                 case 'On': { visualizer.values.rotationValue += 0.005 * direction; } break;
                 case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
                 case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
+            }
+        }
+
+        function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
+            if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.visualizer.values.circleSize = 2; // 2(pi) = full
+            else visualizer.values.circleSize = 1; // 1(pi) = half;
+
+            if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
+
+            getRotationValue();
+
+            if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
+
+            visualizer.values.reactiveBarHeightMultiplier = 0.3 + visualizer.values.bassSmoothRadius / 512; // 0.3 . . 0.55
+
+            if(visualizer.startsFrom === 'Right') drawArcs(false);
+            else if(visualizer.startsFrom === 'Left') drawArcs(true);
+            else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
+                drawArcs(false);
+                drawArcs(true);
             }
         }
 
@@ -791,24 +799,25 @@ try {
 
         let lastFrameTime = 0;
 
-        // NEVER REMOVE TIME VAR FROM HERE
+        // NEVER REMOVE TIME VAR FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
         function renderFrame(time) {
         // Don't do anything if True Pause energy saver is on and playback is paused
             if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
 
             // If render would be faster than max fps (60 by default if energy saver is off) come back later
             if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+
             lastFrameTime = time;
 
             visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
 
-            // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see 1's save event
+            // Kill everything if disabled, can be turned back with requestAnimationFrame(renderFrame), see settignsMenu/events.js --> saveEvent()
             if(visualizer.place === 'Disabled') return;
 
             // Get audio data
             visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-            // Color cycle effect
+            // Cheap color cycle effect, speed scales with fps so probably not the best
             if(visualizer.rgb.enabled === true) {
                 visualizer.rgb._data.push(visualizer.rgb._data[0]);
                 visualizer.rgb._data.shift();
@@ -824,24 +833,23 @@ try {
                 visualizer.ctx = visualizer.canvas.getContext('2d');
             }
             else if(visualizer.place === 'Background') {
-                if(elements.player.playerUiState_ === 'MINIPLAYER') {
+                if(elements.player.playerUiState === 'MINIPLAYER') {
                     if(visualizer.canvas.id !== visualizer.canvases.background.id) {
                         visualizer.canvas = visualizer.canvases.background;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
-                        console.log('Switched visualizer.canvas to background');
                     }
                 }
-                else if(elements.player.playerUiState_ === 'FULLSCREEN') {
+                else if(elements.player.playerUiState === 'FULLSCREEN') {
+                // playerBackground canvas height is not 100vh because YTM is a piece of fucking shit and my brain doesn't let me "hide" the bottom of the canvas under the miniplayer thing
+                // so to not have to fuck with scaling, we just switch to the already perfectly scaled album cover, EZ Clap
                     if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
                         visualizer.canvas = visualizer.canvases.albumCover;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
-                        console.log('Switched visualizer.canvas to albumCover');
                     }
                 }
                 else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
                     visualizer.canvas = visualizer.canvases.playerBackground;
                     visualizer.ctx = visualizer.canvas.getContext('2d');
-                    console.log('Switched visualizer.canvas to playerBackground');
                 }
             }
 
@@ -869,10 +877,8 @@ try {
                 visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
                 startVisualizer();
             }
-            else {
-                console.warn('Query "video" not found, retrying in 100ms.');
+            else
                 setTimeout(getVideo, 100);
-            }
         }
 
         function startVisualizer() {
@@ -957,7 +963,7 @@ try {
                 });
             }
 
-            await injectElement('div', 'divider', sideBySide);
+            await injectElement('div', 'ytmpDivider', sideBySide);
 
             const currentSettings = await injectElement('div', 'currentSettings', sideBySide);
             categorySelect.prepend(wrapper.childNodes[0]); // Put header (title) into categorySelect
@@ -1130,8 +1136,9 @@ try {
             bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
             bgGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
             bgGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színátmenet Animáció' },
-            changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
-            clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
+            // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
+            removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
+            // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
             clockColor: { english: 'Clock Color', hungarian: 'Óra Színe' },
             clockGradient: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
             clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
@@ -1274,39 +1281,43 @@ try {
                 default: 'Horizontal',
                 subCheckbox: 'bgEnableGradient'
             },
-            changeUpgradeButton: {
-                type: 'select',
-                options: ['Original', 'Remove Button', 'Digital Clock'],
-                default: 'Digital Clock'
-            },
-            clockColor: {
-                type: 'color',
-                default: '#AA3333',
-                subOption: 'changeUpgradeButton.2'
-            },
-            clockGradient: {
+            // changeUpgradeButton: {
+            //     type: 'select',
+            //     options: ['Original', 'Remove Button', 'Digital Clock'],
+            //     default: 'Digital Clock'
+            // },
+            removeUpgradeButton: {
                 type: 'checkbox',
-                default: true,
-                subOption: 'changeUpgradeButton.2'
+                default: true
             },
-            clockGradientColor: {
-                type: 'color',
-                default: '#3333AA',
-                subOption: 'changeUpgradeButton.2'
-            },
-            clockGradientAngle: {
-                type: 'int',
-                min: -360,
-                max: 360,
-                default: 90,
-                subOption: 'changeUpgradeButton.2'
-            },
-            clockGradientAnimation: {
-                type: 'select',
-                options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: 'Horizontal',
-                subOption: 'changeUpgradeButton.2'
-            },
+            // clockColor: {
+            //     type: 'color',
+            //     default: '#AA3333',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradient: {
+            //     type: 'checkbox',
+            //     default: true,
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientColor: {
+            //     type: 'color',
+            //     default: '#3333AA',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientAngle: {
+            //     type: 'int',
+            //     min: -360,
+            //     max: 360,
+            //     default: 90,
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientAnimation: {
+            //     type: 'select',
+            //     options: ['Disabled', 'Horizontal', 'Vertical'],
+            //     default: 'Horizontal',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
             visualizerPlace: {
                 section: fieldTexts.visualizerPlaceSection,
                 type: 'select',
@@ -1532,7 +1543,7 @@ try {
 
             changeBackground(ytmpConfig.get('changeBackground'));
 
-            changeUpgradeButton(ytmpConfig.get('changeUpgradeButton'));
+            removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
 
             neverAfk(ytmpConfig.get('neverAfk'));
 
@@ -1572,13 +1583,11 @@ try {
 
             if(ytmpConfig.isOpen === false) ytmpConfig.open();
             else ytmpConfig.close();
-
-            console.log(ytmpConfig);
         }
 
         const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
 
-        const cogFrame = '#cogRotator {\r\n    position: absolute;\r\n    width: 36px;\r\n    height: 36px;\r\n    left: 100px;\r\n    opacity: 1;\r\n    transform: rotate(0);\r\n    filter: drop-shadow(0px 0px 0px #ff00ff);\r\n    transition: 0.15s ease-in-out;\r\n}\r\n\r\n#cogRotator:hover {\r\n    transform: rotate(90deg);\r\n    filter: drop-shadow(0px 0px 8px #ff00ff);\r\n}';
+        const cogFrame = '#cogBigHolder {\r\n    width: 30px;\r\n    height: 30px;\r\n    margin-left: 20px;\r\n}\r\n\r\n#cogBigHolder:hover #cogRotator {\r\n    transform: rotate(90deg);\r\n    filter: drop-shadow(0px 0px 8px #ff00ff);\r\n}\r\n\r\n#cogRotator {\r\n    height: 100%;\r\n    opacity: 1;\r\n    transform: rotate(0);\r\n    filter: drop-shadow(0px 0px 0px #ff00ff);\r\n    transition: 0.15s ease-in-out;\r\n}';
 
         async function createCogFrame() {
             const ytmSettingsSvg = document.getElementById('settings').outerHTML; // Steal YT settings icon
@@ -1588,17 +1597,17 @@ try {
         ${ytmSettingsSvg}
     </svg>`;
 
-            let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0];
+            // let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0]; // Legacy
+            let cogHolder = document.getElementById('right-content');
             if(!cogHolder) cogHolder = document.body;
 
 
             injectStyle(cogFrame);
-            const cogRotator = injectElement('div', 'cogRotator', cogHolder);
+            const cogBigHolder = injectElement('div', 'cogBigHolder', cogHolder);
+            const cogRotator = injectElement('div', 'cogRotator', cogBigHolder);
             cogRotator.innerHTML = settingsSVG;
 
-            const settingsSVGButton = document.getElementById('settingsSVGButton');
-
-            settingsSVGButton.addEventListener('click', () => {
+            cogBigHolder.addEventListener('click', () => {
                 if(ytmpConfig.isOpen === false) ytmpConfig.open();
                 else ytmpConfig.close();
             });
@@ -1647,19 +1656,25 @@ try {
 
             // These functions are timed out so needed elements can load
             setTimeout(async () => {
+                try {
+                    const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+                    elements.bigGuide = guides[0].children[2];
+                    elements.miniGuide = guides[2].children[2];
+                }
+                catch {
+                }
+
+                // Adds a settings button on the navbar
+                createCogFrame();
+
                 removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
 
                 swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
 
-                elements.upgradeButton = await document.getElementsByClassName('tab-title style-scope ytmusic-pivot-bar-item-renderer')[3];
-                elements.originalUpgradeText = elements.upgradeButton.textContent;
-                changeUpgradeButton(ytmpConfig.get('changeUpgradeButton'));
+                removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
             }, 500);
 
             setupVisualizer();
-
-            // Adds a settings button on the navbar
-            createCogFrame();
         }
 
         window.addEventListener('keydown', (e) => keydownEvent(e));
