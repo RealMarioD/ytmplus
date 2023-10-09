@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-beta
-// @author       Mario_D#7052
+// @version      3.0.0-beta.2
+// @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
 // @updateURL    https://github.com/RealMarioD/ytmplus/raw/main/dist/ytmplus.user.js
@@ -13,7 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-beta';
+const vNumber = 'v3.0.0-beta.2';
 try {
     (function() {
         'use strict';
@@ -149,6 +149,7 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -157,8 +158,10 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0)
+                if(popup.length > 0) {
                     popup[0].remove();
+                    console.log('Removed a promotion.');
+                }
             }, 1000);
         }
 
@@ -349,9 +352,10 @@ try {
             }
             else if(customClass) node.classList.add(customClass);
             if(customStyle) node.style = customStyle;
-            if(!wrapperElm)
+            if(!wrapperElm) {
+                console.error('injectElement: Wrapper is undefined');
                 return;
-
+            }
             if(prepend) wrapperElm.prepend(node);
             else wrapperElm.appendChild(node);
             return node;
@@ -381,10 +385,11 @@ try {
         };
 
         image.onerror = () => {
-            if(visualizer.image.type === 'Custom') ;
-            else
+            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
+            else {
+                console.log('Visualizer Image couldn\'t be loaded.');
                 return;
-
+            }
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -398,44 +403,55 @@ try {
 
         function thumbnailEvent() {
             currentURL = thumbnailChildSrc();
-            if(!currentURL)
+            if(!currentURL) {
+                console.log('thumbnailChildSrc is undefined');
                 return;
-
+            }
 
             if(currentURL.indexOf('data') === 0) {
+                console.log('Current song has broken thumbnail, might be a video');
+
                 if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-                else if(loadSD === false && quality !== 'custom')
+                else if(loadSD === false && quality !== 'custom') {
+                    console.log('Multiple changes with same URL, loadSD is false, quality is not custom');
                     return;
+                }
 
-
-                if(!lastSavedVideoURL)
+                if(!lastSavedVideoURL) {
+                    console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
                     return;
+                }
 
+                console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
                 imgLoaded = false;
-                if(loadSD === true)
+                if(loadSD === true) {
                     quality = 'sddefault';
-
+                    console.log(`loadSD is true, working with ${quality}`);
+                }
                 else quality = 'maxresdefault';
                 currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
                 loadSD = false;
             }
-            else if(image.src === currentURL)
+            else if(image.src === currentURL) {
+                console.log('Image src is already thumbnail');
                 return;
-
+            }
             lastSavedVideoURL = currentVideoURL().href;
             finalize();
         }
 
         function customEvent() {
-            if(currentURL === visualizer.image.customURL)
+            if(currentURL === visualizer.image.customURL) {
+                console.log('Custom Image change: URL is the same');
                 return;
-
+            }
             currentURL = visualizer.image.customURL;
             quality = 'custom';
             finalize();
         }
 
         function finalize() {
+            console.log(`Changed currentURL to: ${currentURL}`);
             imgLoaded = false;
             image.src = currentURL;
         }
@@ -837,6 +853,7 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.background.id) {
                         visualizer.canvas = visualizer.canvases.background;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to background');
                     }
                 }
                 else if(elements.player.playerUiState === 'FULLSCREEN') {
@@ -845,13 +862,18 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
                         visualizer.canvas = visualizer.canvases.albumCover;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to albumCover');
                     }
                 }
                 else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
                     visualizer.canvas = visualizer.canvases.playerBackground;
                     visualizer.ctx = visualizer.canvas.getContext('2d');
+                    console.log('Switched visualizer.canvas to playerBackground');
                 }
             }
+
+            if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
+            else elements.playlist.style.visibility = 'hidden';
 
             if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
             else visualizerNavbar(visualizer.ctx);
@@ -877,8 +899,10 @@ try {
                 visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
                 startVisualizer();
             }
-            else
+            else {
+                console.warn('Query "video" not found, retrying in 100ms.');
                 setTimeout(getVideo, 100);
+            }
         }
 
         function startVisualizer() {
@@ -1126,9 +1150,12 @@ try {
             videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
             removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
             swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
-            changeNavbarBackground: { english: 'Change Navbar Background' },
             themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },
+            changeNavbarBackground: { english: 'Change Navbar Background', hungarian: 'Navbar Háttérszín megváltoztatása' },
             navbarBackgroundColor: { english: 'Color', hungarian: 'Szín' },
+            navbarEnableGradient: { english: 'Enable Gradient', hungarian: 'Átmenet Engedélyezése' },
+            navbarGradient: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
+            navbarGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
             changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
             changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
             bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
@@ -1248,6 +1275,23 @@ try {
             navbarBackgroundColor: {
                 type: 'color',
                 default: '#030303',
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarEnableGradient: {
+                type: 'checkbox',
+                default: false,
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarGradient: {
+                type: 'color',
+                default: '#303030',
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarGradientAngle: {
+                type: 'int',
+                min: -360,
+                max: 360,
+                default: 45,
                 subCheckbox: 'changeNavbarBackground'
             },
             changeBackground: {
@@ -1505,10 +1549,10 @@ try {
         }
 
         function changeNavbarBackground(turnOn) {
-            if(!turnOn) return elements.navBarBg.style.removeProperty('background');
+            if(!turnOn) return elements.navBarBg.style.removeProperty('background-image');
 
-            const customNavbarColor = ytmpConfig.get('navbarBackgroundColor');
-            elements.navBarBg.style.background = customNavbarColor;
+            elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
+            elements.navBarBg.style.backgroundAttachment = 'fixed';
         }
 
         function videoSongSwitcher(turnOn) {
@@ -1583,6 +1627,8 @@ try {
 
             if(ytmpConfig.isOpen === false) ytmpConfig.open();
             else ytmpConfig.close();
+
+            console.log(ytmpConfig);
         }
 
         const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
@@ -1662,6 +1708,7 @@ try {
                     elements.miniGuide = guides[2].children[2];
                 }
                 catch {
+                    if(!elements.miniGuide) console.warn('Could not find miniGuide!');
                 }
 
                 // Adds a settings button on the navbar

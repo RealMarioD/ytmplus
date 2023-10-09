@@ -50,6 +50,23 @@ export const configFields = {
         default: '#030303',
         subCheckbox: 'changeNavbarBackground'
     },
+    navbarEnableGradient: {
+        type: 'checkbox',
+        default: false,
+        subCheckbox: 'changeNavbarBackground'
+    },
+    navbarGradient: {
+        type: 'color',
+        default: '#303030',
+        subCheckbox: 'changeNavbarBackground'
+    },
+    navbarGradientAngle: {
+        type: 'int',
+        min: -360,
+        max: 360,
+        default: 45,
+        subCheckbox: 'changeNavbarBackground'
+    },
     changeBackground: {
         type: 'checkbox',
         default: true
