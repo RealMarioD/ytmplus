@@ -62,6 +62,9 @@ export function renderFrame(time) {
         }
     }
 
+    if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
+    else elements.playlist.style.visibility = 'hidden';
+
     if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
     else visualizerNavbar(visualizer.ctx);
 
