@@ -2,9 +2,9 @@ import { elements } from '../../globals/elements';
 import { ytmpConfig } from '../../ytmpConfig';
 
 export function changeNavbarBackground(turnOn) {
-    if(!turnOn) return elements.navBarBg.style.removeProperty('background');
+    if(!turnOn) return elements.navBarBg.style.removeProperty('background-image');
 
-    const customNavbarColor = ytmpConfig.get('navbarBackgroundColor');
-    elements.navBarBg.style.background = customNavbarColor;
+    elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
+    elements.navBarBg.style.backgroundAttachment = 'fixed';
 }
 
