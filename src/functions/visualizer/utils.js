@@ -84,25 +84,26 @@ function getRGB() {
 }
 
 export function visualizerResizeFix() {
+    const renderScale = ytmpConfig.get('visualizerRenderScale');
     switch(visualizer.canvas.id) {
         case visualizer.canvases.navbar.id: {
-            if(visualizer.canvas.width !== elements.navBarBg.offsetWidth) visualizer.canvas.width = elements.navBarBg.offsetWidth;
-            if(visualizer.canvas.height !== elements.navBarBg.offsetHeight) visualizer.canvas.height = elements.navBarBg.offsetHeight;
+            if(visualizer.canvas.width !== elements.navBarBg.offsetWidth * renderScale) visualizer.canvas.width = elements.navBarBg.offsetWidth * renderScale;
+            if(visualizer.canvas.height !== elements.navBarBg.offsetHeight * renderScale) visualizer.canvas.height = elements.navBarBg.offsetHeight * renderScale;
             break;
         }
         case visualizer.canvases.albumCover.id: {
-            if(visualizer.canvas.width !== elements.player.offsetWidth) visualizer.canvas.width = elements.player.offsetWidth;
-            if(visualizer.canvas.height !== elements.player.offsetHeight) visualizer.canvas.height = elements.player.offsetHeight;
+            if(visualizer.canvas.width !== elements.player.offsetWidth * renderScale) visualizer.canvas.width = elements.player.offsetWidth * renderScale;
+            if(visualizer.canvas.height !== elements.player.offsetHeight * renderScale) visualizer.canvas.height = elements.player.offsetHeight * renderScale;
             break;
         }
         case visualizer.canvases.playerBackground.id: {
-            if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth;
-            if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight;
+            if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth * renderScale;
+            if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight * renderScale;
             break;
         }
         case visualizer.canvases.background.id: {
-            if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth) visualizer.canvas.width = visualizer.canvases.background.offsetWidth;
-            if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight) visualizer.canvas.height = visualizer.canvases.background.offsetHeight;
+            if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.background.offsetWidth * renderScale;
+            if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.background.offsetHeight * renderScale;
             break;
         }
         default: break;

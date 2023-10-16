@@ -291,6 +291,12 @@ export const configFields = {
         max: 144,
         default: 30,
     },
+    visualizerRenderScale: {
+        type: 'float',
+        min: 0.01,
+        max: 2,
+        default: 1
+    },
     lastOpenCategory: {
         section: fieldTexts.backendSection,
         type: 'hidden',

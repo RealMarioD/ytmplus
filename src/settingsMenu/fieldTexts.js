@@ -64,6 +64,7 @@ export const fieldTexts = {
     visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
     visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
     visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
+    visualizerRenderScale: { english: 'Vis. Render Scale' },
     backendSection: { english: 'You are not supposed to see this.' },
     lastOpenCategory: { english: 'You are not supposed to see this.' }
 };

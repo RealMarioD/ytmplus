@@ -34,6 +34,7 @@ function dragElement(elmnt, frame) {
     elmnt.addEventListener('mousedown', dragMouseDown);
 
     function dragMouseDown(e) {
+        frame.style.transition = '0s';
         e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
@@ -61,5 +62,10 @@ function dragElement(elmnt, frame) {
         // stop moving when mouse button is released:
         document.removeEventListener('mouseup', closeDragElement);
         document.removeEventListener('mousemove', elementDrag);
+        frame.style.transition = '0.1s';
+        if(frame.offsetTop < 0) frame.style.top = '0px';
+        if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
+        if(frame.offsetLeft < 0) frame.style.left = '0px';
+        if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
     }
 }
