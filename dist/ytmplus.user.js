@@ -56,21 +56,21 @@ try {
             animateBackground(elements.playerPage.style, false, animation);
         }
 
-        function animateBackground(element, overflowOn, animation) {
-            element.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') == true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
-            element.backgroundAttachment = 'fixed';
+        function animateBackground(elementStyle, overflowOn, animation) {
+            elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') == true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
+            elementStyle.backgroundAttachment = 'fixed';
 
             if(animation !== 'Disabled') {
-                element.backgroundSize = '200% 200%';
-                element.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
+                elementStyle.backgroundSize = '200% 200%';
+                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
             }
             else {
-                element.backgroundSize = '100% 100%';
-                element.animation = '';
-                element.backgroundPosition = 'center center';
+                elementStyle.backgroundSize = '100% 100%';
+                elementStyle.animation = '';
+                elementStyle.backgroundPosition = 'center center';
             }
 
-        // if(overflowOn === false) element.overflow = 'hidden';
+        // if(overflowOn === false) elementStyle.overflow = 'hidden';
         }
 
         // import { elements } from '../../globals/elements';
@@ -1156,6 +1156,7 @@ try {
             navbarEnableGradient: { english: 'Enable Gradient', hungarian: 'Átmenet Engedélyezése' },
             navbarGradient: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
             navbarGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
+            navbarGradientAnimation: { english: 'Gradient Animation' },
             changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
             changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
             bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
@@ -1294,6 +1295,12 @@ try {
                 default: 45,
                 subCheckbox: 'changeNavbarBackground'
             },
+            navbarGradientAnimation: {
+                type: 'select',
+                options: ['Disabled', 'Horizontal', 'Vertical'],
+                default: 'Horizontal',
+                subCheckbox: 'changeNavbarBackground'
+            },
             changeBackground: {
                 type: 'checkbox',
                 default: true
@@ -1305,25 +1312,26 @@ try {
             },
             bgEnableGradient: {
                 type: 'checkbox',
-                default: true
+                default: true,
+                subCheckbox: 'changeBackground'
             },
             bgGradient: {
                 type: 'color',
                 default: '#0000AA',
-                subCheckbox: 'bgEnableGradient'
+                subCheckbox: 'changeBackground'
             },
             bgGradientAngle: {
                 type: 'int',
                 min: -360,
                 max: 360,
                 default: 45,
-                subCheckbox: 'bgEnableGradient'
+                subCheckbox: 'changeBackground'
             },
             bgGradientAnimation: {
                 type: 'select',
                 options: ['Disabled', 'Horizontal', 'Vertical'],
                 default: 'Horizontal',
-                subCheckbox: 'bgEnableGradient'
+                subCheckbox: 'changeBackground'
             },
             // changeUpgradeButton: {
             //     type: 'select',
@@ -1553,6 +1561,25 @@ try {
 
             elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
             elements.navBarBg.style.backgroundAttachment = 'fixed';
+
+            animateNavbar(elements.navBarBg.style, null, ytmpConfig.get('navbarGradientAnimation'));
+        }
+
+
+        function animateNavbar(elementStyle, overflowOn, animation) {
+            if(animation !== 'Disabled') {
+                elementStyle.backgroundSize = '200% 200%';
+                elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
+                elements.navBarBg.style.backgroundAttachment = 'fixed';
+                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
+            }
+            else {
+                elementStyle.backgroundSize = '100% 100%';
+                elementStyle.animation = '';
+                elementStyle.backgroundPosition = 'center center';
+            }
+
+        // if(overflowOn === false) elementStyle.overflow = 'hidden';
         }
 
         function videoSongSwitcher(turnOn) {
