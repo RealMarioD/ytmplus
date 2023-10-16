@@ -65,7 +65,7 @@ export function renderFrame(time) {
     if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
     else elements.playlist.style.visibility = 'hidden';
 
-    if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
+    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
     else visualizerNavbar(visualizer.ctx);
 
     requestAnimationFrame(renderFrame);

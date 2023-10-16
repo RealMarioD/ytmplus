@@ -574,25 +574,26 @@ try {
         }
 
         function visualizerResizeFix() {
+            const renderScale = ytmpConfig.get('visualizerRenderScale');
             switch(visualizer.canvas.id) {
                 case visualizer.canvases.navbar.id: {
-                    if(visualizer.canvas.width !== elements.navBarBg.offsetWidth) visualizer.canvas.width = elements.navBarBg.offsetWidth;
-                    if(visualizer.canvas.height !== elements.navBarBg.offsetHeight) visualizer.canvas.height = elements.navBarBg.offsetHeight;
+                    if(visualizer.canvas.width !== elements.navBarBg.offsetWidth * renderScale) visualizer.canvas.width = elements.navBarBg.offsetWidth * renderScale;
+                    if(visualizer.canvas.height !== elements.navBarBg.offsetHeight * renderScale) visualizer.canvas.height = elements.navBarBg.offsetHeight * renderScale;
                     break;
                 }
                 case visualizer.canvases.albumCover.id: {
-                    if(visualizer.canvas.width !== elements.player.offsetWidth) visualizer.canvas.width = elements.player.offsetWidth;
-                    if(visualizer.canvas.height !== elements.player.offsetHeight) visualizer.canvas.height = elements.player.offsetHeight;
+                    if(visualizer.canvas.width !== elements.player.offsetWidth * renderScale) visualizer.canvas.width = elements.player.offsetWidth * renderScale;
+                    if(visualizer.canvas.height !== elements.player.offsetHeight * renderScale) visualizer.canvas.height = elements.player.offsetHeight * renderScale;
                     break;
                 }
                 case visualizer.canvases.playerBackground.id: {
-                    if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth;
-                    if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight;
+                    if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth * renderScale;
+                    if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight * renderScale;
                     break;
                 }
                 case visualizer.canvases.background.id: {
-                    if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth) visualizer.canvas.width = visualizer.canvases.background.offsetWidth;
-                    if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight) visualizer.canvas.height = visualizer.canvases.background.offsetHeight;
+                    if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.background.offsetWidth * renderScale;
+                    if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.background.offsetHeight * renderScale;
                     break;
                 }
             }
@@ -875,7 +876,7 @@ try {
             if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
             else elements.playlist.style.visibility = 'hidden';
 
-            if(visualizer.circleEnabled === true) visualizerCircle(visualizer.ctx);
+            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
             else visualizerNavbar(visualizer.ctx);
 
             requestAnimationFrame(renderFrame);
@@ -1080,6 +1081,7 @@ try {
             elmnt.addEventListener('mousedown', dragMouseDown);
 
             function dragMouseDown(e) {
+                frame.style.transition = '0s';
                 e = e || window.event;
                 e.preventDefault();
                 // get the mouse cursor position at startup:
@@ -1107,6 +1109,11 @@ try {
             // stop moving when mouse button is released:
                 document.removeEventListener('mouseup', closeDragElement);
                 document.removeEventListener('mousemove', elementDrag);
+                frame.style.transition = '0.1s';
+                if(frame.offsetTop < 0) frame.style.top = '0px';
+                if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
+                if(frame.offsetLeft < 0) frame.style.left = '0px';
+                if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
             }
         }
 
@@ -1204,6 +1211,7 @@ try {
             visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
             visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
             visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
+            visualizerRenderScale: { english: 'Vis. Render Scale' },
             backendSection: { english: 'You are not supposed to see this.' },
             lastOpenCategory: { english: 'You are not supposed to see this.' }
         };
@@ -1525,6 +1533,12 @@ try {
                 min: 1,
                 max: 144,
                 default: 30,
+            },
+            visualizerRenderScale: {
+                type: 'float',
+                min: 0.01,
+                max: 2,
+                default: 1
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
