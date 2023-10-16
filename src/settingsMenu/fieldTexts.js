@@ -17,6 +17,7 @@ export const fieldTexts = {
     navbarEnableGradient: { english: 'Enable Gradient', hungarian: 'Átmenet Engedélyezése' },
     navbarGradient: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
     navbarGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
+    navbarGradientAnimation: { english: 'Gradient Animation' },
     changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
     changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
     bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },

@@ -67,6 +67,12 @@ export const configFields = {
         default: 45,
         subCheckbox: 'changeNavbarBackground'
     },
+    navbarGradientAnimation: {
+        type: 'select',
+        options: ['Disabled', 'Horizontal', 'Vertical'],
+        default: 'Horizontal',
+        subCheckbox: 'changeNavbarBackground'
+    },
     changeBackground: {
         type: 'checkbox',
         default: true
@@ -78,25 +84,26 @@ export const configFields = {
     },
     bgEnableGradient: {
         type: 'checkbox',
-        default: true
+        default: true,
+        subCheckbox: 'changeBackground'
     },
     bgGradient: {
         type: 'color',
         default: '#0000AA',
-        subCheckbox: 'bgEnableGradient'
+        subCheckbox: 'changeBackground'
     },
     bgGradientAngle: {
         type: 'int',
         min: -360,
         max: 360,
         default: 45,
-        subCheckbox: 'bgEnableGradient'
+        subCheckbox: 'changeBackground'
     },
     bgGradientAnimation: {
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
-        subCheckbox: 'bgEnableGradient'
+        subCheckbox: 'changeBackground'
     },
     // changeUpgradeButton: {
     //     type: 'select',
