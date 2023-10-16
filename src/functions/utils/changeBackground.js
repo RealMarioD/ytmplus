@@ -24,19 +24,19 @@ export function changeBackground(turnOn, firstRun) {
     animateBackground(elements.playerPage.style, false, animation);
 }
 
-export function animateBackground(element, overflowOn, animation) {
-    element.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') == true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
-    element.backgroundAttachment = 'fixed';
+export function animateBackground(elementStyle, overflowOn, animation) {
+    elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') == true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
+    elementStyle.backgroundAttachment = 'fixed';
 
     if(animation !== 'Disabled') {
-        element.backgroundSize = '200% 200%';
-        element.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
+        elementStyle.backgroundSize = '200% 200%';
+        elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
     }
     else {
-        element.backgroundSize = '100% 100%';
-        element.animation = '';
-        element.backgroundPosition = 'center center';
+        elementStyle.backgroundSize = '100% 100%';
+        elementStyle.animation = '';
+        elementStyle.backgroundPosition = 'center center';
     }
 
-    // if(overflowOn === false) element.overflow = 'hidden';
+    // if(overflowOn === false) elementStyle.overflow = 'hidden';
 }
