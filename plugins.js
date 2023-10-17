@@ -15,7 +15,7 @@ export function lint() {
                 const resultText = formatter.format(results);
                 console.log(resultText);
                 console.log('\x1b[32m%s\x1b[0m', 'lint: Job done.');
-            }, 1000);
+            }, 500);
         }
     };
 }

@@ -20,6 +20,455 @@ try {
 
         const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1.5em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    font-size: 1em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 0.75em;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}';
 
+        function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
+            const node = document.createElement(type);
+            if(id) node.id = id;
+            if(typeof customClass === 'object') {
+                customClass.forEach(c => {
+                    node.classList.add(c);
+                });
+            }
+            else if(customClass) node.classList.add(customClass);
+            if(customStyle) node.style = customStyle;
+            if(!wrapperElm) {
+                console.error('injectElement: Wrapper is undefined');
+                return;
+            }
+            if(prepend) wrapperElm.prepend(node);
+            else wrapperElm.appendChild(node);
+            return node;
+        }
+
+        const fieldTexts = {
+            language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
+            langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
+            neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
+            noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
+            skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
+            fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
+            extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
+            videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
+            removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
+            swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
+            themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },
+            changeNavbarBackground: { english: 'Change Navbar Background', hungarian: 'Navbar Háttérszín megváltoztatása' },
+            navbarBackgroundColor: { english: 'Color', hungarian: 'Szín' },
+            navbarEnableGradient: { english: 'Enable Gradient', hungarian: 'Átmenet Engedélyezése' },
+            navbarGradient: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
+            navbarGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
+            navbarGradientAnimation: { english: 'Gradient Animation' },
+            changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
+            changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
+            bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
+            bgEnableGradient: { english: 'Enable Background Gradient', hungarian: 'Háttér színátmenet engedélyezése' },
+            bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
+            bgGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
+            bgGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színátmenet Animáció' },
+            // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
+            removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
+            // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
+            clockColor: { english: 'Clock Color', hungarian: 'Óra Színe' },
+            clockGradient: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
+            clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
+            clockGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
+            clockGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színtámenet Animáció' },
+            visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
+            visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
+            visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
+            // visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+            visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
+            visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
+            visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
+            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
+            visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
+            visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
+            visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
+            visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
+            visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
+            visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
+            visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
+            visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép' },
+            visualizerImageCustomURL: { english: 'Custom Image URL', hungarian: 'Egyéni Kép URL' },
+            attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
+            attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
+            visualizerRgbRed: { english: 'RGB:Red', hungarian: 'RGB:Piros' },
+            visualizerRgbGreen: { english: 'RGB:Green', hungarian: 'RGB:Zöld' },
+            visualizerRgbBlue: { english: 'RGB:Blue', hungarian: 'RGB:Kék' },
+            visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
+            visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
+            visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
+            visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
+            visualizerMinHertz: { english: 'AudioData Min Hertz', hungarian: 'AudioData Min Hertz' },
+            visualizerMaxHertz: { english: 'AudioData Max Hertz', hungarian: 'AudioData Max Hertz' },
+            visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
+            visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
+            visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
+            visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
+            visualizerRenderScale: { english: 'Vis. Render Scale' },
+            backendSection: { english: 'You are not supposed to see this.' },
+            lastOpenCategory: { english: 'You are not supposed to see this.' }
+        };
+
+        let langOption = GM_getValue('ytmPlusCfg', 'english');
+        if(langOption != 'english') {
+            langOption = JSON.parse(langOption).language;
+            if(!langOption) langOption = 'english';
+            else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
+        }
+
+        function fixupFields() {
+            for(const field in configFields) {
+                if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
+                const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+                configFields[field] = Object.assign(newLabel, configFields[field]);
+
+                if(configFields[field].section === undefined) continue;
+
+                configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
+            }
+            return configFields;
+        }
+
+        // type: 'color' just results in a text input, they are later converted to actual color input, see open event
+        const configFields = {
+            language: {
+                section: fieldTexts.langSection,
+                type: 'select',
+                options: ['English', 'Hungarian'],
+                default: 'English'
+            },
+            neverAfk: {
+                type: 'checkbox',
+                default: true
+            },
+            noPromotions: {
+                type: 'checkbox',
+                default: true
+            },
+            skipDisliked: {
+                type: 'checkbox',
+                default: false
+            },
+            fixLayout: {
+                type: 'checkbox',
+                default: true
+            },
+            extraPlaybackButtons: {
+                type: 'checkbox',
+                default: true
+            },
+            videoSongSwitcher: {
+                type: 'checkbox',
+                default: true
+            },
+            removeAlbumCover: {
+                type: 'checkbox',
+                default: false
+            },
+            swapMainPanelWithPlaylist: {
+                type: 'checkbox',
+                default: false
+            },
+            changeNavbarBackground: {
+                section: fieldTexts.themeSection,
+                type: 'checkbox',
+                default: false
+            },
+            navbarBackgroundColor: {
+                type: 'color',
+                default: '#030303',
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarEnableGradient: {
+                type: 'checkbox',
+                default: false,
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarGradient: {
+                type: 'color',
+                default: '#303030',
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarGradientAngle: {
+                type: 'int',
+                min: -360,
+                max: 360,
+                default: 45,
+                subCheckbox: 'changeNavbarBackground'
+            },
+            navbarGradientAnimation: {
+                type: 'select',
+                options: ['Disabled', 'Horizontal', 'Vertical'],
+                default: 'Horizontal',
+                subCheckbox: 'changeNavbarBackground'
+            },
+            changeBackground: {
+                type: 'checkbox',
+                default: true
+            },
+            bgColor: {
+                type: 'color',
+                default: '#AA0000',
+                subCheckbox: 'changeBackground'
+            },
+            bgEnableGradient: {
+                type: 'checkbox',
+                default: true,
+                subCheckbox: 'changeBackground'
+            },
+            bgGradient: {
+                type: 'color',
+                default: '#0000AA',
+                subCheckbox: 'changeBackground'
+            },
+            bgGradientAngle: {
+                type: 'int',
+                min: -360,
+                max: 360,
+                default: 45,
+                subCheckbox: 'changeBackground'
+            },
+            bgGradientAnimation: {
+                type: 'select',
+                options: ['Disabled', 'Horizontal', 'Vertical'],
+                default: 'Horizontal',
+                subCheckbox: 'changeBackground'
+            },
+            // changeUpgradeButton: {
+            //     type: 'select',
+            //     options: ['Original', 'Remove Button', 'Digital Clock'],
+            //     default: 'Digital Clock'
+            // },
+            removeUpgradeButton: {
+                type: 'checkbox',
+                default: true
+            },
+            // clockColor: {
+            //     type: 'color',
+            //     default: '#AA3333',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradient: {
+            //     type: 'checkbox',
+            //     default: true,
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientColor: {
+            //     type: 'color',
+            //     default: '#3333AA',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientAngle: {
+            //     type: 'int',
+            //     min: -360,
+            //     max: 360,
+            //     default: 90,
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            // clockGradientAnimation: {
+            //     type: 'select',
+            //     options: ['Disabled', 'Horizontal', 'Vertical'],
+            //     default: 'Horizontal',
+            //     subOption: 'changeUpgradeButton.2'
+            // },
+            visualizerPlace: {
+                section: fieldTexts.visualizerPlaceSection,
+                type: 'select',
+                options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
+                default: 'Album Cover'
+            },
+            visualizerStartsFrom: {
+                type: 'select',
+                options: ['Left', 'Center', 'Right', 'Edges'],
+                default: 'Center'
+            },
+            visualizerColor: {
+                type: 'color',
+                default: '#C800C8'
+            },
+            visualizerRgbEnabled: {
+                type: 'checkbox',
+                default: true
+            },
+            visualizerFade: {
+                type: 'checkbox',
+                default: false
+            },
+            visualizerFft: {
+                type: 'select',
+                options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+                default: '4096',
+            },
+            visualizerEnergySaverType: {
+                type: 'select',
+                options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
+                default: 'Disabled'
+            },
+            visualizerCircleEnabled: {
+                type: 'checkbox',
+                default: true,
+            },
+            visualizerRotate: {
+                type: 'select',
+                options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
+                default: 'Disabled',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerRotateDirection: {
+                type: 'select',
+                options: ['Clockwise', 'Counter-Clockwise'],
+                default: 'Clockwise',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerMove: {
+                type: 'select',
+                options: ['Inside', 'Outside', 'Both Sides'],
+                default: 'Outside',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerBassBounceEnabled: {
+                type: 'checkbox',
+                default: true,
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerBassBounceSmooth: {
+                type: 'checkbox',
+                default: true,
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerImageType: {
+                type: 'select',
+                options: ['Disabled', 'Thumbnail', 'Custom'],
+                default: 'Thumbnail',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerImageCustomURL: {
+                type: 'textarea',
+                default: 'https://imgur.com/HSTpR8R.png',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            attention1: {
+                section: fieldTexts.attention1Section,
+                type: 'hidden'
+            },
+            visualizerRgbRed: {
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
+            },
+            visualizerRgbGreen: {
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
+            },
+            visualizerRgbBlue: {
+                type: 'int',
+                min: 0,
+                max: 255,
+                default: 255
+            },
+            visualizerRgbSamples: {
+                type: 'int',
+                min: 1,
+                max: 8192,
+                default: 512
+            },
+            visualizerMinDecibels: {
+                type: 'int',
+                min: -100,
+                max: 0,
+                default: -85
+            },
+            visualizerMaxDecibels: {
+                type: 'int',
+                min: -100,
+                max: 0,
+                default: 0
+            },
+            visualizerSmoothing: {
+                type: 'float',
+                min: 0,
+                max: 1,
+                default: 0.75
+            },
+            visualizerMinHertz: {
+                type: 'int',
+                min: 0,
+                max: 44100,
+                default: 0
+            },
+            visualizerMaxHertz: {
+                type: 'int',
+                min: 1,
+                max: 44100,
+                default: 18450
+            },
+            visualizerBassBounceMinHertz: {
+                type: 'float',
+                min: 0,
+                max: 44100,
+                default: 0
+            },
+            visualizerBassBounceMaxHertz: {
+                type: 'float',
+                min: 1,
+                max: 44100,
+                default: 100
+            },
+            visualizerBassBounceDebug: {
+                type: 'checkbox',
+                default: false
+            },
+            visualizerEnergySaverFps: {
+                type: 'int',
+                min: 1,
+                max: 144,
+                default: 30,
+            },
+            visualizerRenderScale: {
+                type: 'float',
+                min: 0.01,
+                max: 2,
+                default: 1
+            },
+            lastOpenCategory: {
+                section: fieldTexts.backendSection,
+                type: 'hidden',
+                default: -1
+            }
+        };
+
+        const ytmpConfig = new GM_configStruct({
+            id: 'ytmPlusCfg',
+            title: 'ytmPlus',
+            fields: fixupFields(),
+            css: settingsMenu,
+            // Moved to index.js so no more circular dependecies (yay?)
+            // events: {
+            //     open: openEvent,
+            //     save: saveEvent
+            // },
+            frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
+        });
+
+        function keydownEvent(ev) {
+            if(ev.code !== 'Backslash' || ev.ctrlKey === false) return;
+
+            if(ytmpConfig.isOpen === false) ytmpConfig.open();
+            else ytmpConfig.close();
+
+            console.log(ytmpConfig);
+        }
+
+        function injectStyle(css) {
+            const node = document.createElement('style');
+            const textNode = document.createTextNode(css);
+            node.appendChild(textNode);
+            return document.head.appendChild(node);
+        }
+
         const elements = {
             player: undefined, // Has the sizes we need for album cover canvas
             playerPage: undefined,
@@ -32,6 +481,101 @@ try {
             miniGuide: undefined,
             bigGuide: undefined
         };
+
+        const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
+
+        const functions = {
+            clock: undefined, // Holds the interval function that updates the digital clock
+            neverAfk: undefined, // Holds the anti-afk interval function
+            noPromotions: undefined, // Holds the no promotions function
+            skipDisliked: undefined, // Holds the skip disliked songs function
+            fixLayout: undefined
+        };
+
+        function noPromotions(turnOn) {
+            clearInterval(functions.noPromotions);
+            if(!turnOn) return;
+            functions.noPromotions = setInterval(() => {
+                const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
+                if(popup.length > 0) {
+                    popup[0].remove();
+                    console.log('Removed a promotion.');
+                }
+            }, 1000);
+        }
+
+        function neverAfk(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+            clearInterval(functions.noAfkFunction);
+            if(!turnOn) return;
+            functions.noAfkFunction = setInterval(() => {
+                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('Nudged the page so user is not AFK.');
+            }, 15000);
+        }
+
+        function skipDisliked(turnOn) {
+            const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
+            titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
+            if(!turnOn) return;
+            titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
+        }
+
+        // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
+        function checkDislike() {
+            if(elements.dumbFix === 0) return elements.dumbFix++;
+
+            clearTimeout(functions.skipDislikedFunction);
+            functions.skipDislikedFunction = setTimeout(() => {
+                if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
+            }, 5000);
+            elements.dumbFix = 0;
+        }
+
+        const playerStyle = 'ytmusic-player {\r\n    width: 75%;\r\n}';
+
+        let layoutCss;
+        function fixLayout(turnOn) {
+            if(!turnOn) {
+                clearInterval(elements.fixLayout);
+                elements.player.style.removeProperty('flex');
+                // elements.player.style.removeProperty('width');
+                elements.player.style.removeProperty('margin');
+                elements.playerPageDiv.style.removeProperty('padding');
+                elements.mainPanel.style.removeProperty('align-items');
+                elements.mainPanel.style.removeProperty('justify-content');
+                try {
+                    layoutCss.remove();
+                }
+                catch {}
+                return;
+            }
+
+            functions.fixLayout = setInterval(() => {
+                if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
+            // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
+            // else elements.player.style.width = '75%';
+            }, 1000);
+            elements.player.style.flex = 'unset';
+            elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
+            elements.mainPanel.style.alignItems = 'center';
+            elements.mainPanel.style.justifyContent = 'center';
+            layoutCss = injectStyle(playerStyle);
+        }
+
+        function extraPlaybackButtons(turnOn) {
+            const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+            const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
+            if(!turnOn) {
+                playbackButtons[1].hidden = true;
+                playbackButtons[4].hidden = true;
+                playbackRateButton.hidden = true;
+            }
+            else {
+                playbackButtons[1].hidden = false;
+                playbackButtons[4].hidden = false;
+                playbackRateButton.hidden = false;
+            }
+        }
 
         function changeBackground(turnOn, firstRun) {
             if(turnOn === false) {
@@ -71,169 +615,6 @@ try {
             }
 
         // if(overflowOn === false) elementStyle.overflow = 'hidden';
-        }
-
-        // import { elements } from '../../globals/elements';
-
-        async function removeUpgradeButton(turnOn) {
-            if(!turnOn) {
-                elements.bigGuide.lastElementChild.style.display = 'inline-block';
-                elements.miniGuide.lastElementChild.style.display = 'inline-block';
-                return;
-            }
-
-            elements.bigGuide.lastElementChild.style.display = 'none';
-
-            if(!elements.miniGuide) {
-                const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
-                if(guides.length < 3) return;
-                elements.miniGuide = guides[2].children[2];
-            }
-
-            elements.miniGuide.lastElementChild.style.display = 'none';
-        }
-
-        // let currentTime;
-        // clearInterval(functions.clockFunction);
-        // if(mode === 'Original') {
-        //     elements.upgradeButton.textContent = elements.originalUpgradeText;
-        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-        // }
-        // else if(mode === 'Digital Clock') {
-        //     functions.clockFunction = setInterval(() => {
-        //         currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        //         elements.upgradeButton.textContent = currentTime;
-        //     }, 1000);
-        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
-        // }
-        // else {
-        //     elements.upgradeButton.textContent = '';
-        //     elements.upgradeButton.parentElement.style.margin = '0px';
-        // }
-
-        // // Trust me this is the way
-        // const buttonStyle = elements.upgradeButton.style;
-        // if(mode === 'Digital Clock') {
-        //     buttonStyle.background = `linear-gradient(${ytmpConfig.get('clockGradientAngle')}deg, ${ytmpConfig.get('clockColor')} 0%, ${ytmpConfig.get('clockGradient') === true ? ytmpConfig.get('clockGradientColor') : ytmpConfig.get('clockColor')} 50%, ${ytmpConfig.get('clockColor')} 100%)`;
-        //     buttonStyle.backgroundSize = '200% 200%';
-        //     buttonStyle.backgroundClip = 'text';
-        //     buttonStyle.textFillColor = 'transparent';
-        //     buttonStyle.webkitBackgroundClip = 'text';
-        //     buttonStyle.webkitTextFillColor = 'transparent';
-        //     buttonStyle.fontSize = '50px';
-        //     const animation = ytmpConfig.get('clockGradientAnimation');
-        //     if(animation === 'Horizontal') buttonStyle.animation = 'clockGradientHorizontal 2s linear infinite normal';
-        //     else if(animation === 'Vertical') buttonStyle.animation = 'clockGradientVertical 2s linear infinite normal';
-        //     else buttonStyle.animation = '';
-        // }
-        // else {
-        //     buttonStyle.background = '';
-        //     buttonStyle.backgroundSize = '';
-        //     buttonStyle.backgroundClip = '';
-        //     buttonStyle.textFillColor = '';
-        //     buttonStyle.webkitBackgroundClip = '';
-        //     buttonStyle.webkitTextFillColor = '';
-        //     buttonStyle.fontSize = '20px';
-        // }
-
-        const functions = {
-            clock: undefined, // Holds the interval function that updates the digital clock
-            neverAfk: undefined, // Holds the anti-afk interval function
-            noPromotions: undefined, // Holds the no promotions function
-            skipDisliked: undefined, // Holds the skip disliked songs function
-            fixLayout: undefined
-        };
-
-        function neverAfk(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
-            clearInterval(functions.noAfkFunction);
-            if(!turnOn) return;
-            functions.noAfkFunction = setInterval(() => {
-                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('Nudged the page so user is not AFK.');
-            }, 15000);
-        }
-
-        function noPromotions(turnOn) {
-            clearInterval(functions.noPromotions);
-            if(!turnOn) return;
-            functions.noPromotions = setInterval(() => {
-                const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
-                    popup[0].remove();
-                    console.log('Removed a promotion.');
-                }
-            }, 1000);
-        }
-
-        function skipDisliked(turnOn) {
-            const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
-            titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
-            if(!turnOn) return;
-            titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
-        }
-
-        // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
-        function checkDislike() {
-            if(elements.dumbFix === 0) return elements.dumbFix++;
-
-            clearTimeout(functions.skipDislikedFunction);
-            functions.skipDislikedFunction = setTimeout(() => {
-                if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
-            }, 5000);
-            elements.dumbFix = 0;
-        }
-
-        function extraPlaybackButtons(turnOn) {
-            const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
-            const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
-            if(!turnOn) {
-                playbackButtons[1].hidden = true;
-                playbackButtons[4].hidden = true;
-                playbackRateButton.hidden = true;
-            }
-            else {
-                playbackButtons[1].hidden = false;
-                playbackButtons[4].hidden = false;
-                playbackRateButton.hidden = false;
-            }
-        }
-
-        function injectStyle(css) {
-            const node = document.createElement('style');
-            const textNode = document.createTextNode(css);
-            node.appendChild(textNode);
-            return document.head.appendChild(node);
-        }
-
-        const playerStyle = 'ytmusic-player {\r\n    width: 75%;\r\n}';
-
-        let layoutCss;
-        function fixLayout(turnOn) {
-            if(!turnOn) {
-                clearInterval(elements.fixLayout);
-                elements.player.style.removeProperty('flex');
-                // elements.player.style.removeProperty('width');
-                elements.player.style.removeProperty('margin');
-                elements.playerPageDiv.style.removeProperty('padding');
-                elements.mainPanel.style.removeProperty('align-items');
-                elements.mainPanel.style.removeProperty('justify-content');
-                try {
-                    layoutCss.remove();
-                }
-                catch {}
-                return;
-            }
-
-            functions.fixLayout = setInterval(() => {
-                if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
-            // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
-            // else elements.player.style.width = '75%';
-            }, 1000);
-            elements.player.style.flex = 'unset';
-            elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
-            elements.mainPanel.style.alignItems = 'center';
-            elements.mainPanel.style.justifyContent = 'center';
-            layoutCss = injectStyle(playerStyle);
         }
 
         function removeAlbumCover(turnOn) {
@@ -341,25 +722,6 @@ try {
             audioData: undefined,
             resizeInterval: undefined
         };
-
-        function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
-            const node = document.createElement(type);
-            if(id) node.id = id;
-            if(typeof customClass === 'object') {
-                customClass.forEach(c => {
-                    node.classList.add(c);
-                });
-            }
-            else if(customClass) node.classList.add(customClass);
-            if(customStyle) node.style = customStyle;
-            if(!wrapperElm) {
-                console.error('injectElement: Wrapper is undefined');
-                return;
-            }
-            if(prepend) wrapperElm.prepend(node);
-            else wrapperElm.appendChild(node);
-            return node;
-        }
 
         const image = new Image(),
             thumbnailChildSrc = () => {
@@ -934,6 +1296,206 @@ try {
             requestAnimationFrame(renderFrame);
         }
 
+        const cogFrame = '#cogBigHolder {\r\n    width: 30px;\r\n    height: 30px;\r\n    margin-left: 20px;\r\n}\r\n\r\n#cogBigHolder:hover #cogRotator {\r\n    transform: rotate(90deg);\r\n    filter: drop-shadow(0px 0px 8px #ff00ff);\r\n}\r\n\r\n#cogRotator {\r\n    height: 100%;\r\n    opacity: 1;\r\n    transform: rotate(0);\r\n    filter: drop-shadow(0px 0px 0px #ff00ff);\r\n    transition: 0.15s ease-in-out;\r\n}';
+
+        async function createCogFrame() {
+            const ytmSettingsSvg = document.getElementById('settings').outerHTML; // Steal YT settings icon
+
+            const settingsSVG =
+        `<svg id="settingsSVGButton" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
+        ${ytmSettingsSvg}
+    </svg>`;
+
+            // let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0]; // Legacy
+            let cogHolder = document.getElementById('right-content');
+            if(!cogHolder) cogHolder = document.body;
+
+
+            injectStyle(cogFrame);
+            const cogBigHolder = injectElement('div', 'cogBigHolder', cogHolder);
+            const cogRotator = injectElement('div', 'cogRotator', cogBigHolder);
+            cogRotator.innerHTML = settingsSVG;
+
+            cogBigHolder.addEventListener('click', () => {
+                if(ytmpConfig.isOpen === false) ytmpConfig.open();
+                else ytmpConfig.close();
+            });
+
+            const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
+            // If window width is too thin, navbarLogo.logoSrc ends width logo.svg, if it does, move back cog to look good
+            const logoObserver = new MutationObserver(changes => {
+                changes.forEach(change => {
+                    if(change.attributeName === 'logo-src') {
+                        if(navbarLogo.logoSrc.endsWith('logo.svg')) cogRotator.style.left = '50px';
+                        else cogRotator.style.left = '100px';
+                    }
+                });
+            });
+            logoObserver.observe(navbarLogo, { attributes: true });
+        }
+
+        function changeNavbarBackground(turnOn) {
+            if(!turnOn) return elements.navBarBg.style.removeProperty('background-image');
+
+            elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
+            elements.navBarBg.style.backgroundAttachment = 'fixed';
+
+            animateNavbar(elements.navBarBg.style, null, ytmpConfig.get('navbarGradientAnimation'));
+        }
+
+
+        function animateNavbar(elementStyle, overflowOn, animation) {
+            if(animation !== 'Disabled') {
+                elementStyle.backgroundSize = '200% 200%';
+                elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
+                elements.navBarBg.style.backgroundAttachment = 'fixed';
+                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
+            }
+            else {
+                elementStyle.backgroundSize = '100% 100%';
+                elementStyle.animation = '';
+                elementStyle.backgroundPosition = 'center center';
+            }
+
+        // if(overflowOn === false) elementStyle.overflow = 'hidden';
+        }
+
+        function videoSongSwitcher(turnOn) {
+            if(!turnOn) {
+                elements.player.removeAttribute('has-av-switcher');
+                elements.playerPage.removeAttribute('has-av-switcher');
+                return;
+            }
+            elements.player.setAttribute('has-av-switcher');
+            elements.playerPage.setAttribute('has-av-switcher');
+            try {
+                const avSwitch = document.getElementById('av-id');
+                if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
+                const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
+                navbar.children[1].style.justifyContent = 'space-around';
+                navbar.children[1].append(avSwitch);
+            }
+            catch (err) {
+                console.error(err);
+            }
+        }
+
+        // import { elements } from '../../globals/elements';
+
+        async function removeUpgradeButton(turnOn) {
+            if(!turnOn) {
+                elements.bigGuide.lastElementChild.style.display = 'inline-block';
+                elements.miniGuide.lastElementChild.style.display = 'inline-block';
+                return;
+            }
+
+            elements.bigGuide.lastElementChild.style.display = 'none';
+
+            if(!elements.miniGuide) {
+                const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+                if(guides.length < 3) return;
+                elements.miniGuide = guides[2].children[2];
+            }
+
+            elements.miniGuide.lastElementChild.style.display = 'none';
+        }
+
+        // let currentTime;
+        // clearInterval(functions.clockFunction);
+        // if(mode === 'Original') {
+        //     elements.upgradeButton.textContent = elements.originalUpgradeText;
+        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        // }
+        // else if(mode === 'Digital Clock') {
+        //     functions.clockFunction = setInterval(() => {
+        //         currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        //         elements.upgradeButton.textContent = currentTime;
+        //     }, 1000);
+        //     elements.upgradeButton.parentElement.style.margin = '0 var(--ytmusic-pivot-bar-tab-margin)';
+        // }
+        // else {
+        //     elements.upgradeButton.textContent = '';
+        //     elements.upgradeButton.parentElement.style.margin = '0px';
+        // }
+
+        // // Trust me this is the way
+        // const buttonStyle = elements.upgradeButton.style;
+        // if(mode === 'Digital Clock') {
+        //     buttonStyle.background = `linear-gradient(${ytmpConfig.get('clockGradientAngle')}deg, ${ytmpConfig.get('clockColor')} 0%, ${ytmpConfig.get('clockGradient') === true ? ytmpConfig.get('clockGradientColor') : ytmpConfig.get('clockColor')} 50%, ${ytmpConfig.get('clockColor')} 100%)`;
+        //     buttonStyle.backgroundSize = '200% 200%';
+        //     buttonStyle.backgroundClip = 'text';
+        //     buttonStyle.textFillColor = 'transparent';
+        //     buttonStyle.webkitBackgroundClip = 'text';
+        //     buttonStyle.webkitTextFillColor = 'transparent';
+        //     buttonStyle.fontSize = '50px';
+        //     const animation = ytmpConfig.get('clockGradientAnimation');
+        //     if(animation === 'Horizontal') buttonStyle.animation = 'clockGradientHorizontal 2s linear infinite normal';
+        //     else if(animation === 'Vertical') buttonStyle.animation = 'clockGradientVertical 2s linear infinite normal';
+        //     else buttonStyle.animation = '';
+        // }
+        // else {
+        //     buttonStyle.background = '';
+        //     buttonStyle.backgroundSize = '';
+        //     buttonStyle.backgroundClip = '';
+        //     buttonStyle.textFillColor = '';
+        //     buttonStyle.webkitBackgroundClip = '';
+        //     buttonStyle.webkitTextFillColor = '';
+        //     buttonStyle.fontSize = '20px';
+        // }
+
+        async function setup() {
+            elements.player = await document.getElementById('player');
+            elements.playerPage = await document.getElementById('player-page');
+            elements.playerPageDiv = elements.playerPage.firstElementChild;
+            elements.navBarBg = await document.getElementById('nav-bar-background');
+            elements.mainPanel = await document.getElementById('main-panel');
+            const playlistFinder = await document.getElementsByClassName('side-panel modular style-scope ytmusic-player-page');
+            elements.playlist = playlistFinder[0];
+
+            // Injecting animations for background and clock gradients
+            injectStyle(keyframes);
+
+            // Running each function
+            neverAfk(ytmpConfig.get('neverAfk'));
+
+            noPromotions(ytmpConfig.get('noPromotions'));
+
+            skipDisliked(ytmpConfig.get('skipDisliked'));
+
+            fixLayout(ytmpConfig.get('fixLayout'));
+
+            extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
+
+            videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
+
+            changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
+
+            changeBackground(ytmpConfig.get('changeBackground'), true);
+
+            // These functions are timed out so needed elements can load
+            setTimeout(async () => {
+                try {
+                    const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+                    elements.bigGuide = guides[0].children[2];
+                    elements.miniGuide = guides[2].children[2];
+                }
+                catch {
+                    if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+                }
+
+                // Adds a settings button on the navbar
+                createCogFrame();
+
+                removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
+
+                swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
+
+                removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
+            }, 500);
+
+            setupVisualizer();
+        }
+
         async function createResetWarning(frame, resetLink) {
         // Creating window that pops up if you press reset
             const resetWarning = await injectElement('div', 'reset_warning', frame, undefined, 'display: none');
@@ -1146,407 +1708,6 @@ try {
             createResetWarning(frame, resetLink);
         }
 
-        const fieldTexts = {
-            language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
-            langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
-            neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
-            noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
-            skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
-            fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
-            extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
-            videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
-            removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
-            swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
-            themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },
-            changeNavbarBackground: { english: 'Change Navbar Background', hungarian: 'Navbar Háttérszín megváltoztatása' },
-            navbarBackgroundColor: { english: 'Color', hungarian: 'Szín' },
-            navbarEnableGradient: { english: 'Enable Gradient', hungarian: 'Átmenet Engedélyezése' },
-            navbarGradient: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
-            navbarGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-            navbarGradientAnimation: { english: 'Gradient Animation' },
-            changeBackground: { english: 'Change Background', hungarian: 'Háttér megváltoztatása' },
-            changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér beállítások' },
-            bgColor: { english: 'Background Color', hungarian: 'Háttérszín' },
-            bgEnableGradient: { english: 'Enable Background Gradient', hungarian: 'Háttér színátmenet engedélyezése' },
-            bgGradient: { english: 'Background Gradient Color', hungarian: 'Háttér színátmenet' },
-            bgGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
-            bgGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színátmenet Animáció' },
-            // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
-            removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
-            // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
-            clockColor: { english: 'Clock Color', hungarian: 'Óra Színe' },
-            clockGradient: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
-            clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
-            clockGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
-            clockGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színtámenet Animáció' },
-            visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
-            visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
-            visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
-            // visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
-            visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
-            visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
-            visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
-            visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
-            visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
-            visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
-            visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
-            visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
-            visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
-            visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
-            visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép' },
-            visualizerImageCustomURL: { english: 'Custom Image URL', hungarian: 'Egyéni Kép URL' },
-            attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
-            attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
-            visualizerRgbRed: { english: 'RGB:Red', hungarian: 'RGB:Piros' },
-            visualizerRgbGreen: { english: 'RGB:Green', hungarian: 'RGB:Zöld' },
-            visualizerRgbBlue: { english: 'RGB:Blue', hungarian: 'RGB:Kék' },
-            visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
-            visualizerMinDecibels: { english: 'Min Decibels', hungarian: 'Min Decibel' },
-            visualizerMaxDecibels: { english: 'Max Decibels', hungarian: 'Max Decibel' },
-            visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
-            visualizerMinHertz: { english: 'AudioData Min Hertz', hungarian: 'AudioData Min Hertz' },
-            visualizerMaxHertz: { english: 'AudioData Max Hertz', hungarian: 'AudioData Max Hertz' },
-            visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
-            visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
-            visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
-            visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
-            visualizerRenderScale: { english: 'Vis. Render Scale' },
-            backendSection: { english: 'You are not supposed to see this.' },
-            lastOpenCategory: { english: 'You are not supposed to see this.' }
-        };
-
-        let langOption = GM_getValue('ytmPlusCfg', 'english');
-        if(langOption != 'english') {
-            langOption = JSON.parse(langOption).language;
-            if(!langOption) langOption = 'english';
-            else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
-        }
-
-        function fixupFields() {
-            for(const field in configFields) {
-                if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
-                const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-                configFields[field] = Object.assign(newLabel, configFields[field]);
-
-                if(configFields[field].section === undefined) continue;
-
-                configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
-            }
-            return configFields;
-        }
-
-        // type: 'color' just results in a text input, they are later converted to actual color input, see open event
-        const configFields = {
-            language: {
-                section: fieldTexts.langSection,
-                type: 'select',
-                options: ['English', 'Hungarian'],
-                default: 'English'
-            },
-            neverAfk: {
-                type: 'checkbox',
-                default: true
-            },
-            noPromotions: {
-                type: 'checkbox',
-                default: true
-            },
-            skipDisliked: {
-                type: 'checkbox',
-                default: false
-            },
-            fixLayout: {
-                type: 'checkbox',
-                default: true
-            },
-            extraPlaybackButtons: {
-                type: 'checkbox',
-                default: true
-            },
-            videoSongSwitcher: {
-                type: 'checkbox',
-                default: true
-            },
-            removeAlbumCover: {
-                type: 'checkbox',
-                default: false
-            },
-            swapMainPanelWithPlaylist: {
-                type: 'checkbox',
-                default: false
-            },
-            changeNavbarBackground: {
-                section: fieldTexts.themeSection,
-                type: 'checkbox',
-                default: false
-            },
-            navbarBackgroundColor: {
-                type: 'color',
-                default: '#030303',
-                subCheckbox: 'changeNavbarBackground'
-            },
-            navbarEnableGradient: {
-                type: 'checkbox',
-                default: false,
-                subCheckbox: 'changeNavbarBackground'
-            },
-            navbarGradient: {
-                type: 'color',
-                default: '#303030',
-                subCheckbox: 'changeNavbarBackground'
-            },
-            navbarGradientAngle: {
-                type: 'int',
-                min: -360,
-                max: 360,
-                default: 45,
-                subCheckbox: 'changeNavbarBackground'
-            },
-            navbarGradientAnimation: {
-                type: 'select',
-                options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: 'Horizontal',
-                subCheckbox: 'changeNavbarBackground'
-            },
-            changeBackground: {
-                type: 'checkbox',
-                default: true
-            },
-            bgColor: {
-                type: 'color',
-                default: '#AA0000',
-                subCheckbox: 'changeBackground'
-            },
-            bgEnableGradient: {
-                type: 'checkbox',
-                default: true,
-                subCheckbox: 'changeBackground'
-            },
-            bgGradient: {
-                type: 'color',
-                default: '#0000AA',
-                subCheckbox: 'changeBackground'
-            },
-            bgGradientAngle: {
-                type: 'int',
-                min: -360,
-                max: 360,
-                default: 45,
-                subCheckbox: 'changeBackground'
-            },
-            bgGradientAnimation: {
-                type: 'select',
-                options: ['Disabled', 'Horizontal', 'Vertical'],
-                default: 'Horizontal',
-                subCheckbox: 'changeBackground'
-            },
-            // changeUpgradeButton: {
-            //     type: 'select',
-            //     options: ['Original', 'Remove Button', 'Digital Clock'],
-            //     default: 'Digital Clock'
-            // },
-            removeUpgradeButton: {
-                type: 'checkbox',
-                default: true
-            },
-            // clockColor: {
-            //     type: 'color',
-            //     default: '#AA3333',
-            //     subOption: 'changeUpgradeButton.2'
-            // },
-            // clockGradient: {
-            //     type: 'checkbox',
-            //     default: true,
-            //     subOption: 'changeUpgradeButton.2'
-            // },
-            // clockGradientColor: {
-            //     type: 'color',
-            //     default: '#3333AA',
-            //     subOption: 'changeUpgradeButton.2'
-            // },
-            // clockGradientAngle: {
-            //     type: 'int',
-            //     min: -360,
-            //     max: 360,
-            //     default: 90,
-            //     subOption: 'changeUpgradeButton.2'
-            // },
-            // clockGradientAnimation: {
-            //     type: 'select',
-            //     options: ['Disabled', 'Horizontal', 'Vertical'],
-            //     default: 'Horizontal',
-            //     subOption: 'changeUpgradeButton.2'
-            // },
-            visualizerPlace: {
-                section: fieldTexts.visualizerPlaceSection,
-                type: 'select',
-                options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
-                default: 'Album Cover'
-            },
-            visualizerStartsFrom: {
-                type: 'select',
-                options: ['Left', 'Center', 'Right', 'Edges'],
-                default: 'Center'
-            },
-            visualizerColor: {
-                type: 'color',
-                default: '#C800C8'
-            },
-            visualizerRgbEnabled: {
-                type: 'checkbox',
-                default: true
-            },
-            visualizerFade: {
-                type: 'checkbox',
-                default: false
-            },
-            visualizerFft: {
-                type: 'select',
-                options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-                default: '4096',
-            },
-            visualizerEnergySaverType: {
-                type: 'select',
-                options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
-                default: 'Disabled'
-            },
-            visualizerCircleEnabled: {
-                type: 'checkbox',
-                default: true,
-            },
-            visualizerRotate: {
-                type: 'select',
-                options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-                default: 'Disabled',
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerRotateDirection: {
-                type: 'select',
-                options: ['Clockwise', 'Counter-Clockwise'],
-                default: 'Clockwise',
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerMove: {
-                type: 'select',
-                options: ['Inside', 'Outside', 'Both Sides'],
-                default: 'Outside',
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerBassBounceEnabled: {
-                type: 'checkbox',
-                default: true,
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerBassBounceSmooth: {
-                type: 'checkbox',
-                default: true,
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerImageType: {
-                type: 'select',
-                options: ['Disabled', 'Thumbnail', 'Custom'],
-                default: 'Thumbnail',
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            visualizerImageCustomURL: {
-                type: 'textarea',
-                default: 'https://imgur.com/HSTpR8R.png',
-                subCheckbox: 'visualizerCircleEnabled'
-            },
-            attention1: {
-                section: fieldTexts.attention1Section,
-                type: 'hidden'
-            },
-            visualizerRgbRed: {
-                type: 'int',
-                min: 0,
-                max: 255,
-                default: 255
-            },
-            visualizerRgbGreen: {
-                type: 'int',
-                min: 0,
-                max: 255,
-                default: 255
-            },
-            visualizerRgbBlue: {
-                type: 'int',
-                min: 0,
-                max: 255,
-                default: 255
-            },
-            visualizerRgbSamples: {
-                type: 'int',
-                min: 1,
-                max: 8192,
-                default: 512
-            },
-            visualizerMinDecibels: {
-                type: 'int',
-                min: -100,
-                max: 0,
-                default: -85
-            },
-            visualizerMaxDecibels: {
-                type: 'int',
-                min: -100,
-                max: 0,
-                default: 0
-            },
-            visualizerSmoothing: {
-                type: 'float',
-                min: 0,
-                max: 1,
-                default: 0.75
-            },
-            visualizerMinHertz: {
-                type: 'int',
-                min: 0,
-                max: 44100,
-                default: 0
-            },
-            visualizerMaxHertz: {
-                type: 'int',
-                min: 1,
-                max: 44100,
-                default: 18450
-            },
-            visualizerBassBounceMinHertz: {
-                type: 'float',
-                min: 0,
-                max: 44100,
-                default: 0
-            },
-            visualizerBassBounceMaxHertz: {
-                type: 'float',
-                min: 1,
-                max: 44100,
-                default: 100
-            },
-            visualizerBassBounceDebug: {
-                type: 'checkbox',
-                default: false
-            },
-            visualizerEnergySaverFps: {
-                type: 'int',
-                min: 1,
-                max: 144,
-                default: 30,
-            },
-            visualizerRenderScale: {
-                type: 'float',
-                min: 0.01,
-                max: 2,
-                default: 1
-            },
-            lastOpenCategory: {
-                section: fieldTexts.backendSection,
-                type: 'hidden',
-                default: -1
-            }
-        };
-
         function setupAutosave() {
         // Autosave for input tags + Adding info to int/float settings
             const inputs = document.getElementsByTagName('input');
@@ -1567,52 +1728,6 @@ try {
                 textareas[i].parentElement.style.alignItems = 'stretch';
                 textareas[i].previousSibling.style.padding = 0;
                 textareas[i].addEventListener('change', () => ytmpConfig.save());
-            }
-        }
-
-        function changeNavbarBackground(turnOn) {
-            if(!turnOn) return elements.navBarBg.style.removeProperty('background-image');
-
-            elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
-            elements.navBarBg.style.backgroundAttachment = 'fixed';
-
-            animateNavbar(elements.navBarBg.style, null, ytmpConfig.get('navbarGradientAnimation'));
-        }
-
-
-        function animateNavbar(elementStyle, overflowOn, animation) {
-            if(animation !== 'Disabled') {
-                elementStyle.backgroundSize = '200% 200%';
-                elements.navBarBg.style.backgroundImage = `linear-gradient(${ytmpConfig.get('navbarGradientAngle')}deg, ${ytmpConfig.get('navbarBackgroundColor')}, ${ytmpConfig.get('navbarEnableGradient') == true ? ytmpConfig.get('navbarGradient') : ytmpConfig.get('navbarBackgroundColor')})`;
-                elements.navBarBg.style.backgroundAttachment = 'fixed';
-                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
-            }
-            else {
-                elementStyle.backgroundSize = '100% 100%';
-                elementStyle.animation = '';
-                elementStyle.backgroundPosition = 'center center';
-            }
-
-        // if(overflowOn === false) elementStyle.overflow = 'hidden';
-        }
-
-        function videoSongSwitcher(turnOn) {
-            if(!turnOn) {
-                elements.player.removeAttribute('has-av-switcher');
-                elements.playerPage.removeAttribute('has-av-switcher');
-                return;
-            }
-            elements.player.setAttribute('has-av-switcher');
-            elements.playerPage.setAttribute('has-av-switcher');
-            try {
-                const avSwitch = document.getElementById('av-id');
-                if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
-                const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
-                navbar.children[1].style.justifyContent = 'space-around';
-                navbar.children[1].append(avSwitch);
-            }
-            catch (err) {
-                console.error(err);
             }
         }
 
@@ -1661,119 +1776,8 @@ try {
             window.dispatchEvent(new Event('resize'));
         }
 
-        const ytmpConfig = new GM_configStruct({
-            id: 'ytmPlusCfg',
-            title: 'ytmPlus',
-            fields: fixupFields(),
-            css: settingsMenu,
-            events: {
-                open: openEvent,
-                save: saveEvent
-            },
-            frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
-        });
-
-        function keydownEvent(ev) {
-            if(ev.code !== 'Backslash' || ev.ctrlKey === false) return;
-
-            if(ytmpConfig.isOpen === false) ytmpConfig.open();
-            else ytmpConfig.close();
-
-            console.log(ytmpConfig);
-        }
-
-        const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
-
-        const cogFrame = '#cogBigHolder {\r\n    width: 30px;\r\n    height: 30px;\r\n    margin-left: 20px;\r\n}\r\n\r\n#cogBigHolder:hover #cogRotator {\r\n    transform: rotate(90deg);\r\n    filter: drop-shadow(0px 0px 8px #ff00ff);\r\n}\r\n\r\n#cogRotator {\r\n    height: 100%;\r\n    opacity: 1;\r\n    transform: rotate(0);\r\n    filter: drop-shadow(0px 0px 0px #ff00ff);\r\n    transition: 0.15s ease-in-out;\r\n}';
-
-        async function createCogFrame() {
-            const ytmSettingsSvg = document.getElementById('settings').outerHTML; // Steal YT settings icon
-
-            const settingsSVG =
-        `<svg id="settingsSVGButton" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="display: block; width: 100%; height: 100%; fill: white;">
-        ${ytmSettingsSvg}
-    </svg>`;
-
-            // let cogHolder = document.getElementsByTagName('ytmusic-nav-bar')[0]; // Legacy
-            let cogHolder = document.getElementById('right-content');
-            if(!cogHolder) cogHolder = document.body;
-
-
-            injectStyle(cogFrame);
-            const cogBigHolder = injectElement('div', 'cogBigHolder', cogHolder);
-            const cogRotator = injectElement('div', 'cogRotator', cogBigHolder);
-            cogRotator.innerHTML = settingsSVG;
-
-            cogBigHolder.addEventListener('click', () => {
-                if(ytmpConfig.isOpen === false) ytmpConfig.open();
-                else ytmpConfig.close();
-            });
-
-            const navbarLogo = document.getElementsByTagName('ytmusic-logo')[0];
-            // If window width is too thin, navbarLogo.logoSrc ends width logo.svg, if it does, move back cog to look good
-            const logoObserver = new MutationObserver(changes => {
-                changes.forEach(change => {
-                    if(change.attributeName === 'logo-src') {
-                        if(navbarLogo.logoSrc.endsWith('logo.svg')) cogRotator.style.left = '50px';
-                        else cogRotator.style.left = '100px';
-                    }
-                });
-            });
-            logoObserver.observe(navbarLogo, { attributes: true });
-        }
-
-        async function setup() {
-            elements.player = await document.getElementById('player');
-            elements.playerPage = await document.getElementById('player-page');
-            elements.playerPageDiv = elements.playerPage.firstElementChild;
-            elements.navBarBg = await document.getElementById('nav-bar-background');
-            elements.mainPanel = await document.getElementById('main-panel');
-            const playlistFinder = await document.getElementsByClassName('side-panel modular style-scope ytmusic-player-page');
-            elements.playlist = playlistFinder[0];
-
-            // Injecting animations for background and clock gradients
-            injectStyle(keyframes);
-
-            // Running each function
-            neverAfk(ytmpConfig.get('neverAfk'));
-
-            noPromotions(ytmpConfig.get('noPromotions'));
-
-            skipDisliked(ytmpConfig.get('skipDisliked'));
-
-            fixLayout(ytmpConfig.get('fixLayout'));
-
-            extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
-
-            videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
-
-            changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
-
-            changeBackground(ytmpConfig.get('changeBackground'), true);
-
-            // These functions are timed out so needed elements can load
-            setTimeout(async () => {
-                try {
-                    const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
-                    elements.bigGuide = guides[0].children[2];
-                    elements.miniGuide = guides[2].children[2];
-                }
-                catch {
-                    if(!elements.miniGuide) console.warn('Could not find miniGuide!');
-                }
-
-                // Adds a settings button on the navbar
-                createCogFrame();
-
-                removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
-
-                swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
-
-                removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
-            }, 500);
-
-            setupVisualizer();
-        }
+        ytmpConfig.onOpen = openEvent;
+        ytmpConfig.onSave = saveEvent;
 
         window.addEventListener('keydown', (e) => keydownEvent(e));
 

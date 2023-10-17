@@ -1,5 +1,25 @@
 import { fieldTexts } from './fieldTexts';
 
+export let langOption = GM_getValue('ytmPlusCfg', 'english');
+if(langOption != 'english') {
+    langOption = JSON.parse(langOption).language;
+    if(!langOption) langOption = 'english';
+    else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
+}
+
+export function fixupFields() {
+    for(const field in configFields) {
+        if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
+        const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+        configFields[field] = Object.assign(newLabel, configFields[field]);
+
+        if(configFields[field].section === undefined) continue;
+
+        configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
+    }
+    return configFields;
+}
+
 // type: 'color' just results in a text input, they are later converted to actual color input, see open event
 export const configFields = {
     language: {

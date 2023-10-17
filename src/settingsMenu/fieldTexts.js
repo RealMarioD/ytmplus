@@ -1,5 +1,3 @@
-import { configFields } from './fields';
-
 export const fieldTexts = {
     language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
     langSection: { english: 'Utilities', hungarian: 'Hasznosságok' },
@@ -69,23 +67,3 @@ export const fieldTexts = {
     backendSection: { english: 'You are not supposed to see this.' },
     lastOpenCategory: { english: 'You are not supposed to see this.' }
 };
-
-export let langOption = GM_getValue('ytmPlusCfg', 'english');
-if(langOption != 'english') {
-    langOption = JSON.parse(langOption).language;
-    if(!langOption) langOption = 'english';
-    else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
-}
-
-export function fixupFields() {
-    for(const field in configFields) {
-        if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
-        const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-        configFields[field] = Object.assign(newLabel, configFields[field]);
-
-        if(configFields[field].section === undefined) continue;
-
-        configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
-    }
-    return configFields;
-}
