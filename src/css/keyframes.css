@@ -7,6 +7,7 @@
         background-position: 100% center;
     }
 }
+
 @keyframes backgroundGradientVertical {
     0% {
         background-position: center 0%;
@@ -16,6 +17,7 @@
         background-position: center 100%;
     }
 }
+
 @keyframes clockGradientHorizontal {
     from {
         background-position: 0% center;
@@ -24,6 +26,7 @@
         background-position: 200% center;
     }
 }
+
 @keyframes clockGradientVertical {
     from {
         background-position: center 0%;

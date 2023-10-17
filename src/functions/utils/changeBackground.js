@@ -25,7 +25,7 @@ export function changeBackground(turnOn, firstRun) {
 }
 
 export function animateBackground(elementStyle, overflowOn, animation) {
-    elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') == true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
+    elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') === true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
     elementStyle.backgroundAttachment = 'fixed';
 
     if(animation !== 'Disabled') {

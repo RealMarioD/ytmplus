@@ -4,6 +4,7 @@
         font-size: 12px;
     }
 }
+
 @media screen and (min-height: 769px) {
     #ytmPlusCfg {
         height: 768px;
@@ -128,18 +129,16 @@
     font-size: 1em;
 }
 
-#ytmPlusCfg .changeCategoryButton {
-    padding: 3.25%;
-    width: 95%;
-    height: auto;
-    white-space: pre-wrap;
-    animation: buttonBorder 2s infinite forwards linear;
-}
-
 .changeCategoryButton:disabled {
     --borderColor1: #dd0055ee;
     --borderColor2: #5500ddee;
     animation: buttonBorder 2s infinite forwards linear;
+}
+
+.changeCategoryButton:active {
+    --borderColor1: #6600eecc;
+    --borderColor2: #ee0066cc;
+    animation: buttonBorder 0.5s infinite forwards linear;
 }
 
 .changeCategoryButton:hover {
@@ -148,10 +147,12 @@
     animation: buttonBorder 1s infinite forwards linear;
 }
 
-.changeCategoryButton:active {
-    --borderColor1: #6600eecc;
-    --borderColor2: #ee0066cc;
-    animation: buttonBorder 0.5s infinite forwards linear;
+#ytmPlusCfg .changeCategoryButton {
+    padding: 3.25%;
+    width: 95%;
+    height: auto;
+    white-space: pre-wrap;
+    animation: buttonBorder 2s infinite forwards linear;
 }
 
 /* #ytmPlusCfg_buttons_holder {
@@ -284,12 +285,11 @@
 }
 
 input[type="checkbox"]:before {
-    font-size: 1.5em;
+    font-size: 1em;
     content: "";
     width: 1.5em;
     height: 1.5em;
     border-radius: 0.75em;
-    font-size: 1em;
     background: #62666F;
     color: #313338;
     display: flex;

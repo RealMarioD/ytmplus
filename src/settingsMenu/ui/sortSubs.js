@@ -14,7 +14,7 @@ export function sortSubs() {
         let selectOption;
         sub = sub.split('.');
         const subToggle = ytmpConfig.fields[sub[0]];
-        if(sub.length === 2) selectOption = parseInt(sub[1]);
+        if(sub.length === 2) selectOption = parseInt(sub[1], 10);
 
         if(subToggle.settings.type === 'checkbox') {
             if(subToggle.value === true) currentField.wrapper.style.display = 'flex';
