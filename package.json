@@ -13,7 +13,9 @@
   "require": "https://openuserjs.org/src/libs/sizzle/GM_config.js",
   "grant": [
     "GM_getValue",
-    "GM_setValue"
+    "GM_setValue",
+    "GM.getValue",
+    "GM.setValue"
   ],
   "type": "module",
   "scripts": {
