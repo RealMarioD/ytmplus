@@ -20,7 +20,7 @@ export async function setupVisualizer() {
 export function getVideo() {
     visualizer.video = document.querySelector('video');
     if(visualizer.video) {
-        visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
+        // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
         startVisualizer();
     }
     else {

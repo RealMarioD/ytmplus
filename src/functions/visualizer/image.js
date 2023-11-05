@@ -1,29 +1,41 @@
+// Jesus fucking christ can we rework this bullshit
 import { visualizer } from '../../globals/visualizer';
 
 const image = new Image(),
-    thumbnailChildSrc = () => {
-        try {
-            return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src;
-        }
-        catch {
-            return undefined;
-        }
-    },
     currentVideoURL = () => document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
-export let imgLoaded = false, lastSavedVideoURL, currentURL, wRatio, hRatio, loadSD, quality;
+
+function thumbnailChildSrc() {
+    try {
+        return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src;
+    }
+    catch {
+        return undefined;
+    }
+}
+export let imgLoaded = false, lastSavedVideoURL, currentImageURL, wRatio, hRatio, toLoad = -1, quality;
 
 image.onload = () => {
-    if(quality === 'maxresdefault' && image.height < 100) { // loaded 404 maxresdefault
+    if(image.height < 100) { // very likely a 404
         imgLoaded = false;
-        loadSD = true;
-        return replaceImageURL();
+        if(quality === 'maxresdefault') {
+            toLoad = 0;
+            return replaceImageURL();
+        }
+        else if(quality === 'sddefault') {
+            toLoad = 1;
+            return replaceImageURL();
+        }
+        else if(quality === 'hqdefault') {
+            toLoad = 2;
+            return replaceImageURL();
+        }
     }
     hRatio = image.height / image.width;
     wRatio = image.width / image.height;
     imgLoaded = true;
 };
 
-image.onerror = () => {
+image.onerror = () => { // thumbnails return a very small image on 404 so this is mostly for customs
     if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
     else {
         console.log('Visualizer Image couldn\'t be loaded.');
@@ -41,18 +53,18 @@ const observer = new MutationObserver(changes => {
 setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
 
 function thumbnailEvent() {
-    currentURL = thumbnailChildSrc();
-    if(!currentURL) {
+    currentImageURL = thumbnailChildSrc();
+    if(!currentImageURL) {
         console.log('thumbnailChildSrc is undefined');
         return;
     }
 
-    if(currentURL.indexOf('data') === 0) {
-        console.log('Current song has broken thumbnail, might be a video');
+    if(currentImageURL.indexOf('data') === 0) {
+        console.log('Current song has broken thumbnail');
 
         if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-        else if(loadSD === false && quality !== 'custom') {
-            console.log('Multiple changes with same URL, loadSD is false, quality is not custom');
+        else if(toLoad < 0 && quality !== 'custom') {
+            console.log('Multiple changes with same URL, not asking for small resolution, quality is not custom');
             return;
         }
 
@@ -63,15 +75,15 @@ function thumbnailEvent() {
 
         console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
         imgLoaded = false;
-        if(loadSD === true) {
-            quality = 'sddefault';
-            console.log(`loadSD is true, working with ${quality}`);
-        }
+        if(toLoad === 0) quality = 'sddefault';
+        else if(toLoad === 1) quality = 'hqdefault';
+        else if(toLoad === 2) quality = 'mqdefault';
         else quality = 'maxresdefault';
-        currentURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
-        loadSD = false;
+        console.log(`Image quality: ${quality}`);
+        currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
+        toLoad = -1;
     }
-    else if(image.src === currentURL) {
+    else if(image.src === currentImageURL) {
         console.log('Image src is already thumbnail');
         return;
     }
@@ -80,19 +92,19 @@ function thumbnailEvent() {
 }
 
 function customEvent() {
-    if(currentURL === visualizer.image.customURL) {
+    if(currentImageURL === visualizer.image.customURL) {
         console.log('Custom Image change: URL is the same');
         return;
     }
-    currentURL = visualizer.image.customURL;
+    currentImageURL = visualizer.image.customURL;
     quality = 'custom';
     finalize();
 }
 
 function finalize() {
-    console.log(`Changed currentURL to: ${currentURL}`);
+    console.log(`Changed currentImageURL to: ${currentImageURL}`);
     imgLoaded = false;
-    image.src = currentURL;
+    image.src = currentImageURL;
 }
 
 export function replaceImageURL() {

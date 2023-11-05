@@ -22,8 +22,11 @@ export function fixupFields() {
 
 // type: 'color' just results in a text input, they are later converted to actual color input, see open event
 export const configFields = {
+    changeShortcut: {
+        section: fieldTexts.utilities,
+        type: 'button'
+    },
     language: {
-        section: fieldTexts.langSection,
         type: 'select',
         options: ['English', 'Hungarian'],
         default: 'English'
@@ -60,7 +63,7 @@ export const configFields = {
         type: 'checkbox',
         default: false
     },
-    changeNavbarBackground: {
+    navbarBackgroundChange: {
         section: fieldTexts.themeSection,
         type: 'checkbox',
         default: false
@@ -68,62 +71,62 @@ export const configFields = {
     navbarBackgroundColor: {
         type: 'color',
         default: '#030303',
-        subCheckbox: 'changeNavbarBackground'
+        subCheckbox: 'navbarBackgroundChange'
     },
-    navbarEnableGradient: {
+    navbarBackgroundGradientEnabled: {
         type: 'checkbox',
         default: false,
-        subCheckbox: 'changeNavbarBackground'
+        subCheckbox: 'navbarBackgroundChange'
     },
-    navbarGradient: {
+    navbarBackgroundGradientColor: {
         type: 'color',
         default: '#303030',
-        subCheckbox: 'changeNavbarBackground'
+        subCheckbox: 'navbarBackgroundChange'
     },
-    navbarGradientAngle: {
+    navbarBackgroundGradientAngle: {
         type: 'int',
         min: -360,
         max: 360,
         default: 45,
-        subCheckbox: 'changeNavbarBackground'
+        subCheckbox: 'navbarBackgroundChange'
     },
-    navbarGradientAnimation: {
+    navbarBackgroundGradientAnimation: {
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
-        subCheckbox: 'changeNavbarBackground'
+        subCheckbox: 'navbarBackgroundChange'
     },
-    changeBackground: {
+    siteBackgroundChange: {
         type: 'checkbox',
         default: true
     },
-    bgColor: {
+    siteBackgroundColor: {
         type: 'color',
         default: '#AA0000',
-        subCheckbox: 'changeBackground'
+        subCheckbox: 'siteBackgroundChange'
     },
-    bgEnableGradient: {
+    siteBackgroundGradientEnabled: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'changeBackground'
+        subCheckbox: 'siteBackgroundChange'
     },
-    bgGradient: {
+    siteBackgroundGradientColor: {
         type: 'color',
         default: '#0000AA',
-        subCheckbox: 'changeBackground'
+        subCheckbox: 'siteBackgroundChange'
     },
-    bgGradientAngle: {
+    siteBackgroundGradientAngle: {
         type: 'int',
         min: -360,
         max: 360,
         default: 45,
-        subCheckbox: 'changeBackground'
+        subCheckbox: 'siteBackgroundChange'
     },
-    bgGradientAnimation: {
+    siteBackgroundGradientAnimation: {
         type: 'select',
         options: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
-        subCheckbox: 'changeBackground'
+        subCheckbox: 'siteBackgroundChange'
     },
     // changeUpgradeButton: {
     //     type: 'select',
@@ -294,7 +297,7 @@ export const configFields = {
         type: 'int',
         min: 1,
         max: 44100,
-        default: 18450
+        default: 4000
     },
     visualizerBassBounceMinHertz: {
         type: 'float',
@@ -328,5 +331,9 @@ export const configFields = {
         section: fieldTexts.backendSection,
         type: 'hidden',
         default: -1
-    }
+    },
+    shortcut: {
+        type: 'hidden',
+        default: 'ctrl Backslash|CTRL + ű'
+    },
 };

@@ -1,7 +1,7 @@
 import { elements } from '../../globals/elements';
 import { ytmpConfig } from '../../ytmpConfig';
 
-export function changeBackground(turnOn, firstRun) {
+export function siteBackgroundChange(turnOn, firstRun) {
     if(turnOn === false) {
         if(document.body.style.backgroundImage !== '') {
             document.body.style.backgroundColor = '#000000';
@@ -19,13 +19,13 @@ export function changeBackground(turnOn, firstRun) {
     }
     catch {}
     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-    const animation = ytmpConfig.get('bgGradientAnimation');
+    const animation = ytmpConfig.get('siteBackgroundGradientAnimation');
     animateBackground(document.body.style, true, animation);
     animateBackground(elements.playerPage.style, false, animation);
 }
 
 export function animateBackground(elementStyle, overflowOn, animation) {
-    elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('bgGradientAngle')}deg, ${ytmpConfig.get('bgColor')}, ${ytmpConfig.get('bgEnableGradient') === true ? ytmpConfig.get('bgGradient') : ytmpConfig.get('bgColor')})`;
+    elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('siteBackgroundGradientAngle')}deg, ${ytmpConfig.get('siteBackgroundColor')}, ${ytmpConfig.get('siteBackgroundGradientEnabled') === true ? ytmpConfig.get('siteBackgroundGradientColor') : ytmpConfig.get('siteBackgroundColor')})`;
     elementStyle.backgroundAttachment = 'fixed';
 
     if(animation !== 'Disabled') {

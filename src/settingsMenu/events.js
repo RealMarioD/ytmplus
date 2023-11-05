@@ -1,4 +1,4 @@
-import { changeBackground } from '../functions/utils/changeBackground';
+import { siteBackgroundChange } from '../functions/utils/siteBackgroundChange';
 import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
 import { neverAfk } from '../functions/utils/neverAfk';
 import { noPromotions } from '../functions/utils/noPromotions';
@@ -12,7 +12,7 @@ import { ytmpConfig } from '../ytmpConfig';
 import { manageUI } from './ui/init';
 import { configFields } from './fields';
 import { setupAutosave } from './ui/autosave';
-import { changeNavbarBackground } from '../functions/utils/changeNavbarBackground';
+import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
@@ -25,17 +25,13 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     manageUI(frame);
 
     setupAutosave();
-
-    document.addEventListener('keydown', event => {
-        if(event.key == 'Escape') ytmpConfig.close();
-    });
 }
 
 export function saveEvent() {
     // Updates updateable stuff on save
-    changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
+    navbarBackgroundChange(ytmpConfig.get('navbarBackgroundChange'));
 
-    changeBackground(ytmpConfig.get('changeBackground'));
+    siteBackgroundChange(ytmpConfig.get('siteBackgroundChange'));
 
     removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
 

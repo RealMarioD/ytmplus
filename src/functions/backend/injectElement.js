@@ -13,6 +13,6 @@ export function injectElement(type, id, wrapperElm, customClass, customStyle, pr
         return;
     }
     if(prepend) wrapperElm.prepend(node);
-    else wrapperElm.appendChild(node);
+    else wrapperElm.append(node);
     return node;
 }

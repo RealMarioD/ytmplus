@@ -7,13 +7,13 @@ import { neverAfk } from '../functions/utils/neverAfk';
 import { skipDisliked } from '../functions/utils/skipDisliked';
 import { fixLayout } from '../functions/utils/fixLayout';
 import { extraPlaybackButtons } from '../functions/utils/extraPlaybackButtons';
-import { changeBackground } from '../functions/utils/changeBackground';
+import { siteBackgroundChange } from '../functions/utils/siteBackgroundChange';
 import { removeAlbumCover } from '../functions/utils/removeAlbumCover';
 import { swapMainPanelWithPlaylist } from '../functions/utils/swapMainPanelWithPlaylist';
 // import { changeUpgradeButton } from '../functions/utils/changeUpgradeButton';
 import { setupVisualizer } from '../functions/visualizer/init';
 import { createCogFrame } from '../settingsMenu/createCogFrame';
-import { changeNavbarBackground } from '../functions/utils/changeNavbarBackground';
+import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
 
@@ -42,30 +42,29 @@ export async function setup() {
 
     videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
 
-    changeNavbarBackground(ytmpConfig.get('changeNavbarBackground'));
+    navbarBackgroundChange(ytmpConfig.get('navbarBackgroundChange'));
 
-    changeBackground(ytmpConfig.get('changeBackground'), true);
-
-    // These functions are timed out so needed elements can load
-    setTimeout(async () => {
-        try {
-            const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
-            elements.bigGuide = guides[0].children[2];
-            elements.miniGuide = guides[2].children[2];
-        }
-        catch {
-            if(!elements.miniGuide) console.warn('Could not find miniGuide!');
-        }
-
-        // Adds a settings button on the navbar
-        createCogFrame();
-
-        removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
-
-        swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
-
-        removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
-    }, 500);
+    siteBackgroundChange(ytmpConfig.get('siteBackgroundChange'), true);
 
     setupVisualizer();
+
+    // Note: Everything below was timed out because YTM, now whole setup function is timed out for safety lol
+    // If shit breaks just put back everything below in a timeout
+    try {
+        const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+        elements.bigGuide = guides[0].children[2];
+        elements.miniGuide = guides[2].children[2];
+    }
+    catch {
+        if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+    }
+
+    // Adds a settings button on the navbar
+    createCogFrame();
+
+    removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
+
+    swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
+
+    removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
 }
