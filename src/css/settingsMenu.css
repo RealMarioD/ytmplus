@@ -495,7 +495,10 @@ svg text {
 }
 
 #shortcutText {
+    display: flex;
+    align-items: center;
     text-align: center;
+    height: 15%;
 }
 
 #shortcutButtonHolder {
@@ -526,4 +529,14 @@ svg text {
 
 #resetShortcut:hover {
     background-color: #a00;
+}
+
+.userButtons {
+    width: 30%;
+    background-color: #77f;
+    transition: 100ms linear;
+}
+
+.userButtons:hover {
+    background-color: #00a;
 }

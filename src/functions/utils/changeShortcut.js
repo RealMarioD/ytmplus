@@ -6,8 +6,9 @@ export function changeShortcut() {
     // Create overlay window
     window.removeEventListener('keydown', keydownEvent);
     const shortcutWindow = injectElement('div', 'shortcutWindow', document.body);
-    const shortcutText = injectElement('span', 'shortcutText', shortcutWindow);
-    shortcutText.innerText = 'Listening for keystrokes...';
+    const shortcutText = injectElement('div', 'shortcutText', shortcutWindow);
+    const prompt = 'Press the buttons you would like to use,\nor press Escape to close this window.';
+    shortcutText.innerText = prompt;
     const buttonHolder = injectElement('div', 'shortcutButtonHolder', shortcutWindow);
     const saveButton = injectElement('input', 'saveShortcut', buttonHolder);
     saveButton.type = 'button';
@@ -36,7 +37,7 @@ export function changeShortcut() {
     function saveShortcut() {
         if(!lastPressedKey) {
             shortcutText.animate({
-                marginLeft: ['0', '2%', '-2%', '2%', '-2%', '0'],
+                marginLeft: ['0', '2%', '-2%', '0'],
                 color: ['red', 'white'],
                 easing: 'linear'
             }, 250);
@@ -53,6 +54,6 @@ export function changeShortcut() {
     }
     function resetShortcut() {
         lastPressedKey = undefined;
-        shortcutText.innerText = 'Listening for keystrokes...';
+        shortcutText.innerText = prompt;
     }
 }

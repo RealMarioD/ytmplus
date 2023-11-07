@@ -1,8 +1,8 @@
 export const fieldTexts = {
-    changeShortcut: { english: 'Change Shortcut' },
-    shortcut: { english: 'Current Shortcut: ' },
+    refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
+    changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
-    language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
+    language: { english: 'Language', hungarian: 'Nyelv' },
     neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
     noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
@@ -67,5 +67,6 @@ export const fieldTexts = {
     visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
     visualizerRenderScale: { english: 'Vis. Render Scale' },
     backendSection: { english: 'You are not supposed to see this.' },
-    lastOpenCategory: { english: 'You are not supposed to see this.' }
+    lastOpenCategory: { english: 'You are not supposed to see this.' },
+    shortcut: { english: 'You are not supposed to see this.' },
 };

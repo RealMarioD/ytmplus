@@ -11,6 +11,10 @@ export function fixupFields() {
     for(const field in configFields) {
         if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
         const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+        if(configFields[field].refresh === true) {
+            newLabel.label += '↻';
+            newLabel.title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+        }
         configFields[field] = Object.assign(newLabel, configFields[field]);
 
         if(configFields[field].section === undefined) continue;
@@ -24,9 +28,11 @@ export function fixupFields() {
 export const configFields = {
     changeShortcut: {
         section: fieldTexts.utilities,
-        type: 'button'
+        type: 'customButton',
+        valueStorage: 'shortcut'
     },
     language: {
+        refresh: true,
         type: 'select',
         options: ['English', 'Hungarian'],
         default: 'English'

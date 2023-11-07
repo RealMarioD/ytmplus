@@ -20,6 +20,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     for(const key in configFields) {
         if(configFields[key].type !== 'color') continue;
         document.getElementById(`ytmPlusCfg_field_${key}`).type = 'color';
+        if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
     }
 
     manageUI(frame);
