@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-beta.2
+// @version      3.0.0-beta.3
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,12 +15,12 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-beta.2';
+const vNumber = 'v3.0.0-beta.3';
 try {
     (function() {
         'use strict';
 
-        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9998;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 0.75em;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    text-align: center;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 6em;\r\n}\r\n\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n} \r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover {\r\n    background-color: #a00;\r\n}';
+        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9998;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_x {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls {\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header {\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n.changeCategoryButton:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n}\r\n\r\n.changeCategoryButton:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    padding: 3.25%;\r\n    width: 95%;\r\n    height: auto;\r\n    white-space: pre-wrap;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n\r\n/* #ytmPlusCfg_buttons_holder {\r\n    text-align: center;\r\n}\r\n#ytmPlusCfg #ytmPlusCfg_saveBtn {\r\n    margin-right: 2%;\r\n}\r\n#ytmPlusCfg .saveclose_buttons {\r\n    margin: 0;\r\n    width: 49%;\r\n    padding: 1.5vh;\r\n    background: rgba(66, 66, 66, 0.8);\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:disabled {\r\n    --borderColor1: #dd0055ee;\r\n    --borderColor2: #5500ddee;\r\n    animation: buttonBorder 2s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:hover {\r\n    --borderColor1: #ff0077ff;\r\n    --borderColor2: #7700ffff;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n#ytmPlusCfg .saveclose_buttons:active {\r\n    --borderColor1: #6600eecc;\r\n    --borderColor2: #ee0066cc;\r\n    animation: buttonBorder 0.5s infinite forwards linear;\r\n} */\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n:root {\r\n    --borderColor1: #66003366;\r\n    --borderColor2: #33006666;\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg .ytmPlusBorder {\r\n    border-radius: 0.75em;\r\n    border: solid 3px transparent;\r\n    box-shadow: 2px 1000px 1px #333 inset;\r\n    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));\r\n    background-size: 200% 100%;\r\n    background-origin: border-box;\r\n    background-clip: content-box, border-box;\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n    animation: buttonBorder 1s infinite forwards linear;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 6em;\r\n}\r\n\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n} \r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
 
         function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
             const node = document.createElement(type);
@@ -42,10 +42,10 @@ try {
         }
 
         const fieldTexts = {
-            changeShortcut: { english: 'Change Shortcut' },
-            shortcut: { english: 'Current Shortcut: ' },
+            refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
+            changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
             utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
-            language: { english: '<span title="Refresh for changes">Language↻</span>', hungarian: '<span title="Frissíts a változásokhoz">Nyelv↻</span>' },
+            language: { english: 'Language', hungarian: 'Nyelv' },
             neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
             noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
             skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
@@ -110,7 +110,8 @@ try {
             visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
             visualizerRenderScale: { english: 'Vis. Render Scale' },
             backendSection: { english: 'You are not supposed to see this.' },
-            lastOpenCategory: { english: 'You are not supposed to see this.' }
+            lastOpenCategory: { english: 'You are not supposed to see this.' },
+            shortcut: { english: 'You are not supposed to see this.' },
         };
 
         let langOption = GM_getValue('ytmPlusCfg', 'english');
@@ -124,6 +125,10 @@ try {
             for(const field in configFields) {
                 if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
                 const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+                if(configFields[field].refresh === true) {
+                    newLabel.label += '↻';
+                    newLabel.title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+                }
                 configFields[field] = Object.assign(newLabel, configFields[field]);
 
                 if(configFields[field].section === undefined) continue;
@@ -137,9 +142,11 @@ try {
         const configFields = {
             changeShortcut: {
                 section: fieldTexts.utilities,
-                type: 'button'
+                type: 'customButton',
+                valueStorage: 'shortcut'
             },
             language: {
+                refresh: true,
                 type: 'select',
                 options: ['English', 'Hungarian'],
                 default: 'English'
@@ -462,6 +469,43 @@ try {
             //     save: saveEvent
             // },
             frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
+            types: {
+                customButton: {
+                    default: 'Change',
+                    toNode: function() {
+                        const configId = 'ytmPlusCfg';
+                        const field = this.settings,
+                            id = this.id,
+                            create = this.create,
+                            format = (field.format || '1'),
+                            retNode = create('div', {
+                                className: 'config_var',
+                                id: configId + '_' + id + '_var',
+                                title: field.title || ''
+                            });
+
+                        this.format = format;
+
+                        retNode.appendChild(create('label', {
+                            innerHTML: field.label + '<br>' + ytmpConfig.get(field.valueStorage).split('|')[1],
+                            id: configId + '_' + id + '_field_label',
+                            for: configId + '_field_' + id,
+                            className: 'field_label'
+                        }));
+
+                        const props = {
+                            id: configId + '_field_' + id + '_',
+                            className: 'userButtons',
+                            type: 'button',
+                            value: 'Change',
+                            onclick: field.click,
+                        };
+                        retNode.appendChild(create('input', props));
+
+                        return retNode;
+                    }
+                }
+            }
         });
 
         function keydownEvent(ev) {
@@ -474,8 +518,6 @@ try {
 
             if(ytmpConfig.isOpen === false) ytmpConfig.open();
             else ytmpConfig.close();
-
-            console.log(ytmpConfig);
         }
 
         function injectStyle(css) {
@@ -513,10 +555,8 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    console.log('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -525,7 +565,6 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -738,10 +777,11 @@ try {
             resizeInterval: undefined
         };
 
-        // Jesus fucking christ can we rework this bullshit
+        const image = new Image();
 
-        const image = new Image(),
-            currentVideoURL = () => document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+        function currentVideoURL() {
+            return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+        }
 
         function thumbnailChildSrc() {
             try {
@@ -751,35 +791,30 @@ try {
                 return undefined;
             }
         }
-        let imgLoaded = false, lastSavedVideoURL, currentImageURL, wRatio, hRatio, toLoad = -1, quality;
+
+        let imgLoaded = false, lastSavedVideoURL, currentImageURL, widthRatio, heightRatio, quality = 'maxresdefault', loadedQuality;
 
         image.onload = () => {
             if(image.height < 100) { // very likely a 404
                 imgLoaded = false;
-                if(quality === 'maxresdefault') {
-                    toLoad = 0;
-                    return replaceImageURL();
-                }
-                else if(quality === 'sddefault') {
-                    toLoad = 1;
-                    return replaceImageURL();
-                }
-                else if(quality === 'hqdefault') {
-                    toLoad = 2;
-                    return replaceImageURL();
-                }
+                if(quality === 'maxresdefault') quality = 'sddefault';
+                else if(quality === 'sddefault') quality = 'hqdefault';
+                else if(quality === 'hqdefault') quality = 'mqdefault';
+                return replaceImageURL();
             }
-            hRatio = image.height / image.width;
-            wRatio = image.width / image.height;
+            heightRatio = image.height / image.width;
+            widthRatio = image.width / image.height;
             imgLoaded = true;
+            loadedQuality = quality;
+            quality = 'maxresdefault';
         };
 
-        image.onerror = () => { // thumbnails return a very small image on 404 so this is mostly for customs
-            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
-            else {
-                console.log('Visualizer Image couldn\'t be loaded.');
+        image.onerror = (err) => { // thumbnails return a very small image on 404 so this is mostly for customs
+            console.error(err);
+            if(visualizer.image.type === 'Custom') ;
+            else
                 return;
-            }
+
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -792,56 +827,44 @@ try {
         setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
 
         function thumbnailEvent() {
+            if(visualizer.image.type === 'Custom')
+                return;
+
             currentImageURL = thumbnailChildSrc();
-            if(!currentImageURL) {
-                console.log('thumbnailChildSrc is undefined');
+            if(!currentImageURL)
                 return;
+
+
+            if(currentImageURL.indexOf('data') !== 0) {
+                if(image.src === currentImageURL)
+                    return;
+
+                lastSavedVideoURL = currentVideoURL().href;
+                return finalize();
             }
 
-            if(currentImageURL.indexOf('data') === 0) {
-                console.log('Current song has broken thumbnail');
+            if(lastSavedVideoURL !== currentVideoURL().href)
+                lastSavedVideoURL = currentVideoURL().href;
 
-                if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-                else if(toLoad < 0 && quality !== 'custom') {
-                    console.log('Multiple changes with same URL, not asking for small resolution, quality is not custom');
-                    return;
-                }
 
-                if(!lastSavedVideoURL) {
-                    console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
-                    return;
-                }
-
-                console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
-                imgLoaded = false;
-                if(toLoad === 0) quality = 'sddefault';
-                else if(toLoad === 1) quality = 'hqdefault';
-                else if(toLoad === 2) quality = 'mqdefault';
-                else quality = 'maxresdefault';
-                console.log(`Image quality: ${quality}`);
-                currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
-                toLoad = -1;
-            }
-            else if(image.src === currentImageURL) {
-                console.log('Image src is already thumbnail');
+            if(!lastSavedVideoURL)
                 return;
-            }
-            lastSavedVideoURL = currentVideoURL().href;
+
+
+            imgLoaded = false;
+            currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
             finalize();
         }
 
         function customEvent() {
-            if(currentImageURL === visualizer.image.customURL) {
-                console.log('Custom Image change: URL is the same');
+            if(currentImageURL === visualizer.image.customURL)
                 return;
-            }
+
             currentImageURL = visualizer.image.customURL;
-            quality = 'custom';
             finalize();
         }
 
         function finalize() {
-            console.log(`Changed currentImageURL to: ${currentImageURL}`);
             imgLoaded = false;
             image.src = currentImageURL;
         }
@@ -860,17 +883,18 @@ try {
             visualizer.ctx.closePath();
             visualizer.ctx.clip();
 
-            let radiusMultX = visualizer.values.radius, radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
+            let radiusMultX = visualizer.values.radius,
+                radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
 
-            if(quality === 'sddefault') { // enlarge image to cut off "cinematic bars"
+            if(loadedQuality !== 'maxresdefault' && visualizer.image.type !== 'Custom') { // enlarge image to cut off "cinematic bars"
                 radiusMultX *= 1.33;
-                radiusMultY = wRatio;
+                radiusMultY = widthRatio;
             }
-            else if(hRatio > 1) { // vertical img handling
-                radiusMultX *= hRatio;
-                radiusMultY = wRatio;
+            else if(heightRatio > 1) { // vertical img handling
+                radiusMultX *= heightRatio;
+                radiusMultY = widthRatio;
             }
-            else radiusMultY *= wRatio; // horizontal img handling
+            else radiusMultY *= widthRatio; // horizontal img handling
 
             visualizer.ctx.drawImage(
                 image,
@@ -1244,7 +1268,6 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.background.id) {
                         visualizer.canvas = visualizer.canvases.background;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
-                        console.log('Switched visualizer.canvas to background');
                     }
                 }
                 else if(elements.player.playerUiState === 'FULLSCREEN') {
@@ -1253,13 +1276,11 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
                         visualizer.canvas = visualizer.canvases.albumCover;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
-                        console.log('Switched visualizer.canvas to albumCover');
                     }
                 }
                 else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
                     visualizer.canvas = visualizer.canvases.playerBackground;
                     visualizer.ctx = visualizer.canvas.getContext('2d');
-                    console.log('Switched visualizer.canvas to playerBackground');
                 }
             }
 
@@ -1290,10 +1311,8 @@ try {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
                 startVisualizer();
             }
-            else {
-                console.warn('Query "video" not found, retrying in 100ms.');
+            else
                 setTimeout(getVideo, 100);
-            }
         }
 
         function startVisualizer() {
@@ -1388,22 +1407,28 @@ try {
         // if(overflowOn === false) elementStyle.overflow = 'hidden';
         }
 
+        let clone;
         function videoSongSwitcher(turnOn) {
             const avSwitch = document.getElementById('av-id');
             if(!turnOn) {
-                avSwitch.style.display = 'none';
                 elements.player.removeAttribute('has-av-switcher');
                 elements.playerPage.removeAttribute('has-av-switcher');
+                avSwitch.style.display = 'none';
+                if(clone) clone.style.display = 'none';
                 return;
             }
-            avSwitch.style.display = 'block';
             elements.player.setAttribute('has-av-switcher');
             elements.playerPage.setAttribute('has-av-switcher');
+            avSwitch.style.display = 'none';
+            if(clone) return clone.style.display = 'block';
+
             try {
                 if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
                 const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
                 navbar.children[1].style.justifyContent = 'space-around';
-                navbar.children[1].append(avSwitch);
+                clone = avSwitch.cloneNode(true);
+                navbar.children[1].append(clone);
+                clone.style.display = 'block';
             }
             catch (err) {
                 console.error(err);
@@ -1512,7 +1537,6 @@ try {
                 elements.miniGuide = guides[2].children[2];
             }
             catch {
-                if(!elements.miniGuide) console.warn('Could not find miniGuide!');
             }
 
             // Adds a settings button on the navbar
@@ -1529,8 +1553,9 @@ try {
         // Create overlay window
             window.removeEventListener('keydown', keydownEvent);
             const shortcutWindow = injectElement('div', 'shortcutWindow', document.body);
-            const shortcutText = injectElement('span', 'shortcutText', shortcutWindow);
-            shortcutText.innerText = 'Listening for keystrokes...';
+            const shortcutText = injectElement('div', 'shortcutText', shortcutWindow);
+            const prompt = 'Press the buttons you would like to use,\nor press Escape to close this window.';
+            shortcutText.innerText = prompt;
             const buttonHolder = injectElement('div', 'shortcutButtonHolder', shortcutWindow);
             const saveButton = injectElement('input', 'saveShortcut', buttonHolder);
             saveButton.type = 'button';
@@ -1559,7 +1584,7 @@ try {
             function saveShortcut() {
                 if(!lastPressedKey) {
                     shortcutText.animate({
-                        marginLeft: ['0', '2%', '-2%', '2%', '-2%', '0'],
+                        marginLeft: ['0', '2%', '-2%', '0'],
                         color: ['red', 'white'],
                         easing: 'linear'
                     }, 250);
@@ -1576,7 +1601,7 @@ try {
             }
             function resetShortcut() {
                 lastPressedKey = undefined;
-                shortcutText.innerText = 'Listening for keystrokes...';
+                shortcutText.innerText = prompt;
             }
         }
 
@@ -1820,6 +1845,7 @@ try {
             for(const key in configFields) {
                 if(configFields[key].type !== 'color') continue;
                 document.getElementById(`ytmPlusCfg_field_${key}`).type = 'color';
+                if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
             }
 
             manageUI(frame);
