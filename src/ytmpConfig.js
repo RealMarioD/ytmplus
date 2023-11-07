@@ -49,7 +49,9 @@ export const ytmpConfig = new GM_configStruct({
                 if(slash) retNode.appendChild(slash);
 
                 return retNode;
-            }
+            },
+            toValue: function() { return; },
+            reset: function() { return; }
         }
     }
 });

@@ -503,7 +503,9 @@ try {
                         retNode.appendChild(create('input', props));
 
                         return retNode;
-                    }
+                    },
+                    toValue: function() { return; },
+                    reset: function() { return; }
                 }
             }
         });
@@ -518,6 +520,8 @@ try {
 
             if(ytmpConfig.isOpen === false) ytmpConfig.open();
             else ytmpConfig.close();
+
+            console.log(ytmpConfig);
         }
 
         function injectStyle(css) {
@@ -555,8 +559,10 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0)
+                if(popup.length > 0) {
                     popup[0].remove();
+                    console.log('Removed a promotion.');
+                }
             }, 1000);
         }
 
@@ -565,6 +571,7 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -806,15 +813,17 @@ try {
             widthRatio = image.width / image.height;
             imgLoaded = true;
             loadedQuality = quality;
+            console.log('Image loaded successfully');
             quality = 'maxresdefault';
         };
 
         image.onerror = (err) => { // thumbnails return a very small image on 404 so this is mostly for customs
             console.error(err);
-            if(visualizer.image.type === 'Custom') ;
-            else
+            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
+            else {
+                console.log('Visualizer Image couldn\'t be loaded.');
                 return;
-
+            }
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -827,44 +836,56 @@ try {
         setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
 
         function thumbnailEvent() {
-            if(visualizer.image.type === 'Custom')
+            if(visualizer.image.type === 'Custom') {
+                console.warn('Thumbnail event called with custom image');
                 return;
-
+            }
             currentImageURL = thumbnailChildSrc();
-            if(!currentImageURL)
+            if(!currentImageURL) {
+                console.log('thumbnailChildSrc is undefined');
                 return;
-
+            }
 
             if(currentImageURL.indexOf('data') !== 0) {
-                if(image.src === currentImageURL)
+                console.log('Current image URL is valid');
+                if(image.src === currentImageURL) {
+                    console.log('but is already thumbnail');
                     return;
-
+                }
+                console.log('Setting it to image source');
                 lastSavedVideoURL = currentVideoURL().href;
                 return finalize();
             }
 
-            if(lastSavedVideoURL !== currentVideoURL().href)
+            console.log('Current image URL is data, cannot be image source');
+
+            if(lastSavedVideoURL !== currentVideoURL().href) {
                 lastSavedVideoURL = currentVideoURL().href;
+                console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
+            }
 
-
-            if(!lastSavedVideoURL)
+            if(!lastSavedVideoURL) {
+                console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
                 return;
-
+            }
 
             imgLoaded = false;
             currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
+            console.log(`Trying to load with quality: ${quality}`);
             finalize();
         }
 
         function customEvent() {
-            if(currentImageURL === visualizer.image.customURL)
+            if(currentImageURL === visualizer.image.customURL) {
+                console.log('Custom Image change: URL is the same');
                 return;
-
+            }
             currentImageURL = visualizer.image.customURL;
             finalize();
         }
 
         function finalize() {
+            console.log(`Changed currentImageURL to: ${currentImageURL}`);
             imgLoaded = false;
             image.src = currentImageURL;
         }
@@ -1268,6 +1289,7 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.background.id) {
                         visualizer.canvas = visualizer.canvases.background;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to background');
                     }
                 }
                 else if(elements.player.playerUiState === 'FULLSCREEN') {
@@ -1276,11 +1298,13 @@ try {
                     if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) {
                         visualizer.canvas = visualizer.canvases.albumCover;
                         visualizer.ctx = visualizer.canvas.getContext('2d');
+                        console.log('Switched visualizer.canvas to albumCover');
                     }
                 }
                 else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) {
                     visualizer.canvas = visualizer.canvases.playerBackground;
                     visualizer.ctx = visualizer.canvas.getContext('2d');
+                    console.log('Switched visualizer.canvas to playerBackground');
                 }
             }
 
@@ -1311,8 +1335,10 @@ try {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
                 startVisualizer();
             }
-            else
+            else {
+                console.warn('Query "video" not found, retrying in 100ms.');
                 setTimeout(getVideo, 100);
+            }
         }
 
         function startVisualizer() {
@@ -1537,6 +1563,7 @@ try {
                 elements.miniGuide = guides[2].children[2];
             }
             catch {
+                if(!elements.miniGuide) console.warn('Could not find miniGuide!');
             }
 
             // Adds a settings button on the navbar
