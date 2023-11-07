@@ -1,8 +1,10 @@
-// Jesus fucking christ can we rework this bullshit
 import { visualizer } from '../../globals/visualizer';
 
-const image = new Image(),
-    currentVideoURL = () => document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+const image = new Image();
+
+function currentVideoURL() {
+    return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+}
 
 function thumbnailChildSrc() {
     try {
@@ -12,30 +14,27 @@ function thumbnailChildSrc() {
         return undefined;
     }
 }
-export let imgLoaded = false, lastSavedVideoURL, currentImageURL, wRatio, hRatio, toLoad = -1, quality;
+
+export let imgLoaded = false, lastSavedVideoURL, currentImageURL, widthRatio, heightRatio, quality = 'maxresdefault', loadedQuality;
 
 image.onload = () => {
     if(image.height < 100) { // very likely a 404
         imgLoaded = false;
-        if(quality === 'maxresdefault') {
-            toLoad = 0;
-            return replaceImageURL();
-        }
-        else if(quality === 'sddefault') {
-            toLoad = 1;
-            return replaceImageURL();
-        }
-        else if(quality === 'hqdefault') {
-            toLoad = 2;
-            return replaceImageURL();
-        }
+        if(quality === 'maxresdefault') quality = 'sddefault';
+        else if(quality === 'sddefault') quality = 'hqdefault';
+        else if(quality === 'hqdefault') quality = 'mqdefault';
+        return replaceImageURL();
     }
-    hRatio = image.height / image.width;
-    wRatio = image.width / image.height;
+    heightRatio = image.height / image.width;
+    widthRatio = image.width / image.height;
     imgLoaded = true;
+    loadedQuality = quality;
+    console.log('Image loaded successfully');
+    quality = 'maxresdefault';
 };
 
-image.onerror = () => { // thumbnails return a very small image on 404 so this is mostly for customs
+image.onerror = (err) => { // thumbnails return a very small image on 404 so this is mostly for customs
+    console.error(err);
     if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
     else {
         console.log('Visualizer Image couldn\'t be loaded.');
@@ -53,41 +52,42 @@ const observer = new MutationObserver(changes => {
 setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
 
 function thumbnailEvent() {
+    if(visualizer.image.type === 'Custom') {
+        console.warn('Thumbnail event called with custom image');
+        return;
+    }
     currentImageURL = thumbnailChildSrc();
     if(!currentImageURL) {
         console.log('thumbnailChildSrc is undefined');
         return;
     }
 
-    if(currentImageURL.indexOf('data') === 0) {
-        console.log('Current song has broken thumbnail');
-
-        if(lastSavedVideoURL !== currentVideoURL().href) lastSavedVideoURL = currentVideoURL().href;
-        else if(toLoad < 0 && quality !== 'custom') {
-            console.log('Multiple changes with same URL, not asking for small resolution, quality is not custom');
+    if(currentImageURL.indexOf('data') !== 0) {
+        console.log('Current image URL is valid');
+        if(image.src === currentImageURL) {
+            console.log('but is already thumbnail');
             return;
         }
-
-        if(!lastSavedVideoURL) {
-            console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
-            return;
-        }
-
-        console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
-        imgLoaded = false;
-        if(toLoad === 0) quality = 'sddefault';
-        else if(toLoad === 1) quality = 'hqdefault';
-        else if(toLoad === 2) quality = 'mqdefault';
-        else quality = 'maxresdefault';
-        console.log(`Image quality: ${quality}`);
-        currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
-        toLoad = -1;
+        console.log('Setting it to image source');
+        lastSavedVideoURL = currentVideoURL().href;
+        return finalize();
     }
-    else if(image.src === currentImageURL) {
-        console.log('Image src is already thumbnail');
+
+    console.log('Current image URL is data, cannot be image source');
+
+    if(lastSavedVideoURL !== currentVideoURL().href) {
+        lastSavedVideoURL = currentVideoURL().href;
+        console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
+    }
+
+    if(!lastSavedVideoURL) {
+        console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
         return;
     }
-    lastSavedVideoURL = currentVideoURL().href;
+
+    imgLoaded = false;
+    currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
+    console.log(`Trying to load with quality: ${quality}`);
     finalize();
 }
 
@@ -97,7 +97,6 @@ function customEvent() {
         return;
     }
     currentImageURL = visualizer.image.customURL;
-    quality = 'custom';
     finalize();
 }
 
@@ -121,17 +120,18 @@ export function drawVisImage() {
     visualizer.ctx.closePath();
     visualizer.ctx.clip();
 
-    let radiusMultX = visualizer.values.radius, radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
+    let radiusMultX = visualizer.values.radius,
+        radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
 
-    if(quality === 'sddefault') { // enlarge image to cut off "cinematic bars"
+    if(loadedQuality !== 'maxresdefault' && visualizer.image.type !== 'Custom') { // enlarge image to cut off "cinematic bars"
         radiusMultX *= 1.33;
-        radiusMultY = wRatio;
+        radiusMultY = widthRatio;
     }
-    else if(hRatio > 1) { // vertical img handling
-        radiusMultX *= hRatio;
-        radiusMultY = wRatio;
+    else if(heightRatio > 1) { // vertical img handling
+        radiusMultX *= heightRatio;
+        radiusMultY = widthRatio;
     }
-    else radiusMultY *= wRatio; // horizontal img handling
+    else radiusMultY *= widthRatio; // horizontal img handling
 
     visualizer.ctx.drawImage(
         image,
