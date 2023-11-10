@@ -121,7 +121,7 @@ export function visualizerResizeFix() {
     // Commented out because it breaks more shit than it fixes
     // elements.player.style.margin = 'auto 0px';
 
-    if(visualizer.circleEnabled === true) {
+    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
         if(visualizer.bassBounce.enabled === false) {
             visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
             visualizer.values.heightModifier = (visualizer.values.HEIGHT - visualizer.values.radius) / 2 / 255;

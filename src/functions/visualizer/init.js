@@ -7,7 +7,7 @@ import { getBufferData, initValues, visualizerResizeFix } from './utils';
 
 export async function setupVisualizer() {
     // Injecting visualizer visualizer.canvases
-    visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, undefined, 'position: absolute; left: 0; top: 0; width: inherit; height: inherit; pointer-events: none;');
+    visualizer.canvases.navbar = await injectElement('canvas', 'visualizerNavbarCanvas', elements.navBarBg, undefined, 'position: absolute; left: 0; top: 0; width: 100%; height: inherit; pointer-events: none;');
     visualizer.canvases.albumCover = await injectElement('canvas', 'visualizerAlbumCoverCanvas', elements.player, undefined, 'position: absolute; z-index: 9999; pointer-events: none; visibility: visible; width: 100%; height: 100%;', true);
     elements.navBarBg.style.opacity = 1;
 
