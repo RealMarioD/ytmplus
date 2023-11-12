@@ -76,17 +76,17 @@ export const configFields = {
     },
     navbarBackgroundColor: {
         type: 'color',
-        default: '#030303',
+        default: '#aa0000',
         subCheckbox: 'navbarBackgroundChange'
     },
     navbarBackgroundGradientEnabled: {
         type: 'checkbox',
-        default: false,
+        default: true,
         subCheckbox: 'navbarBackgroundChange'
     },
     navbarBackgroundGradientColor: {
         type: 'color',
-        default: '#303030',
+        default: '#0000aa',
         subCheckbox: 'navbarBackgroundChange'
     },
     navbarBackgroundGradientAngle: {

@@ -1,10 +1,12 @@
 import { injectElement } from '../../functions/backend/injectElement';
 import { ytmpConfig } from '../../ytmpConfig';
 
+let shrunk = false;
+
 export async function createTitlebar(wrapper, frame) {
     // Creating titlebar
     const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
-    const closeButton = await injectElement('input', 'titlebar_x', titlebar);
+    const closeButton = await injectElement('input', 'titlebar_x', titlebar, 'titlebarButtons');
     closeButton.type = 'button';
     closeButton.value = 'X';
     closeButton.addEventListener('click', () => {
@@ -12,12 +14,18 @@ export async function createTitlebar(wrapper, frame) {
     });
 
     // Support button
-    const kofi = injectElement('div', 'supportMePls', titlebar);
-    const kofiA = injectElement('a', 'goToKofi', kofi);
+    const kofi = await injectElement('div', 'supportMePls', titlebar);
+    const kofiA = await injectElement('a', 'goToKofi', kofi);
     kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
     kofiA.href = 'https://ko-fi.com/realmariod';
     kofiA.title = 'Buy me a Coffee!';
     kofiA.target = '_blank';
+
+    // Hide categories button
+    const hideCategoriesBtn = await injectElement('input', 'hideCategories', titlebar, 'titlebarButtons');
+    hideCategoriesBtn.type = 'button';
+    hideCategoriesBtn.value = '>>';
+    hideCategoriesBtn.addEventListener('click', () => expandDong(frame, hideCategoriesBtn));
 
     // Adding draggable part to titlebar now so that you can actually click X and support
     const draggablePart = await injectElement('div', 'titlebar_draggable', titlebar);
@@ -63,9 +71,33 @@ function dragElement(elmnt, frame) {
         document.removeEventListener('mouseup', closeDragElement);
         document.removeEventListener('mousemove', elementDrag);
         frame.style.transition = '0.1s';
+
         if(frame.offsetTop < 0) frame.style.top = '0px';
         if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
         if(frame.offsetLeft < 0) frame.style.left = '0px';
         if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
     }
+}
+
+function expandDong(frame, hideCategoriesBtn) {
+    if(shrunk === false) hideThem(frame, hideCategoriesBtn);
+    else showThem(frame, hideCategoriesBtn);
+}
+
+function hideThem(frame, hideCategoriesBtn) {
+    document.getElementById('categorySelect').style.display = 'none';
+    document.getElementById('ytmpDivider').style.display = 'none';
+    document.getElementById('currentSettings').style.width = '100%';
+    frame.style.aspectRatio = '2.4 / 3';
+    shrunk = true;
+    hideCategoriesBtn.value = '<<';
+}
+
+function showThem(frame, hideCategoriesBtn) {
+    document.getElementById('categorySelect').style.display = 'flex';
+    document.getElementById('ytmpDivider').style.display = 'flex';
+    document.getElementById('currentSettings').style.width = '60%';
+    frame.style.aspectRatio = '4 / 3';
+    shrunk = false;
+    hideCategoriesBtn.value = '>>';
 }

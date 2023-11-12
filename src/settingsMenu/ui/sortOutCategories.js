@@ -50,7 +50,8 @@ export async function sortOutCategories(wrapper) {
         configVars.removeChild(configVars.firstElementChild); // Remove category name
         currentSettings.appendChild(configVars); // Move category to currentSettings and wait to be visible
     }
-    if(ytmpConfig.get('lastOpenCategory') !== -1) changeCategoryButton[ytmpConfig.get('lastOpenCategory')].click();
+    // indeed, lastOpenCategory is string, did you know you can use a string for an array's index?
+    if(ytmpConfig.get('lastOpenCategory') !== '-1') changeCategoryButton[ytmpConfig.get('lastOpenCategory')].click();
 
     return resetLink;
 }
