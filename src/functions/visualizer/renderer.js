@@ -5,7 +5,7 @@ import { visualizerNavbar } from './navbar';
 
 let lastFrameTime = 0;
 
-// NEVER REMOVE TIME VAR FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
+// NEVER REMOVE TIME const FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
 export function renderFrame(time) {
     // Don't do anything if True Pause energy saver is on and playback is paused
     if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
@@ -65,8 +65,26 @@ export function renderFrame(time) {
     if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
     else elements.playlist.style.visibility = 'hidden';
 
-    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
+    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
+        if(visualizer.values.bassSmoothRadius > 70) {
+            preShake();
+            visualizerCircle();
+            postShake();
+        }
+        else visualizerCircle(visualizer.ctx);
+    }
     else visualizerNavbar(visualizer.ctx);
 
     requestAnimationFrame(renderFrame);
+}
+
+function preShake() {
+    visualizer.ctx.save();
+    const dx = Math.random() * 10;
+    const dy = Math.random() * 10;
+    visualizer.ctx.translate(dx, dy);
+}
+
+function postShake() {
+    visualizer.ctx.restore();
 }

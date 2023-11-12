@@ -3,7 +3,7 @@ import { drawVisImage, imgLoaded } from './image';
 import { calculateBass, getRotationValue, getBarColor } from './utils';
 
 export function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-    if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.visualizer.values.circleSize = 2; // 2(pi) = full
+    if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
     else visualizer.values.circleSize = 1; // 1(pi) = half;
 
     if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
