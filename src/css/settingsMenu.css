@@ -316,6 +316,14 @@ input[type="checkbox"]:checked:before {
     margin-left: 50%;
 }
 
+input[type="checkbox"]:hover {
+    background: linear-gradient(135deg, #313338, #52565F);
+}
+
+input[type="checkbox"]:checked:hover {
+    background: linear-gradient(135deg, #5145ae, #598ece);
+}
+
 #ytmPlusCfg input[type="text"] {
     width: 15%;
     height: 75%;
@@ -360,6 +368,10 @@ input {
     width: 30%;
     height: 75%;
     text-overflow: ellipsis;
+}
+
+#ytmPlusCfg select:hover {
+    background: #303030ee;
 }
 
 #ytmPlusCfg *::-webkit-scrollbar {
