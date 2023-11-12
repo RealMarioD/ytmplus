@@ -208,6 +208,11 @@ export const configFields = {
         type: 'checkbox',
         default: true,
     },
+    visualizerShakeEnabled: {
+        type: 'checkbox',
+        default: true,
+        subCheckbox: 'visualizerCircleEnabled'
+    },
     visualizerRotate: {
         type: 'select',
         options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
@@ -332,6 +337,12 @@ export const configFields = {
         min: 0.01,
         max: 2,
         default: 1
+    },
+    visualizerShakeThreshold: {
+        type: 'int',
+        min: 0,
+        max: 100,
+        default: 70
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

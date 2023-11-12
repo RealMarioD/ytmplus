@@ -66,7 +66,7 @@ export function renderFrame(time) {
     else elements.playlist.style.visibility = 'hidden';
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
-        if(visualizer.values.bassSmoothRadius > 70) {
+        if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold) {
             preShake();
             visualizerCircle();
             postShake();

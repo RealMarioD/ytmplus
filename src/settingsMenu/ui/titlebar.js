@@ -1,8 +1,6 @@
 import { injectElement } from '../../functions/backend/injectElement';
 import { ytmpConfig } from '../../ytmpConfig';
 
-let shrunk = false;
-
 export async function createTitlebar(wrapper, frame) {
     // Creating titlebar
     const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
@@ -11,6 +9,7 @@ export async function createTitlebar(wrapper, frame) {
     closeButton.value = 'X';
     closeButton.addEventListener('click', () => {
         ytmpConfig.close();
+        ytmpConfig.shrunk = false;
     });
 
     // Support button
@@ -71,16 +70,19 @@ function dragElement(elmnt, frame) {
         document.removeEventListener('mouseup', closeDragElement);
         document.removeEventListener('mousemove', elementDrag);
         frame.style.transition = '0.1s';
-
-        if(frame.offsetTop < 0) frame.style.top = '0px';
-        if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
-        if(frame.offsetLeft < 0) frame.style.left = '0px';
-        if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
+        fixPlacemenet(frame);
     }
 }
 
+function fixPlacemenet(frame) {
+    if(frame.offsetTop < 0) frame.style.top = '0px';
+    if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
+    if(frame.offsetLeft < 0) frame.style.left = '0px';
+    if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
+}
+
 function expandDong(frame, hideCategoriesBtn) {
-    if(shrunk === false) hideThem(frame, hideCategoriesBtn);
+    if(!ytmpConfig.shrunk) hideThem(frame, hideCategoriesBtn);
     else showThem(frame, hideCategoriesBtn);
 }
 
@@ -89,7 +91,7 @@ function hideThem(frame, hideCategoriesBtn) {
     document.getElementById('ytmpDivider').style.display = 'none';
     document.getElementById('currentSettings').style.width = '100%';
     frame.style.aspectRatio = '2.4 / 3';
-    shrunk = true;
+    ytmpConfig.shrunk = true;
     hideCategoriesBtn.value = '<<';
 }
 
@@ -98,6 +100,7 @@ function showThem(frame, hideCategoriesBtn) {
     document.getElementById('ytmpDivider').style.display = 'flex';
     document.getElementById('currentSettings').style.width = '60%';
     frame.style.aspectRatio = '4 / 3';
-    shrunk = false;
+    ytmpConfig.shrunk = false;
     hideCategoriesBtn.value = '>>';
+    setTimeout(() => fixPlacemenet(frame), 150); // we need to wait for transition to finish which is 150ms
 }

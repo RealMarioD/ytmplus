@@ -7,6 +7,10 @@ export const visualizer = {
     rotate: undefined,
     rotateDirection: undefined,
     move: undefined,
+    shake: {
+        enabled: undefined,
+        threshold: undefined
+    },
     energySaver: {
         type: undefined,
         fps: undefined,
