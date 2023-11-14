@@ -80,8 +80,10 @@ export function renderFrame(time) {
 
 function preShake() {
     visualizer.ctx.save();
-    const dx = Math.random() * 10;
-    const dy = Math.random() * 10;
+    const random1 = Math.random();
+    const random2 = Math.random();
+    const dx = random1 * visualizer.shake.multiplier * (random1 === 0 ? 1 : -1);
+    const dy = Math.random() * visualizer.shake.multiplier * (random2 === 0 ? 1 : -1);
     visualizer.ctx.translate(dx, dy);
 }
 

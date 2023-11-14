@@ -6,7 +6,7 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
     if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
     else visualizer.values.circleSize = 1; // 1(pi) = half;
 
-    if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
+    if(visualizer.bassBounce.enabled === true || visualizer.shake.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
     getRotationValue();
 

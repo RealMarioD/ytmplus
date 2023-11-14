@@ -68,6 +68,7 @@ export const fieldTexts = {
     visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
     visualizerRenderScale: { english: 'Render Scale' },
     visualizerShakeThreshold: { english: 'Shake Threshold' },
+    visualizerShakeMultiplier: { english: 'Shake Multiplier' },
     backendSection: { english: 'You are not supposed to see this.' },
     lastOpenCategory: { english: 'You are not supposed to see this.' },
     shortcut: { english: 'You are not supposed to see this.' },

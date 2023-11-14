@@ -344,6 +344,12 @@ export const configFields = {
         max: 100,
         default: 70
     },
+    visualizerShakeMultiplier: {
+        type: 'int',
+        min: 1,
+        max: 100,
+        default: 10
+    },
     lastOpenCategory: {
         section: fieldTexts.backendSection,
         type: 'hidden',

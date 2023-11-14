@@ -111,6 +111,7 @@ try {
             visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
             visualizerRenderScale: { english: 'Render Scale' },
             visualizerShakeThreshold: { english: 'Shake Threshold' },
+            visualizerShakeMultiplier: { english: 'Shake Multiplier' },
             backendSection: { english: 'You are not supposed to see this.' },
             lastOpenCategory: { english: 'You are not supposed to see this.' },
             shortcut: { english: 'You are not supposed to see this.' },
@@ -460,6 +461,12 @@ try {
                 max: 100,
                 default: 70
             },
+            visualizerShakeMultiplier: {
+                type: 'int',
+                min: 1,
+                max: 100,
+                default: 10
+            },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
                 type: 'hidden',
@@ -731,7 +738,8 @@ try {
             move: undefined,
             shake: {
                 enabled: undefined,
-                threshold: undefined
+                threshold: undefined,
+                multiplier: undefined
             },
             energySaver: {
                 type: undefined,
@@ -1128,7 +1136,7 @@ try {
             if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
             else visualizer.values.circleSize = 1; // 1(pi) = half;
 
-            if(visualizer.bassBounce.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
+            if(visualizer.bassBounce.enabled === true || visualizer.shake.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
             getRotationValue();
 
@@ -1343,8 +1351,10 @@ try {
 
         function preShake() {
             visualizer.ctx.save();
-            const dx = Math.random() * 10;
-            const dy = Math.random() * 10;
+            const random1 = Math.random();
+            const random2 = Math.random();
+            const dx = random1 * visualizer.shake.multiplier * (random1 === 0 ? 1 : -1);
+            const dy = Math.random() * visualizer.shake.multiplier * (random2 === 0 ? 1 : -1);
             visualizer.ctx.translate(dx, dy);
         }
 

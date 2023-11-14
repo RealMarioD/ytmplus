@@ -9,7 +9,8 @@ export const visualizer = {
     move: undefined,
     shake: {
         enabled: undefined,
-        threshold: undefined
+        threshold: undefined,
+        multiplier: undefined
     },
     energySaver: {
         type: undefined,
