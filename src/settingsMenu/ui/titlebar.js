@@ -13,7 +13,7 @@ export async function createTitlebar(wrapper, frame) {
     });
 
     // Support button
-    const kofi = await injectElement('div', 'supportMePls', titlebar);
+    const kofi = await injectElement('div', 'supportMePls', titlebar, 'titlebarButtons');
     const kofiA = await injectElement('a', 'goToKofi', kofi);
     kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
     kofiA.href = 'https://ko-fi.com/realmariod';
@@ -74,7 +74,7 @@ function dragElement(elmnt, frame) {
     }
 }
 
-function fixPlacemenet(frame) {
+export function fixPlacemenet(frame) {
     if(frame.offsetTop < 0) frame.style.top = '0px';
     if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
     if(frame.offsetLeft < 0) frame.style.left = '0px';
@@ -102,5 +102,5 @@ function showThem(frame, hideCategoriesBtn) {
     frame.style.aspectRatio = '4 / 3';
     ytmpConfig.shrunk = false;
     hideCategoriesBtn.value = '>>';
-    setTimeout(() => fixPlacemenet(frame), 150); // we need to wait for transition to finish which is 150ms
+    setTimeout(() => fixPlacemenet(frame), 110); // we need to wait for transition to finish which is 100ms plud leeway
 }

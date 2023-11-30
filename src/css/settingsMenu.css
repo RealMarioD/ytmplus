@@ -18,13 +18,12 @@
     border: 0;
     border-radius: 1em;
     z-index: 9998;
-    transition: 0.1s;
     /* GM_config sets a lot of things to element, we can only change it in JS no? */
 }
 
 #ytmPlusCfg * {
     font-family: monospace;
-    color: rgba(255, 255, 255, 0.8);
+    color: #EEEEEE;
 }
 
 #ytmPlusCfg_wrapper {
@@ -52,6 +51,7 @@
     aspect-ratio: 1;
     border-radius: 0;
     border-left: 1px solid rgba(0, 0, 0, 0.925);
+    background-color: rgb(66, 66, 66, 0.925);
     transition: 100ms linear;
 }
 
@@ -61,13 +61,6 @@
 
 #titlebar_x:hover {
     background-color: rgb(170, 25, 25);
-}
-
-#supportMePls {
-    height: 100%;
-    aspect-ratio: 1;
-    border-left: 1px solid rgba(0, 0, 0, 0.925);
-    transition: 100ms linear;
 }
 
 #supportMePls:hover {
@@ -135,60 +128,32 @@
     font-size: 1em;
 }
 
-.changeCategoryButton:disabled {
-    --borderColor1: #dd0055ee;
-    --borderColor2: #5500ddee;
-    animation: buttonBorder 2s infinite forwards linear;
-}
-
-.changeCategoryButton:active {
-    --borderColor1: #6600eecc;
-    --borderColor2: #ee0066cc;
-    animation: buttonBorder 0.5s infinite forwards linear;
-}
-
-.changeCategoryButton:hover {
-    --borderColor1: #ff0077ff;
-    --borderColor2: #7700ffff;
-    animation: buttonBorder 1s infinite forwards linear;
+@property --angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
 }
 
 #ytmPlusCfg .changeCategoryButton {
+    border: 5px groove;
+    --angle: 0deg;
+    border-image: repeating-linear-gradient(var(--angle), #ffd700 0px, #666 25px, #666 50px, #ffd700 100px) 1;
+    border-radius: 0;
     padding: 3.25%;
     width: 95%;
     height: auto;
     white-space: pre-wrap;
-    animation: buttonBorder 2s infinite forwards linear;
+    animation: plsRotate 15s infinite linear;
 }
 
-/* #ytmPlusCfg_buttons_holder {
-    text-align: center;
+@keyframes plsRotate {
+    from {
+        --angle: 0deg;
+    }
+    to {
+        --angle: 360deg;
+    }
 }
-#ytmPlusCfg #ytmPlusCfg_saveBtn {
-    margin-right: 2%;
-}
-#ytmPlusCfg .saveclose_buttons {
-    margin: 0;
-    width: 49%;
-    padding: 1.5vh;
-    background: rgba(66, 66, 66, 0.8);
-    animation: buttonBorder 2s infinite forwards linear;
-}
-#ytmPlusCfg .saveclose_buttons:disabled {
-    --borderColor1: #dd0055ee;
-    --borderColor2: #5500ddee;
-    animation: buttonBorder 2s infinite forwards linear;
-}
-#ytmPlusCfg .saveclose_buttons:hover {
-    --borderColor1: #ff0077ff;
-    --borderColor2: #7700ffff;
-    animation: buttonBorder 1s infinite forwards linear;
-}
-#ytmPlusCfg .saveclose_buttons:active {
-    --borderColor1: #6600eecc;
-    --borderColor2: #ee0066cc;
-    animation: buttonBorder 0.5s infinite forwards linear;
-} */
 
 #ytmPlusCfg .reset_holder {
     text-align: center;
@@ -423,11 +388,6 @@ svg text {
     }
 }
 
-:root {
-    --borderColor1: #66003366;
-    --borderColor2: #33006666;
-}
-
 @keyframes buttonBorder {
     0% {
         background-position: 0% center;
@@ -444,16 +404,6 @@ svg text {
     }
 }
 
-#ytmPlusCfg .ytmPlusBorder {
-    border-radius: 0.75em;
-    border: solid 3px transparent;
-    box-shadow: 2px 1000px 1px #333 inset;
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(45deg, var(--borderColor2), var(--borderColor1), var(--borderColor2));
-    background-size: 200% 100%;
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-}
-
 #ytmPlusCfg #reset_warning {
     border: 3px solid;
     border-radius: 0.75em;
@@ -467,7 +417,6 @@ svg text {
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-content: space-around;
-    animation: buttonBorder 1s infinite forwards linear;
 }
 
 #warning_text {

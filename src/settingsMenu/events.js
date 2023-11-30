@@ -14,6 +14,7 @@ import { configFields } from './fields';
 import { setupAutosave } from './ui/autosave';
 import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
+import { fixPlacemenet } from './ui/titlebar';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Quick hack for color fields
@@ -26,6 +27,15 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
     manageUI(frame);
 
     setupAutosave();
+
+    setTimeout(() => {
+        ytmpConfig.frame.style.transition = '0.1s';
+        fixPlacemenet(frame);
+    }, 100);
+}
+
+export function closeEvent() {
+    ytmpConfig.frame.style.transition = '0s';
 }
 
 export function saveEvent() {

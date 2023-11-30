@@ -10,7 +10,7 @@ export async function sortOutCategories(wrapper) {
     for(let i = 0, len = categories.length - 1; i < len; i++) {
         const sectionName = categories[i].children[0].innerHTML;
 
-        const newCategoryButton = await injectElement('input', undefined, categorySelect, ['changeCategoryButton', 'ytmPlusBorder']);
+        const newCategoryButton = await injectElement('input', undefined, categorySelect, 'changeCategoryButton');
         newCategoryButton.type = 'button';
         newCategoryButton.value = sectionName;
     }
