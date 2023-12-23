@@ -18,16 +18,16 @@ export function changeShortcut() {
     resetButton.type = 'button';
     resetButton.value = 'Reset';
     resetButton.addEventListener('click', resetShortcut);
+    const quitButton = injectElement('input', 'quitShortcut', buttonHolder);
+    quitButton.type = 'button';
+    quitButton.value = 'Quit';
+    quitButton.addEventListener('click', quitShortcut);
 
     let lastPressedKey, fancyKey;
     window.addEventListener('keydown', handleKeystrokes);
 
     function handleKeystrokes(e) {
-        if(e.key === 'Escape') {
-            window.removeEventListener('keydown', handleKeystrokes);
-            window.addEventListener('keydown', keydownEvent);
-            return shortcutWindow.remove();
-        }
+        if(e.key === 'Escape') return quitShortcut();
 
         if((e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt') === false) lastPressedKey = e;
         else return;
@@ -55,5 +55,10 @@ export function changeShortcut() {
     function resetShortcut() {
         lastPressedKey = undefined;
         shortcutText.innerText = prompt;
+    }
+    function quitShortcut() {
+        window.removeEventListener('keydown', handleKeystrokes);
+        window.addEventListener('keydown', keydownEvent);
+        return shortcutWindow.remove();
     }
 }

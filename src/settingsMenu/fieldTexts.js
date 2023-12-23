@@ -3,6 +3,10 @@ export const fieldTexts = {
     changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
     language: { english: 'Language', hungarian: 'Nyelv' },
+    changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret', options: {
+        english: ['Auto', 'Small', 'Normal', 'Large'],
+        hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy']
+    } },
     neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
     noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
@@ -24,7 +28,10 @@ export const fieldTexts = {
     siteBackgroundGradientEnabled: { english: 'Enable Gradient', hungarian: 'Színátmenet engedélyezése' },
     siteBackgroundGradientColor: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
     siteBackgroundGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-    siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció' },
+    siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció', options: {
+        english: ['Disabled', 'Horizontal', 'Vertical'],
+        hungarian: ['Kikapcsol', 'Vízszintes', 'Függőleges']
+    } },
     // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
     removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
     // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
@@ -72,4 +79,5 @@ export const fieldTexts = {
     backendSection: { english: 'You are not supposed to see this.' },
     lastOpenCategory: { english: 'You are not supposed to see this.' },
     shortcut: { english: 'You are not supposed to see this.' },
+    windowSize: { english: 'Surely' }
 };

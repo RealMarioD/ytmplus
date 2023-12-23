@@ -9,12 +9,18 @@ if(langOption != 'english') {
 
 export function fixupFields() {
     for(const field in configFields) {
-        if(fieldTexts[field] === undefined) throw new Error(`"${field}" is undefined in fieldTexts.`);
+        if(fieldTexts[field] === undefined) {
+            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden values.`);
+            continue;
+        }
         const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
         if(configFields[field].refresh === true) {
             newLabel.label += '↻';
             newLabel.title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
         }
+
+        if(fieldTexts[field].options !== undefined) newLabel.options = fieldTexts[field].options[langOption] || fieldTexts[field].options['english'];
+
         configFields[field] = Object.assign(newLabel, configFields[field]);
 
         if(configFields[field].section === undefined) continue;
@@ -36,6 +42,10 @@ export const configFields = {
         type: 'select',
         options: ['English', 'Hungarian'],
         default: 'English'
+    },
+    changeWindowSize: {
+        type: 'select',
+        default: 'Auto'
     },
     neverAfk: {
         type: 'checkbox',
@@ -130,7 +140,7 @@ export const configFields = {
     },
     siteBackgroundGradientAnimation: {
         type: 'select',
-        options: ['Disabled', 'Horizontal', 'Vertical'],
+        rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
         subCheckbox: 'siteBackgroundChange'
     },
@@ -359,4 +369,10 @@ export const configFields = {
         type: 'hidden',
         default: 'ctrl Backslash|CTRL + ű'
     },
+    windowSize: {
+        type: 'int',
+        min: 0,
+        max: 3,
+        default: 0
+    }
 };
