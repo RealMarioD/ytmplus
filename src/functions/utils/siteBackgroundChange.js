@@ -19,7 +19,7 @@ export function siteBackgroundChange(turnOn, firstRun) {
     }
     catch {}
     document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-    const animation = ytmpConfig.getRawValue('siteBackgroundGradientAnimation');
+    const animation = ytmpConfig.get('siteBackgroundGradientAnimation');
     animateBackground(document.body.style, true, animation);
     animateBackground(elements.playerPage.style, false, animation);
 }

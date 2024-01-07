@@ -15,6 +15,7 @@ import { setupAutosave } from './ui/autosave';
 import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 import { fixPlacemenet } from './ui/titlebar';
+import { unlockWidth } from '../functions/utils/unlockWidth';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Quick hack for color fields
@@ -22,7 +23,10 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
         if(configFields[key].type !== 'color') continue;
         document.getElementById(`ytmPlusCfg_field_${key}`).type = 'color';
         if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
+        ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
     }
+
+    console.log(ytmpConfig);
 
     manageUI(frame);
 
@@ -55,6 +59,8 @@ export function saveEvent() {
     extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
 
     fixLayout(ytmpConfig.get('fixLayout'));
+
+    unlockWidth(ytmpConfig.get('unlockWidth'));
 
     videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
 

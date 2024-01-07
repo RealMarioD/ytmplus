@@ -1,12 +1,16 @@
 import { elements } from '../../globals/elements';
 import { visualizer } from '../../globals/visualizer';
 import { visualizerCircle } from './circle';
-import { visualizerNavbar } from './navbar';
+import { visualizerNavbar } from './navbar.js';
 
 let lastFrameTime = 0;
 
 // NEVER REMOVE TIME const FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
 export function renderFrame(time) {
+    // If player is in fullscreen, hide playlist, TODO: put it in a mutation observer
+    if(elements.player.playerUiState !== 'FULLSCREEN' && elements.playlist.style !== 'visible') elements.playlist.style = 'visible'; // .removeProperty('visibility');
+    else if(elements.player.playerUiState === 'FULLSCREEN' && elements.playlist.style.visibility !== 'hidden') elements.playlist.style.visibility = 'hidden';
+
     // Don't do anything if True Pause energy saver is on and playback is paused
     if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
 
@@ -62,9 +66,6 @@ export function renderFrame(time) {
         }
     }
 
-    if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
-    else elements.playlist.style.visibility = 'hidden';
-
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
         if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold) {
             preShake();
@@ -80,10 +81,8 @@ export function renderFrame(time) {
 
 function preShake() {
     visualizer.ctx.save();
-    const random1 = Math.random();
-    const random2 = Math.random();
-    const dx = random1 * visualizer.shake.multiplier * (random1 === 0 ? 1 : -1);
-    const dy = Math.random() * visualizer.shake.multiplier * (random2 === 0 ? 1 : -1);
+    const dx = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
+    const dy = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
     visualizer.ctx.translate(dx, dy);
 }
 

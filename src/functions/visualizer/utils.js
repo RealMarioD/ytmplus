@@ -7,8 +7,8 @@ export function getFMT(fps) {
 }
 
 export function calculateBassBounceBars() {
-    visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / (44100 / visualizer.analyser.fftSize));
-    visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / (44100 / visualizer.analyser.fftSize));
+    visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
+    visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
     if(visualizer.bassBounce._barEnd === 0) visualizer.bassBounce._barEnd++;
 }
 
@@ -16,8 +16,12 @@ export function getBufferData() {
     visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
     visualizer.minHertz = ytmpConfig.get('visualizerMinHertz');
     visualizer.maxHertz = ytmpConfig.get('visualizerMaxHertz');
-    visualizer.bufferLength = ~~((visualizer.maxHertz) / (44100 / visualizer.analyser.fftSize));
-    visualizer.removedBeginning = visualizer.bufferLength - ~~((visualizer.maxHertz - visualizer.minHertz) / (44100 / visualizer.analyser.fftSize));
+    visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
+    visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
+    // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
+    visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
+    visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
+    visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
     visualizer.audioData = new Uint8Array(visualizer.bufferLength);
 }
 
@@ -55,11 +59,13 @@ export function initValues() {
             calculateBassBounceBars();
         }
 
-        visualizer.colorDivergence = visualizer.bufferLength / visualizer.rgb.samples;
+        visualizer.colorDivergence = visualizer.audioDataLength / visualizer.rgb.samples;
         if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
 
         if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
         else getFMT(60);
+
+        visualizer.shake._normalized = (100 - visualizer.shake.threshold);
 
         clearInterval(visualizer.resizeInterval);
         if(visualizer.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
@@ -128,12 +134,12 @@ export function visualizerResizeFix() {
         }
         else visualizer.values.heightModifier = (visualizer.values.HEIGHT - ~~(visualizer.values.HEIGHT / 8)) / 2 / 255;
 
-        visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / ((visualizer.bufferLength - visualizer.removedBeginning) - 2 + visualizer.values.circleSize);
+        visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
         visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
     }
     else {
-        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / (visualizer.bufferLength - visualizer.removedBeginning);
-        else visualizer.values.barTotal = visualizer.values.WIDTH / (visualizer.bufferLength - visualizer.removedBeginning);
+        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.audioDataLength;
+        else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.audioDataLength;
         visualizer.values.barSpace = visualizer.values.barTotal * 0.05;
         visualizer.values.barWidth = visualizer.values.barTotal * 0.95;
     }
@@ -146,6 +152,8 @@ export function averageOfArray(numbers) {
 }
 
 export function getBarColor(i) {
+    if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
+    i -= visualizer.removedBeginning;
     if(visualizer.rgb.enabled === true) {
         // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
         const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
@@ -155,9 +163,6 @@ export function getBarColor(i) {
     }
     else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
     else visualizer.ctx.fillStyle = visualizer.color;
-
-    // This might not actually be correct
-    if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) visualizer.ctx.fillStyle = '#FFF';
 }
 
 export function calculateBass() {

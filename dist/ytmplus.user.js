@@ -45,15 +45,19 @@ try {
             refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
             changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
             utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
-            language: { english: 'Language', hungarian: 'Nyelv' },
-            changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret', options: {
-                english: ['Auto', 'Small', 'Normal', 'Large'],
-                hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy']
-            } },
+            language: { english: 'Language', hungarian: 'Nyelv',
+                options: { english: ['English', 'Hungarian'], hungarian: ['Angol', 'Magyar'] }
+            },
+            changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret',
+                options: { english: ['Auto', 'Small', 'Normal', 'Large'], hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy'] }
+            },
             neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
             noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
             skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
             fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
+            unlockWidth: { english: 'Unlock Width',
+                options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] }
+            },
             extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
             videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
             removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
@@ -64,17 +68,18 @@ try {
             navbarBackgroundGradientEnabled: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
             navbarBackgroundGradientColor: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
             navbarBackgroundGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-            navbarBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció' },
+            navbarBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció',
+                options: { english: ['Disabled', 'Horizontal', 'Vertical'], hungarian: ['Kikapcsolva', 'Vízszintes', 'Függőleges'] }
+            },
             siteBackgroundChange: { english: 'Change Site Background', hungarian: 'Oldal Háttér megváltoztatása' },
             changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér Beállítások' },
             siteBackgroundColor: { english: 'Color', hungarian: 'Szín' },
             siteBackgroundGradientEnabled: { english: 'Enable Gradient', hungarian: 'Színátmenet engedélyezése' },
             siteBackgroundGradientColor: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
             siteBackgroundGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-            siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció', options: {
-                english: ['Disabled', 'Horizontal', 'Vertical'],
-                hungarian: ['Kikapcsol', 'Vízszintes', 'Függőleges']
-            } },
+            siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció',
+                options: { english: ['Disabled', 'Horizontal', 'Vertical'], hungarian: ['Kikapcsolva', 'Vízszintes', 'Függőleges'] }
+            },
             // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
             removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
             // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
@@ -83,23 +88,38 @@ try {
             clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
             clockGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
             clockGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színtámenet Animáció' },
-            visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
+            visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye',
+                options: { english: ['Disabled', 'Navbar', 'Album Cover', 'Background'], hungarian: ['Kikapcsolva', 'Navbar', 'Album Borító', 'Háttér'] }
+            },
             visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
-            visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
-            // visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+            visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:',
+                options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+            },
             visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
             visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
             visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
-            visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
+            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>',
+                options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] }
+            },
+            visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
+                options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
+            },
             visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
             visualizerShakeEnabled: { english: 'Shake Effect' },
-            visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
-            visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
-            visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
+            visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
+                options: { english: ['Disabled', 'Enabled', 'Reactive', 'Reactive (Bass)'], hungarian: ['Kikapcsolva', 'Engedélyezve', 'Reaktív', 'Reaktív (Basszus)'] }
+            },
+            visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány',
+                options: { english: ['Clockwise', 'Counter Clockwise'], hungarian: ['Óramutató Járásával', 'Óramutató Járásával Ellentétesen'] }
+            },
+            visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya',
+                options: { english: ['Inside', 'Outside', 'Both'], hungarian: ['Befelé', 'Kifelé', 'Mindkettő'] }
+            },
             visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
             visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
-            visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép' },
+            visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
+                options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }
+            },
             visualizerImageCustomURL: { english: 'Custom Image URL', hungarian: 'Egyéni Kép URL' },
             attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
             attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },
@@ -125,32 +145,43 @@ try {
             windowSize: { english: 'Surely' }
         };
 
-        let langOption = GM_getValue('ytmPlusCfg', 'english');
-        if(langOption != 'english') {
-            langOption = JSON.parse(langOption).language;
-            if(!langOption) langOption = 'english';
-            else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
-        }
-
         function fixupFields() {
+        // When we first call this function, ytmpConfig is not initalized yet, so we can't use ytmpConfig.get('language'), yadi yadi yada
+        // also circular dependecies are apparently a bad thing...
+            let langOption = 'english';
+            const rawSaveData = GM_getValue('ytmPlusCfg', undefined);
+            if(rawSaveData !== undefined) {
+                const parsedSaveData = JSON.parse(rawSaveData);
+                if(parsedSaveData !== undefined && parsedSaveData.language !== undefined) langOption = parsedSaveData.language.toLowerCase();
+            }
+
             for(const field in configFields) {
                 if(fieldTexts[field] === undefined) {
-                    console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden values.`);
+                    console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields!`);
                     continue;
                 }
-                const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-                if(configFields[field].refresh === true) {
-                    newLabel.label += '↻';
-                    newLabel.title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+
+                if(configFields[field].type === 'customSelect') {
+                    if(configFields[field].rawOptions !== undefined) {
+                        if(fieldTexts[field].options === undefined) throw new Error(`"${field}" is missing options in fieldTexts!`);
+                        configFields[field].options = fieldTexts[field].options[langOption] || fieldTexts[field].options['english'];
+                        configFields[field].value = configFields[field].options[configFields[field].rawOptions.indexOf(configFields[field].default)];
+                    }
+                    else throw new Error(`"${field}" is missing rawOptions!`);
                 }
 
-                if(fieldTexts[field].options !== undefined) newLabel.options = fieldTexts[field].options[langOption] || fieldTexts[field].options['english'];
+                if(configFields[field].label === undefined) {
+                    const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+                    configFields[field] = Object.assign(newLabel, configFields[field]); // We merge so label is the first property, if label is not the first property, label/input order will be messed up
+                }
+                else configFields[field].label = fieldTexts[field][langOption] || fieldTexts[field]['english'];
 
-                configFields[field] = Object.assign(newLabel, configFields[field]);
+                if(configFields[field].refresh === true) {
+                    configFields[field].label += '↻';
+                    configFields[field].title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+                }
 
-                if(configFields[field].section === undefined) continue;
-
-                configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
+                if(configFields[field].section !== undefined) configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
             }
             return configFields;
         }
@@ -164,13 +195,14 @@ try {
             },
             language: {
                 refresh: true,
-                type: 'select',
-                options: ['English', 'Hungarian'],
+                type: 'customSelect',
+                rawOptions: ['English', 'Hungarian'],
                 default: 'English'
             },
             changeWindowSize: {
-                type: 'select',
-                default: 'Auto'
+                type: 'customSelect',
+                rawOptions: ['auto', 'small', 'normal', 'large'],
+                default: 'auto'
             },
             neverAfk: {
                 type: 'checkbox',
@@ -187,6 +219,11 @@ try {
             fixLayout: {
                 type: 'checkbox',
                 default: true
+            },
+            unlockWidth: {
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
+                default: 'Disabled'
             },
             extraPlaybackButtons: {
                 type: 'checkbox',
@@ -232,8 +269,8 @@ try {
                 subCheckbox: 'navbarBackgroundChange'
             },
             navbarBackgroundGradientAnimation: {
-                type: 'select',
-                options: ['Disabled', 'Horizontal', 'Vertical'],
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
                 default: 'Horizontal',
                 subCheckbox: 'navbarBackgroundChange'
             },
@@ -264,14 +301,14 @@ try {
                 subCheckbox: 'siteBackgroundChange'
             },
             siteBackgroundGradientAnimation: {
-                type: 'select',
+                type: 'customSelect',
                 rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
                 default: 'Horizontal',
                 subCheckbox: 'siteBackgroundChange'
             },
             // changeUpgradeButton: {
-            //     type: 'select',
-            //     options: ['Original', 'Remove Button', 'Digital Clock'],
+            //     type: 'customSelect',
+            //     rawOptions: ['Original', 'Remove Button', 'Digital Clock'],
             //     default: 'Digital Clock'
             // },
             removeUpgradeButton: {
@@ -301,20 +338,20 @@ try {
             //     subOption: 'changeUpgradeButton.2'
             // },
             // clockGradientAnimation: {
-            //     type: 'select',
-            //     options: ['Disabled', 'Horizontal', 'Vertical'],
+            //     type: 'customSelect',
+            //     rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
             //     default: 'Horizontal',
             //     subOption: 'changeUpgradeButton.2'
             // },
             visualizerPlace: {
                 section: fieldTexts.visualizerPlaceSection,
-                type: 'select',
-                options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
                 default: 'Album Cover'
             },
             visualizerStartsFrom: {
-                type: 'select',
-                options: ['Left', 'Center', 'Right', 'Edges'],
+                type: 'customSelect',
+                rawOptions: ['Left', 'Center', 'Right', 'Edges'],
                 default: 'Center'
             },
             visualizerColor: {
@@ -330,13 +367,13 @@ try {
                 default: false
             },
             visualizerFft: {
-                type: 'select',
-                options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+                type: 'customSelect',
+                rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
                 default: '4096',
             },
             visualizerEnergySaverType: {
-                type: 'select',
-                options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
                 default: 'Disabled'
             },
             visualizerCircleEnabled: {
@@ -349,20 +386,20 @@ try {
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerRotate: {
-                type: 'select',
-                options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
                 default: 'Disabled',
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerRotateDirection: {
-                type: 'select',
-                options: ['Clockwise', 'Counter-Clockwise'],
+                type: 'customSelect',
+                rawOptions: ['Clockwise', 'Counter-Clockwise'],
                 default: 'Clockwise',
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerMove: {
-                type: 'select',
-                options: ['Inside', 'Outside', 'Both Sides'],
+                type: 'customSelect',
+                rawOptions: ['Inside', 'Outside', 'Both Sides'],
                 default: 'Outside',
                 subCheckbox: 'visualizerCircleEnabled'
             },
@@ -377,8 +414,8 @@ try {
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerImageType: {
-                type: 'select',
-                options: ['Disabled', 'Thumbnail', 'Custom'],
+                type: 'customSelect',
+                rawOptions: ['Disabled', 'Thumbnail', 'Custom'],
                 default: 'Thumbnail',
                 subCheckbox: 'visualizerCircleEnabled'
             },
@@ -480,10 +517,10 @@ try {
                 default: 70
             },
             visualizerShakeMultiplier: {
-                type: 'int',
+                type: 'float',
                 min: 1,
                 max: 100,
-                default: 10
+                default: 7.5
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
@@ -502,6 +539,100 @@ try {
             }
         };
 
+        const customButton = {
+            default: 'Change',
+            toNode: function() {
+                const configId = 'ytmPlusCfg';
+                const field = this.settings,
+                    id = this.id,
+                    create = this.create,
+                    format = (field.format || '1'),
+                    retNode = create('div', {
+                        className: 'config_var',
+                        id: configId + '_' + id + '_var',
+                        title: field.title || ''
+                    });
+
+                this.format = format;
+
+                retNode.appendChild(create('label', {
+                    innerHTML: field.label + '<br>' + ytmpConfig.get(field.valueStorage).split('|')[1],
+                    id: configId + '_' + id + '_field_label',
+                    for: configId + '_field_' + id,
+                    className: 'field_label'
+                }));
+
+                const props = {
+                    id: configId + '_field_' + id,
+                    className: 'userButtons',
+                    type: 'button',
+                    value: 'Change',
+                    onclick: field.click,
+                };
+                retNode.appendChild(create('input', props));
+
+                return retNode;
+            },
+            toValue: function() { return; },
+            reset: function() { return; }
+        };
+
+        // ALL THIS BULLSHIT SO THAT SELECT INPUTS CAN CHANGE LANGUAGE
+        const customSelect = {
+            default: null,
+            toNode: function() {
+                const configId = 'ytmPlusCfg';
+                const field = this.settings,
+                    id = this.id,
+                    create = this.create,
+                    options = field.options,
+                    retNode = create('div', {
+                        className: 'config_var',
+                        id: configId + '_' + id + '_var',
+                        title: field.title || ''
+                    });
+
+                retNode.appendChild(create('label', {
+                    innerHTML: field.label,
+                    id: configId + '_' + id + '_field_label',
+                    for: configId + '_field_' + id,
+                    className: 'field_label'
+                }));
+
+                const props = {
+                    id: configId + '_field_' + id,
+                };
+                const selectInput = retNode.appendChild(create('select', props));
+                this.node = selectInput;
+                for(let i = 0; i < options.length; i++) {
+                    selectInput.appendChild(create('option', {
+                        innerHTML: options[i],
+                        value: field.rawOptions[i],
+                    }));
+                }
+                field.value = this.value;
+                selectInput.value = this.value;
+
+                return retNode;
+            },
+            toValue: function() {
+                let returnValue = null;
+                if(this.wrapper) {
+                    const selectInput = this.wrapper.children[1];
+                    returnValue = selectInput.value;
+                }
+                return returnValue;
+            },
+            reset: function() {
+                if(this.wrapper) {
+                    const selectInput = this.wrapper.children[1];
+                    selectInput.value = this.default;
+                    this.settings.value = this.default;
+                }
+                return;
+            }
+        };
+
         const ytmpConfig = new GM_configStruct({
             id: 'ytmPlusCfg',
             title: 'ytmPlus',
@@ -514,43 +645,8 @@ try {
             // },
             frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
             types: {
-                customButton: {
-                    default: 'Change',
-                    toNode: function() {
-                        const configId = 'ytmPlusCfg';
-                        const field = this.settings,
-                            id = this.id,
-                            create = this.create,
-                            format = (field.format || '1'),
-                            retNode = create('div', {
-                                className: 'config_var',
-                                id: configId + '_' + id + '_var',
-                                title: field.title || ''
-                            });
-
-                        this.format = format;
-
-                        retNode.appendChild(create('label', {
-                            innerHTML: field.label + '<br>' + ytmpConfig.get(field.valueStorage).split('|')[1],
-                            id: configId + '_' + id + '_field_label',
-                            for: configId + '_field_' + id,
-                            className: 'field_label'
-                        }));
-
-                        const props = {
-                            id: configId + '_field_' + id + '_',
-                            className: 'userButtons',
-                            type: 'button',
-                            value: 'Change',
-                            onclick: field.click,
-                        };
-                        retNode.appendChild(create('input', props));
-
-                        return retNode;
-                    },
-                    toValue: function() { return; },
-                    reset: function() { return; }
-                }
+                customButton: customButton,
+                customSelect: customSelect
             }
         });
 
@@ -564,8 +660,6 @@ try {
 
             if(ytmpConfig.isOpen === false) ytmpConfig.open();
             else ytmpConfig.close();
-
-            console.log(ytmpConfig);
         }
 
         function injectStyle(css) {
@@ -701,7 +795,7 @@ try {
             }
             catch {}
             document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-            const animation = ytmpConfig.getRawValue('siteBackgroundGradientAnimation');
+            const animation = ytmpConfig.get('siteBackgroundGradientAnimation');
             animateBackground(document.body.style, true, animation);
             animateBackground(elements.playerPage.style, false, animation);
         }
@@ -763,7 +857,8 @@ try {
             shake: {
                 enabled: undefined,
                 threshold: undefined,
-                multiplier: undefined
+                multiplier: undefined,
+                _normalized: undefined
             },
             energySaver: {
                 type: undefined,
@@ -826,10 +921,13 @@ try {
             minHertz: undefined,
             maxHertz: undefined,
             removedBeginning: undefined,
+            removedEnding: undefined,
             colorDivergence: undefined,
             analyser: undefined,
             bufferLength: undefined,
             audioData: undefined,
+            audioDataStep: undefined,
+            audioDataLength: undefined,
             resizeInterval: undefined
         };
 
@@ -981,8 +1079,8 @@ try {
         }
 
         function calculateBassBounceBars() {
-            visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / (44100 / visualizer.analyser.fftSize));
-            visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / (44100 / visualizer.analyser.fftSize));
+            visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
+            visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
             if(visualizer.bassBounce._barEnd === 0) visualizer.bassBounce._barEnd++;
         }
 
@@ -990,8 +1088,12 @@ try {
             visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
             visualizer.minHertz = ytmpConfig.get('visualizerMinHertz');
             visualizer.maxHertz = ytmpConfig.get('visualizerMaxHertz');
-            visualizer.bufferLength = ~~((visualizer.maxHertz) / (44100 / visualizer.analyser.fftSize));
-            visualizer.removedBeginning = visualizer.bufferLength - ~~((visualizer.maxHertz - visualizer.minHertz) / (44100 / visualizer.analyser.fftSize));
+            visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
+            visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
+            // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
+            visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
+            visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
+            visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
             visualizer.audioData = new Uint8Array(visualizer.bufferLength);
         }
 
@@ -1029,11 +1131,13 @@ try {
                     calculateBassBounceBars();
                 }
 
-                visualizer.colorDivergence = visualizer.bufferLength / visualizer.rgb.samples;
+                visualizer.colorDivergence = visualizer.audioDataLength / visualizer.rgb.samples;
                 if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
 
                 if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
                 else getFMT(60);
+
+                visualizer.shake._normalized = (100 - visualizer.shake.threshold);
 
                 clearInterval(visualizer.resizeInterval);
                 if(visualizer.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
@@ -1101,12 +1205,12 @@ try {
                 }
                 else visualizer.values.heightModifier = (visualizer.values.HEIGHT - ~~(visualizer.values.HEIGHT / 8)) / 2 / 255;
 
-                visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / ((visualizer.bufferLength - visualizer.removedBeginning) - 2 + visualizer.values.circleSize);
+                visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
                 visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
             }
             else {
-                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / (visualizer.bufferLength - visualizer.removedBeginning);
-                else visualizer.values.barTotal = visualizer.values.WIDTH / (visualizer.bufferLength - visualizer.removedBeginning);
+                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.audioDataLength;
+                else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.audioDataLength;
                 visualizer.values.barSpace = visualizer.values.barTotal * 0.05;
                 visualizer.values.barWidth = visualizer.values.barTotal * 0.95;
             }
@@ -1119,6 +1223,8 @@ try {
         }
 
         function getBarColor(i) {
+            if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
+            i -= visualizer.removedBeginning;
             if(visualizer.rgb.enabled === true) {
             // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
                 const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
@@ -1128,9 +1234,6 @@ try {
             }
             else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
             else visualizer.ctx.fillStyle = visualizer.color;
-
-            // This might not actually be correct
-            if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) visualizer.ctx.fillStyle = '#FFF';
         }
 
         function calculateBass() {
@@ -1181,16 +1284,17 @@ try {
             visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
             visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
-            for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; ++i) {
+            let barHeight;
+            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
                 getBarColor(i);
 
-                if(visualizer.bassBounce.enabled === true) visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
-                else visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * 0.5;
+                if(visualizer.bassBounce.enabled === true) barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
+                else barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * 0.5;
 
-                if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + visualizer.values.barHeight;
+                if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + barHeight;
                 else visualizer.values.outerRadius = visualizer.values.radius;
 
-                if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - visualizer.values.barHeight;
+                if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - barHeight;
                 else visualizer.values.innerRadius = visualizer.values.radius;
 
                 if(visualizer.values.outerRadius < 0) visualizer.values.outerRadius = 0;
@@ -1207,94 +1311,95 @@ try {
         }
 
         function visualizerNavbar() {
-            if(visualizer.startsFrom === 'Center') visualizer.values.xPosOffset = visualizer.values.barWidth + visualizer.values.barSpace / 2; // Centers 1 bar
-            else if(visualizer.startsFrom === 'Edges') visualizer.values.xPosOffset = visualizer.values.barSpace / 2; // Both sides are offset a bit for perfect centering
-            else visualizer.values.xPosOffset = 0;
+            let xPosOffset;
+            if(visualizer.startsFrom === 'Center') xPosOffset = visualizer.values.barWidth + visualizer.values.barSpace / 2; // Centers 1 bar
+            else if(visualizer.startsFrom === 'Edges') xPosOffset = visualizer.values.barSpace / 2; // Both sides are offset a bit for perfect centering
+            else xPosOffset = 0;
 
             const maxBarHeight = (visualizer.values.HEIGHT / 255);
 
-            firstDraw(maxBarHeight);
+            firstDraw(maxBarHeight, xPosOffset);
 
             if(visualizer.startsFrom === 'Center') {
-                visualizer.values.xPosOffset = visualizer.values.halfWidth + visualizer.values.barSpace / 2; // Reset pos to center
-                secondDraw(maxBarHeight);
+                xPosOffset = visualizer.values.halfWidth + visualizer.values.barSpace / 2; // Reset pos to center
+                secondDraw(maxBarHeight, xPosOffset);
             }
             else if(visualizer.startsFrom === 'Edges') {
-                visualizer.values.xPosOffset = visualizer.values.barWidth + (visualizer.values.barSpace / 2); // Reset pos to right + offset for perfect center
-                secondDraw(maxBarHeight);
+                xPosOffset = visualizer.values.barWidth + (visualizer.values.barSpace / 2); // Reset pos to right + offset for perfect center
+                secondDraw(maxBarHeight, xPosOffset);
             }
         }
 
-        function firstDraw(maxBarHeight) {
-            for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; i++) {
-                visualizer.values.barHeight = visualizer.audioData[i] * maxBarHeight;
+        function firstDraw(maxBarHeight, xPosOffset) {
+            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
+                const barHeight = visualizer.audioData[i] * maxBarHeight;
 
                 getBarColor(i);
 
                 // To this day I don't get the Y and height values
                 if(visualizer.startsFrom === 'Left') {
                     visualizer.ctx.fillRect( // Draws rect from left to right
-                        visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
                 else if(visualizer.startsFrom === 'Center') {
-                    if(visualizer.values.halfWidth - visualizer.values.xPosOffset < 0 - visualizer.values.barWidth) break;
+                    if(visualizer.values.halfWidth - xPosOffset < 0 - visualizer.values.barWidth) break;
                     visualizer.ctx.fillRect( // Draws rect from left to right, starting from center to left
-                        visualizer.values.halfWidth - visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        visualizer.values.halfWidth - xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
                 else if(visualizer.startsFrom === 'Right') {
                     visualizer.ctx.fillRect( // Draws rect from right to left
-                        visualizer.values.WIDTH - visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        visualizer.values.WIDTH - xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         0 - visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
                 else if(visualizer.startsFrom === 'Edges') {
-                    if(visualizer.values.xPosOffset > visualizer.values.halfWidth) break;
+                    if(xPosOffset > visualizer.values.halfWidth) break;
                     visualizer.ctx.fillRect( // Draws rect from left to right, from left to center
-                        visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
-                visualizer.values.xPosOffset += visualizer.values.barTotal;
+                xPosOffset += visualizer.values.barTotal;
             }
         }
 
-        function secondDraw(maxBarHeight) {
-            for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; i++) {
-                visualizer.values.barHeight = visualizer.audioData[i] * maxBarHeight;
+        function secondDraw(maxBarHeight, xPosOffset) {
+            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
+                const barHeight = visualizer.audioData[i] * maxBarHeight;
 
                 getBarColor(i);
 
                 if(visualizer.startsFrom === 'Center') {
-                    if(visualizer.values.xPosOffset > visualizer.values.WIDTH) break;
+                    if(xPosOffset > visualizer.values.WIDTH) break;
                     visualizer.ctx.fillRect( // Draws rect from left to right, from center to right
-                        visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
                 else if(visualizer.startsFrom === 'Edges') {
-                    if(visualizer.values.xPosOffset > visualizer.values.halfWidth) break;
+                    if(xPosOffset > visualizer.values.halfWidth) break;
                     visualizer.ctx.fillRect( // Draws rect from left to right, from right to center
-                        visualizer.values.WIDTH - visualizer.values.xPosOffset,
-                        visualizer.values.HEIGHT - visualizer.values.barHeight,
+                        visualizer.values.WIDTH - xPosOffset,
+                        visualizer.values.HEIGHT - barHeight,
                         visualizer.values.barWidth,
-                        visualizer.values.barHeight
+                        barHeight
                     );
                 }
-                visualizer.values.xPosOffset += visualizer.values.barTotal;
+                xPosOffset += visualizer.values.barTotal;
             }
         }
 
@@ -1302,7 +1407,11 @@ try {
 
         // NEVER REMOVE TIME const FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
         function renderFrame(time) {
-        // Don't do anything if True Pause energy saver is on and playback is paused
+        // If player is in fullscreen, hide playlist, TODO: put it in a mutation observer
+            if(elements.player.playerUiState !== 'FULLSCREEN' && elements.playlist.style !== 'visible') elements.playlist.style = 'visible'; // .removeProperty('visibility');
+            else if(elements.player.playerUiState === 'FULLSCREEN' && elements.playlist.style.visibility !== 'hidden') elements.playlist.style.visibility = 'hidden';
+
+            // Don't do anything if True Pause energy saver is on and playback is paused
             if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
 
             // If render would be faster than max fps (60 by default if energy saver is off) come back later
@@ -1357,9 +1466,6 @@ try {
                 }
             }
 
-            if(elements.player.playerUiState !== 'FULLSCREEN') elements.playlist.style.removeProperty('visibility');
-            else elements.playlist.style.visibility = 'hidden';
-
             if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
                 if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold) {
                     preShake();
@@ -1375,10 +1481,8 @@ try {
 
         function preShake() {
             visualizer.ctx.save();
-            const random1 = Math.random();
-            const random2 = Math.random();
-            const dx = random1 * visualizer.shake.multiplier * (random1 === 0 ? 1 : -1);
-            const dy = Math.random() * visualizer.shake.multiplier * (random2 === 0 ? 1 : -1);
+            const dx = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
+            const dy = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
             visualizer.ctx.translate(dx, dy);
         }
 
@@ -1593,6 +1697,25 @@ try {
         //     buttonStyle.fontSize = '20px';
         // }
 
+        function unlockWidth(option) {
+            if(option === 'Playlist') {
+                elements.playlist.style.maxWidth = 'unset';
+                elements.player.style.removeProperty('max-width');
+            }
+            else if(option === 'Album Cover') {
+                elements.player.style.maxWidth = 'unset';
+                elements.playlist.style.removeProperty('max-width');
+            }
+            else if(option === 'Both') {
+                elements.player.style.maxWidth = 'unset';
+                elements.playlist.style.maxWidth = 'unset';
+            }
+            else {
+                elements.player.style.removeProperty('max-width');
+                elements.playlist.style.removeProperty('max-width');
+            }
+        }
+
         async function setup() {
             elements.player = await document.getElementById('player');
             elements.playerPage = await document.getElementById('player-page');
@@ -1614,6 +1737,8 @@ try {
 
             fixLayout(ytmpConfig.get('fixLayout'));
 
+            unlockWidth(ytmpConfig.get('unlockWidth'));
+
             extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
 
             videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
@@ -1624,7 +1749,7 @@ try {
 
             setupVisualizer();
 
-            // Note: Everything below was timed out because YTM, now whole setup function is timed out for safety lol
+            // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
             // If shit breaks just put back everything below in a timeout
             try {
                 const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
@@ -1672,7 +1797,7 @@ try {
             function handleKeystrokes(e) {
                 if(e.key === 'Escape') return quitShortcut();
 
-                if((e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt') === false) lastPressedKey = e;
+                if((e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt') === false) lastPressedKey = e; // If it's not a modifier key, save it
                 else return;
                 fancyKey = (e.ctrlKey ? 'CTRL + ' : '') + (e.shiftKey ? 'SHIFT + ' : '') + (e.altKey ? 'ALT + ' : '') + e.key;
                 shortcutText.innerText = fancyKey;
@@ -1983,7 +2108,10 @@ try {
                 if(configFields[key].type !== 'color') continue;
                 document.getElementById(`ytmPlusCfg_field_${key}`).type = 'color';
                 if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
+                ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
             }
+
+            console.log(ytmpConfig);
 
             manageUI(frame);
 
@@ -2017,6 +2145,8 @@ try {
 
             fixLayout(ytmpConfig.get('fixLayout'));
 
+            unlockWidth(ytmpConfig.get('unlockWidth'));
+
             videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
 
             removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
@@ -2033,17 +2163,19 @@ try {
         ytmpConfig.onClose = closeEvent;
         configFields.changeShortcut.click = changeShortcut;
 
-        ytmpConfig.getRawValue = function(settingName) {
-            const field = ytmpConfig.fields[settingName];
-            if(!field) throw new Error(`No field called ${settingName}`);
-            if(!field.settings.rawOptions) throw new Error(`Field ${settingName} is not select input or does not have rawOptions`);
-            if(!field.settings.options) throw new Error(`Field ${settingName} does not even have English options declared in fieldTexts or fixupFields failed`);
-            const index = field.settings.options.indexOf(field.value);
-            if(!index) throw new Error(`Options of ${settingName} does NOT have selected value (${field.value}), [${field.settings.options.toString()}]`);
-            const rawValue = field.settings.rawOptions[index];
-            if(!rawValue) throw new Error('Fucking fucked');
-            return rawValue;
-        };
+        /* // We don't need this anymore
+    ytmpConfig.getRawValue = function(settingName) {
+        const field = ytmpConfig.fields[settingName];
+        if(!field) throw new Error(`No field called ${settingName}`);
+        if(!field.settings.rawOptions) throw new Error(`Field ${settingName} is not select input or does not have rawOptions`);
+        if(!field.settings.options) throw new Error(`Field ${settingName} does not even have English options, this is not supposed to happen`);
+        const index = field.settings.options.indexOf(field.value);
+        if(!index) throw new Error(`Options of ${settingName} does NOT have selected value (${field.value}), [${field.settings.options.toString()}]`);
+        const rawValue = field.settings.rawOptions[index];
+        if(!rawValue) throw new Error('Fucking fucked');
+        return rawValue;
+    };
+    */
 
         window.addEventListener('keydown', keydownEvent);
 

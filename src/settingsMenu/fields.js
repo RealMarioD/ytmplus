@@ -1,31 +1,42 @@
 import { fieldTexts } from './fieldTexts';
 
-export let langOption = GM_getValue('ytmPlusCfg', 'english');
-if(langOption != 'english') {
-    langOption = JSON.parse(langOption).language;
-    if(!langOption) langOption = 'english';
-    else langOption = langOption.charAt(0).toLowerCase() + langOption.slice(1);
-}
-
 export function fixupFields() {
+    // When we first call this function, ytmpConfig is not initalized yet, so we can't use ytmpConfig.get('language'), yadi yadi yada
+    // also circular dependecies are apparently a bad thing...
+    let langOption = 'english';
+    const rawSaveData = GM_getValue('ytmPlusCfg', undefined);
+    if(rawSaveData !== undefined) {
+        const parsedSaveData = JSON.parse(rawSaveData);
+        if(parsedSaveData !== undefined && parsedSaveData.language !== undefined) langOption = parsedSaveData.language.toLowerCase();
+    }
+
     for(const field in configFields) {
         if(fieldTexts[field] === undefined) {
-            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden values.`);
+            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields!`);
             continue;
         }
-        const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-        if(configFields[field].refresh === true) {
-            newLabel.label += '↻';
-            newLabel.title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+
+        if(configFields[field].type === 'customSelect') {
+            if(configFields[field].rawOptions !== undefined) {
+                if(fieldTexts[field].options === undefined) throw new Error(`"${field}" is missing options in fieldTexts!`);
+                configFields[field].options = fieldTexts[field].options[langOption] || fieldTexts[field].options['english'];
+                configFields[field].value = configFields[field].options[configFields[field].rawOptions.indexOf(configFields[field].default)];
+            }
+            else throw new Error(`"${field}" is missing rawOptions!`);
         }
 
-        if(fieldTexts[field].options !== undefined) newLabel.options = fieldTexts[field].options[langOption] || fieldTexts[field].options['english'];
+        if(configFields[field].label === undefined) {
+            const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
+            configFields[field] = Object.assign(newLabel, configFields[field]); // We merge so label is the first property, if label is not the first property, label/input order will be messed up
+        }
+        else configFields[field].label = fieldTexts[field][langOption] || fieldTexts[field]['english'];
 
-        configFields[field] = Object.assign(newLabel, configFields[field]);
+        if(configFields[field].refresh === true) {
+            configFields[field].label += '↻';
+            configFields[field].title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+        }
 
-        if(configFields[field].section === undefined) continue;
-
-        configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
+        if(configFields[field].section !== undefined) configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
     }
     return configFields;
 }
@@ -39,13 +50,14 @@ export const configFields = {
     },
     language: {
         refresh: true,
-        type: 'select',
-        options: ['English', 'Hungarian'],
+        type: 'customSelect',
+        rawOptions: ['English', 'Hungarian'],
         default: 'English'
     },
     changeWindowSize: {
-        type: 'select',
-        default: 'Auto'
+        type: 'customSelect',
+        rawOptions: ['auto', 'small', 'normal', 'large'],
+        default: 'auto'
     },
     neverAfk: {
         type: 'checkbox',
@@ -62,6 +74,11 @@ export const configFields = {
     fixLayout: {
         type: 'checkbox',
         default: true
+    },
+    unlockWidth: {
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
+        default: 'Disabled'
     },
     extraPlaybackButtons: {
         type: 'checkbox',
@@ -107,8 +124,8 @@ export const configFields = {
         subCheckbox: 'navbarBackgroundChange'
     },
     navbarBackgroundGradientAnimation: {
-        type: 'select',
-        options: ['Disabled', 'Horizontal', 'Vertical'],
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
         subCheckbox: 'navbarBackgroundChange'
     },
@@ -139,14 +156,14 @@ export const configFields = {
         subCheckbox: 'siteBackgroundChange'
     },
     siteBackgroundGradientAnimation: {
-        type: 'select',
+        type: 'customSelect',
         rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
         subCheckbox: 'siteBackgroundChange'
     },
     // changeUpgradeButton: {
-    //     type: 'select',
-    //     options: ['Original', 'Remove Button', 'Digital Clock'],
+    //     type: 'customSelect',
+    //     rawOptions: ['Original', 'Remove Button', 'Digital Clock'],
     //     default: 'Digital Clock'
     // },
     removeUpgradeButton: {
@@ -176,20 +193,20 @@ export const configFields = {
     //     subOption: 'changeUpgradeButton.2'
     // },
     // clockGradientAnimation: {
-    //     type: 'select',
-    //     options: ['Disabled', 'Horizontal', 'Vertical'],
+    //     type: 'customSelect',
+    //     rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
     //     default: 'Horizontal',
     //     subOption: 'changeUpgradeButton.2'
     // },
     visualizerPlace: {
         section: fieldTexts.visualizerPlaceSection,
-        type: 'select',
-        options: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'Navbar', 'Album Cover', 'Background'],
         default: 'Album Cover'
     },
     visualizerStartsFrom: {
-        type: 'select',
-        options: ['Left', 'Center', 'Right', 'Edges'],
+        type: 'customSelect',
+        rawOptions: ['Left', 'Center', 'Right', 'Edges'],
         default: 'Center'
     },
     visualizerColor: {
@@ -205,13 +222,13 @@ export const configFields = {
         default: false
     },
     visualizerFft: {
-        type: 'select',
-        options: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
+        type: 'customSelect',
+        rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
         default: '4096',
     },
     visualizerEnergySaverType: {
-        type: 'select',
-        options: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
         default: 'Disabled'
     },
     visualizerCircleEnabled: {
@@ -224,20 +241,20 @@ export const configFields = {
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerRotate: {
-        type: 'select',
-        options: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
         default: 'Disabled',
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerRotateDirection: {
-        type: 'select',
-        options: ['Clockwise', 'Counter-Clockwise'],
+        type: 'customSelect',
+        rawOptions: ['Clockwise', 'Counter-Clockwise'],
         default: 'Clockwise',
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerMove: {
-        type: 'select',
-        options: ['Inside', 'Outside', 'Both Sides'],
+        type: 'customSelect',
+        rawOptions: ['Inside', 'Outside', 'Both Sides'],
         default: 'Outside',
         subCheckbox: 'visualizerCircleEnabled'
     },
@@ -252,8 +269,8 @@ export const configFields = {
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerImageType: {
-        type: 'select',
-        options: ['Disabled', 'Thumbnail', 'Custom'],
+        type: 'customSelect',
+        rawOptions: ['Disabled', 'Thumbnail', 'Custom'],
         default: 'Thumbnail',
         subCheckbox: 'visualizerCircleEnabled'
     },
@@ -355,10 +372,10 @@ export const configFields = {
         default: 70
     },
     visualizerShakeMultiplier: {
-        type: 'int',
+        type: 'float',
         min: 1,
         max: 100,
-        default: 10
+        default: 7.5
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

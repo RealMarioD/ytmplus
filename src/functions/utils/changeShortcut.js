@@ -29,7 +29,7 @@ export function changeShortcut() {
     function handleKeystrokes(e) {
         if(e.key === 'Escape') return quitShortcut();
 
-        if((e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt') === false) lastPressedKey = e;
+        if((e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt') === false) lastPressedKey = e; // If it's not a modifier key, save it
         else return;
         fancyKey = (e.ctrlKey ? 'CTRL + ' : '') + (e.shiftKey ? 'SHIFT + ' : '') + (e.altKey ? 'ALT + ' : '') + e.key;
         shortcutText.innerText = fancyKey;

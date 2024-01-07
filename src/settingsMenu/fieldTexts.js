@@ -2,15 +2,19 @@ export const fieldTexts = {
     refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
     changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
-    language: { english: 'Language', hungarian: 'Nyelv' },
-    changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret', options: {
-        english: ['Auto', 'Small', 'Normal', 'Large'],
-        hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy']
-    } },
+    language: { english: 'Language', hungarian: 'Nyelv',
+        options: { english: ['English', 'Hungarian'], hungarian: ['Angol', 'Magyar'] }
+    },
+    changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret',
+        options: { english: ['Auto', 'Small', 'Normal', 'Large'], hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy'] }
+    },
     neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
     noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
     fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
+    unlockWidth: { english: 'Unlock Width',
+        options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] }
+    },
     extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
     videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
     removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
@@ -21,17 +25,18 @@ export const fieldTexts = {
     navbarBackgroundGradientEnabled: { english: 'Enable Gradient', hungarian: 'Színátmenet Engedélyezése' },
     navbarBackgroundGradientColor: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
     navbarBackgroundGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-    navbarBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció' },
+    navbarBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció',
+        options: { english: ['Disabled', 'Horizontal', 'Vertical'], hungarian: ['Kikapcsolva', 'Vízszintes', 'Függőleges'] }
+    },
     siteBackgroundChange: { english: 'Change Site Background', hungarian: 'Oldal Háttér megváltoztatása' },
     changeBackgroundSection: { english: 'Background Settings', hungarian: 'Háttér Beállítások' },
     siteBackgroundColor: { english: 'Color', hungarian: 'Szín' },
     siteBackgroundGradientEnabled: { english: 'Enable Gradient', hungarian: 'Színátmenet engedélyezése' },
     siteBackgroundGradientColor: { english: 'Gradient Color', hungarian: 'Átmenet Színe' },
     siteBackgroundGradientAngle: { english: 'Gradient Angle', hungarian: 'Átmenet Irány' },
-    siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció', options: {
-        english: ['Disabled', 'Horizontal', 'Vertical'],
-        hungarian: ['Kikapcsol', 'Vízszintes', 'Függőleges']
-    } },
+    siteBackgroundGradientAnimation: { english: 'Gradient Animation', hungarian: 'Átmenet Animáció',
+        options: { english: ['Disabled', 'Horizontal', 'Vertical'], hungarian: ['Kikapcsolva', 'Vízszintes', 'Függőleges'] }
+    },
     // changeUpgradeButton: { english: 'Change "Upgrade" Button', hungarian: '"Bővítés" Gomb Cserélése' },
     removeUpgradeButton: { english: 'Remove Upgrade Button', hungarian: 'Bővítés Gomb Eltávolítása' },
     // clockSection: { english: 'Upgrade Button', hungarian: 'Bővítés Gomb' },
@@ -40,23 +45,38 @@ export const fieldTexts = {
     clockGradientColor: { english: 'Gradient Color', hungarian: 'Színátmenet' },
     clockGradientAngle: { english: 'Gradient Angle', hungarian: 'Színátmenet Irány' },
     clockGradientAnimation: { english: 'Gradient Animation', hungarian: 'Színtámenet Animáció' },
-    visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye' },
+    visualizerPlace: { english: 'Visualizer Place', hungarian: 'Vizualizáló Helye',
+        options: { english: ['Disabled', 'Navbar', 'Album Cover', 'Background'], hungarian: ['Kikapcsolva', 'Navbar', 'Album Borító', 'Háttér'] }
+    },
     visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
-    visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:' },
-    // visualizerStartsFromOptions: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+    visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:',
+        options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
+    },
     visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
     visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
     visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-    visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>' },
-    visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód' },
+    visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>',
+        options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] }
+    },
+    visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
+        options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
+    },
     visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
     visualizerShakeEnabled: { english: 'Shake Effect' },
-    visualizerRotate: { english: 'Rotation', hungarian: 'Forgás' },
-    visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány' },
-    visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya' },
+    visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
+        options: { english: ['Disabled', 'Enabled', 'Reactive', 'Reactive (Bass)'], hungarian: ['Kikapcsolva', 'Engedélyezve', 'Reaktív', 'Reaktív (Basszus)'] }
+    },
+    visualizerRotateDirection: { english: 'Rotation Direction', hungarian: 'Forgásirány',
+        options: { english: ['Clockwise', 'Counter Clockwise'], hungarian: ['Óramutató Járásával', 'Óramutató Járásával Ellentétesen'] }
+    },
+    visualizerMove: { english: 'Bars Movement Direction', hungarian: 'Sávok Mozgásiránya',
+        options: { english: ['Inside', 'Outside', 'Both'], hungarian: ['Befelé', 'Kifelé', 'Mindkettő'] }
+    },
     visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
     visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
-    visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép' },
+    visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
+        options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }
+    },
     visualizerImageCustomURL: { english: 'Custom Image URL', hungarian: 'Egyéni Kép URL' },
     attention1: { english: 'Changes here can cause glitches!', hungarian: 'Az itteni változtatások hibákat okozhatnak!' },
     attention1Section: { english: 'Advanced Visualizer Settings', hungarian: 'Speciális Vizualizáló Beállítások' },

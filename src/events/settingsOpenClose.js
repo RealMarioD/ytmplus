@@ -10,6 +10,4 @@ export function keydownEvent(ev) {
 
     if(ytmpConfig.isOpen === false) ytmpConfig.open();
     else ytmpConfig.close();
-
-    console.log(ytmpConfig);
 }

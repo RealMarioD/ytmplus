@@ -27,16 +27,17 @@ function drawArcs(backwards) {
     visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
     visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
-    for(let i = visualizer.removedBeginning; i < visualizer.bufferLength; ++i) {
+    let barHeight;
+    for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
         getBarColor(i);
 
-        if(visualizer.bassBounce.enabled === true) visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
-        else visualizer.values.barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * 0.5;
+        if(visualizer.bassBounce.enabled === true) barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
+        else barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * 0.5;
 
-        if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + visualizer.values.barHeight;
+        if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + barHeight;
         else visualizer.values.outerRadius = visualizer.values.radius;
 
-        if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - visualizer.values.barHeight;
+        if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - barHeight;
         else visualizer.values.innerRadius = visualizer.values.radius;
 
         if(visualizer.values.outerRadius < 0) visualizer.values.outerRadius = 0;

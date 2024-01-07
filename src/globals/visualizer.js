@@ -10,7 +10,8 @@ export const visualizer = {
     shake: {
         enabled: undefined,
         threshold: undefined,
-        multiplier: undefined
+        multiplier: undefined,
+        _normalized: undefined
     },
     energySaver: {
         type: undefined,
@@ -73,9 +74,12 @@ export const visualizer = {
     minHertz: undefined,
     maxHertz: undefined,
     removedBeginning: undefined,
+    removedEnding: undefined,
     colorDivergence: undefined,
     analyser: undefined,
     bufferLength: undefined,
     audioData: undefined,
+    audioDataStep: undefined,
+    audioDataLength: undefined,
     resizeInterval: undefined
 };

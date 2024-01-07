@@ -16,6 +16,7 @@ import { createCogFrame } from '../settingsMenu/createCogFrame';
 import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
 import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
 import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
+import { unlockWidth } from '../functions/utils/unlockWidth';
 
 export async function setup() {
     elements.player = await document.getElementById('player');
@@ -38,6 +39,8 @@ export async function setup() {
 
     fixLayout(ytmpConfig.get('fixLayout'));
 
+    unlockWidth(ytmpConfig.get('unlockWidth'));
+
     extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
 
     videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
@@ -48,7 +51,7 @@ export async function setup() {
 
     setupVisualizer();
 
-    // Note: Everything below was timed out because YTM, now whole setup function is timed out for safety lol
+    // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
     // If shit breaks just put back everything below in a timeout
     try {
         const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
