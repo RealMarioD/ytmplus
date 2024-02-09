@@ -7,6 +7,7 @@ export const visualizer = {
     rotate: undefined,
     rotateDirection: undefined,
     move: undefined,
+    renderScale: undefined,
     shake: {
         enabled: undefined,
         threshold: undefined,
@@ -32,6 +33,7 @@ export const visualizer = {
     },
     bassBounce: {
         enabled: undefined,
+        threshold: undefined,
         minHertz: undefined,
         maxHertz: undefined,
         smooth: undefined,
@@ -57,7 +59,8 @@ export const visualizer = {
         barHeight: undefined,
         circleSize: undefined,
         radius: 1,
-        heightModifier: 1,
+        minRadius: 1,
+        maxRadius: 1,
         innerRadius: undefined,
         outerRadius: undefined,
         rotationValue: 0,
@@ -78,6 +81,7 @@ export const visualizer = {
     colorDivergence: undefined,
     analyser: undefined,
     bufferLength: undefined,
+    normalizedAudioData: [],
     audioData: undefined,
     audioDataStep: undefined,
     audioDataLength: undefined,

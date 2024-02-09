@@ -1,10 +1,10 @@
 import fs from 'fs';
 import { announceVersion, lint, metadataBuilder } from './plugins.js';
-// import strip from '@rollup/plugin-strip';
+import strip from '@rollup/plugin-strip';
 import css from 'rollup-plugin-import-css';
 import { string } from 'rollup-plugin-string';
 
-const catcherBlock = fs.readFileSync('./catcher.js', 'utf8').split('undefined');
+const catcherBlock = fs.readFileSync('./rollup/catcher.js', 'utf8').split('undefined');
 
 export default {
     input: 'src/index.js',
@@ -20,10 +20,10 @@ export default {
         string({
             include: 'src/settingsMenu/ui/ytmpTitle.svg',
         }),
-        // strip({
-        //     functions: [ 'console.log', 'console.warn' ]
-        // }),
+        strip({
+            functions: [ 'console.log', 'console.warn' ]
+        }),
         lint(),
-        announceVersion(true)
+        announceVersion(false)
     ]
 };

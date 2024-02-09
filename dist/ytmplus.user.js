@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-beta.3
+// @version      3.0.0-gamma.1
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,12 +15,12 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-beta.3';
+const vNumber = 'v3.0.0-gamma.1';
 try {
     (function() {
         'use strict';
 
-        const settingsMenu = '@media screen and (max-height: 768px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n@media screen and (min-height: 769px) {\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 7.68%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.5em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: calc(100% - 52px);\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 8px;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: 50%;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 12px;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
+        const settingsMenu = '/* Width calculations based on 4:3 aspect ratio */\r\n/* Small screen */\r\n@media screen and (min-height: 0px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n/* Medium screen */\r\n@media screen and (min-height: 768px) and (min-width: 1024px){\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n/* Large screen */\r\n@media screen and (min-height: 1080px) and (min-width: 1440px) {\r\n    #ytmPlusCfg {\r\n        height: 1080px;\r\n        font-size: 24px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 6%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.25em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: 94%;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 0.75em;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: auto;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 0.7em;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n/** don\'t be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    height: 2.5em;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
 
         function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
             const node = document.createElement(type);
@@ -43,13 +43,13 @@ try {
 
         const fieldTexts = {
             refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
-            changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
             utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
+            changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
             language: { english: 'Language', hungarian: 'Nyelv',
-                options: { english: ['English', 'Hungarian'], hungarian: ['Angol', 'Magyar'] }
+                options: { english: ['English', 'Magyar'] }
             },
             changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret',
-                options: { english: ['Auto', 'Small', 'Normal', 'Large'], hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy'] }
+                options: { english: ['Auto', 'Small', 'Medium', 'Large'], hungarian: ['Auto', 'Kicsi', 'Közepes', 'Nagy'] }
             },
             neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
             noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
@@ -132,6 +132,7 @@ try {
             visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
             visualizerMinHertz: { english: 'AudioData Min Hertz' },
             visualizerMaxHertz: { english: 'AudioData Max Hertz' },
+            visualizerBassBounceThreshold: { english: 'Bass Bounce Threshold' },
             visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
             visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
             visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
@@ -201,7 +202,7 @@ try {
             },
             changeWindowSize: {
                 type: 'customSelect',
-                rawOptions: ['auto', 'small', 'normal', 'large'],
+                rawOptions: ['auto', 'small', 'medium', 'large'],
                 default: 'auto'
             },
             neverAfk: {
@@ -380,11 +381,6 @@ try {
                 type: 'checkbox',
                 default: true,
             },
-            visualizerShakeEnabled: {
-                type: 'checkbox',
-                default: true,
-                subCheckbox: 'visualizerCircleEnabled'
-            },
             visualizerRotate: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
@@ -401,6 +397,11 @@ try {
                 type: 'customSelect',
                 rawOptions: ['Inside', 'Outside', 'Both Sides'],
                 default: 'Outside',
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerShakeEnabled: {
+                type: 'checkbox',
+                default: true,
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerBassBounceEnabled: {
@@ -481,6 +482,12 @@ try {
                 min: 1,
                 max: 44100,
                 default: 4000
+            },
+            visualizerBassBounceThreshold: {
+                type: 'float',
+                min: 0,
+                max: 1,
+                default: 0.5
             },
             visualizerBassBounceMinHertz: {
                 type: 'float',
@@ -684,167 +691,6 @@ try {
 
         const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
 
-        const functions = {
-            clock: undefined, // Holds the interval function that updates the digital clock
-            neverAfk: undefined, // Holds the anti-afk interval function
-            noPromotions: undefined, // Holds the no promotions function
-            skipDisliked: undefined, // Holds the skip disliked songs function
-            fixLayout: undefined
-        };
-
-        function noPromotions(turnOn) {
-            clearInterval(functions.noPromotions);
-            if(!turnOn) return;
-            functions.noPromotions = setInterval(() => {
-                const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
-                    popup[0].remove();
-                    console.log('Removed a promotion.');
-                }
-            }, 1000);
-        }
-
-        function neverAfk(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
-            clearInterval(functions.noAfkFunction);
-            if(!turnOn) return;
-            functions.noAfkFunction = setInterval(() => {
-                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('Nudged the page so user is not AFK.');
-            }, 15000);
-        }
-
-        function skipDisliked(turnOn) {
-            const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
-            titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
-            if(!turnOn) return;
-            titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
-        }
-
-        // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
-        function checkDislike() {
-            if(elements.dumbFix === 0) return elements.dumbFix++;
-
-            clearTimeout(functions.skipDislikedFunction);
-            functions.skipDislikedFunction = setTimeout(() => {
-                if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
-            }, 5000);
-            elements.dumbFix = 0;
-        }
-
-        const playerStyle = 'ytmusic-player {\r\n    width: 75%;\r\n}';
-
-        let layoutCss;
-        function fixLayout(turnOn) {
-            if(!turnOn) {
-                clearInterval(elements.fixLayout);
-                elements.player.style.removeProperty('flex');
-                // elements.player.style.removeProperty('width');
-                elements.player.style.removeProperty('margin');
-                elements.playerPageDiv.style.removeProperty('padding');
-                elements.mainPanel.style.removeProperty('align-items');
-                elements.mainPanel.style.removeProperty('justify-content');
-                try {
-                    layoutCss.remove();
-                }
-                catch {}
-                return;
-            }
-
-            functions.fixLayout = setInterval(() => {
-                if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
-            // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
-            // else elements.player.style.width = '75%';
-            }, 1000);
-            elements.player.style.flex = 'unset';
-            elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
-            elements.mainPanel.style.alignItems = 'center';
-            elements.mainPanel.style.justifyContent = 'center';
-            layoutCss = injectStyle(playerStyle);
-        }
-
-        function extraPlaybackButtons(turnOn) {
-            const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
-            const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
-            if(!turnOn) {
-                playbackButtons[1].hidden = true;
-                playbackButtons[4].hidden = true;
-                playbackRateButton.hidden = true;
-            }
-            else {
-                playbackButtons[1].hidden = false;
-                playbackButtons[4].hidden = false;
-                playbackRateButton.hidden = false;
-            }
-        }
-
-        function siteBackgroundChange(turnOn, firstRun) {
-            if(turnOn === false) {
-                if(document.body.style.backgroundImage !== '') {
-                    document.body.style.backgroundColor = '#000000';
-                    document.body.style.backgroundImage = '';
-                    elements.playerPage.style.background = '';
-                }
-                return;
-            }
-            try {
-                if(firstRun === true) document.getElementsByTagName('ytmusic-browse-response')[0].children[0].remove();
-            }
-            catch {}
-            try {
-                document.getElementsByClassName('immersive-background style-scope ytmusic-browse-response')[0].children[0].remove();
-            }
-            catch {}
-            document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
-            const animation = ytmpConfig.get('siteBackgroundGradientAnimation');
-            animateBackground(document.body.style, true, animation);
-            animateBackground(elements.playerPage.style, false, animation);
-        }
-
-        function animateBackground(elementStyle, overflowOn, animation) {
-            elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('siteBackgroundGradientAngle')}deg, ${ytmpConfig.get('siteBackgroundColor')}, ${ytmpConfig.get('siteBackgroundGradientEnabled') === true ? ytmpConfig.get('siteBackgroundGradientColor') : ytmpConfig.get('siteBackgroundColor')})`;
-            elementStyle.backgroundAttachment = 'fixed';
-
-            if(animation !== 'Disabled') {
-                elementStyle.backgroundSize = '200% 200%';
-                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
-            }
-            else {
-                elementStyle.backgroundSize = '100% 100%';
-                elementStyle.animation = '';
-                elementStyle.backgroundPosition = 'center center';
-            }
-
-        // if(overflowOn === false) elementStyle.overflow = 'hidden';
-        }
-
-        async function removeAlbumCover(turnOn) {
-            elements.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
-            const songImage = document.getElementById('song-image');
-            const songMediaControls = await elements.player.children[elements.player.children.length - 2];
-
-            if(!turnOn) {
-                songImage.style.opacity = 1;
-                songMediaControls.style.removeProperty('background');
-            }
-            else {
-                songImage.style.opacity = 0.001;
-                songMediaControls.style.background = '#0000';
-            }
-        }
-
-        async function swapMainPanelWithPlaylist(turnOn) {
-            if(turnOn) {
-                if(elements.mainPanel.parentNode.lastElementChild.id === elements.mainPanel.id) return;
-                await elements.mainPanel.parentNode.append(elements.mainPanel);
-                elements.playlist.style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
-            }
-            else {
-                if(elements.mainPanel.parentNode.firstElementChild.id === elements.mainPanel.id) return;
-                await elements.mainPanel.parentNode.prepend(elements.mainPanel);
-                elements.playlist.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
-            }
-        }
-
         const visualizer = {
             place: undefined,
             startsFrom: undefined,
@@ -854,6 +700,7 @@ try {
             rotate: undefined,
             rotateDirection: undefined,
             move: undefined,
+            renderScale: undefined,
             shake: {
                 enabled: undefined,
                 threshold: undefined,
@@ -879,6 +726,7 @@ try {
             },
             bassBounce: {
                 enabled: undefined,
+                threshold: undefined,
                 minHertz: undefined,
                 maxHertz: undefined,
                 smooth: undefined,
@@ -904,7 +752,8 @@ try {
                 barHeight: undefined,
                 circleSize: undefined,
                 radius: 1,
-                heightModifier: 1,
+                minRadius: 1,
+                maxRadius: 1,
                 innerRadius: undefined,
                 outerRadius: undefined,
                 rotationValue: 0,
@@ -925,6 +774,7 @@ try {
             colorDivergence: undefined,
             analyser: undefined,
             bufferLength: undefined,
+            normalizedAudioData: [],
             audioData: undefined,
             audioDataStep: undefined,
             audioDataLength: undefined,
@@ -1137,8 +987,6 @@ try {
                 if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
                 else getFMT(60);
 
-                visualizer.shake._normalized = (100 - visualizer.shake.threshold);
-
                 clearInterval(visualizer.resizeInterval);
                 if(visualizer.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
                 return; // So we don't check anything beyond bassBounce
@@ -1162,29 +1010,17 @@ try {
         }
 
         function visualizerResizeFix() {
-            const renderScale = ytmpConfig.get('visualizerRenderScale');
+            let currentCanvasHolder;
             switch(visualizer.canvas.id) {
-                case visualizer.canvases.navbar.id: {
-                    if(visualizer.canvas.width !== elements.navBarBg.offsetWidth * renderScale) visualizer.canvas.width = elements.navBarBg.offsetWidth * renderScale;
-                    if(visualizer.canvas.height !== elements.navBarBg.offsetHeight * renderScale) visualizer.canvas.height = elements.navBarBg.offsetHeight * renderScale;
-                    break;
-                }
-                case visualizer.canvases.albumCover.id: {
-                    if(visualizer.canvas.width !== elements.player.offsetWidth * renderScale) visualizer.canvas.width = elements.player.offsetWidth * renderScale;
-                    if(visualizer.canvas.height !== elements.player.offsetHeight * renderScale) visualizer.canvas.height = elements.player.offsetHeight * renderScale;
-                    break;
-                }
-                case visualizer.canvases.playerBackground.id: {
-                    if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth * renderScale;
-                    if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight * renderScale;
-                    break;
-                }
-                case visualizer.canvases.background.id: {
-                    if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.background.offsetWidth * renderScale;
-                    if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.background.offsetHeight * renderScale;
-                    break;
-                }
+                case visualizer.canvases.navbar.id: currentCanvasHolder = elements.navBarBg; break;
+                case visualizer.canvases.albumCover.id: currentCanvasHolder = elements.player; break;
+                case visualizer.canvases.playerBackground.id: currentCanvasHolder = visualizer.canvases.playerBackground; break;
+                case visualizer.canvases.background.id: currentCanvasHolder = visualizer.canvases.background; break;
+                default: throw new Error('visualizer.canvas.id is not valid!');
             }
+
+            if(visualizer.canvas.width !== currentCanvasHolder.offsetWidth * visualizer.renderScale) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
+            if(visualizer.canvas.height !== currentCanvasHolder.offsetHeight * visualizer.renderScale) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
 
             if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
             else elements.playlist.style.opacity = '';
@@ -1199,11 +1035,14 @@ try {
             // elements.player.style.margin = 'auto 0px';
 
             if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
-                if(visualizer.bassBounce.enabled === false) {
-                    visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
-                    visualizer.values.heightModifier = (visualizer.values.HEIGHT - visualizer.values.radius) / 2 / 255;
+                if(visualizer.bassBounce.enabled === true) {
+                    visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 5);
+                    visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
                 }
-                else visualizer.values.heightModifier = (visualizer.values.HEIGHT - ~~(visualizer.values.HEIGHT / 8)) / 2 / 255;
+                else {
+                    visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
+                    visualizer.values.maxRadius = visualizer.values.radius;
+                }
 
                 visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
                 visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
@@ -1237,15 +1076,19 @@ try {
         }
 
         function calculateBass() {
-            visualizer.values.bass = visualizer.audioData.slice(
-                visualizer.bassBounce._barStart,
-                visualizer.bassBounce._barEnd
-            );
+            visualizer.values.bass = visualizer.normalizedAudioData.slice(visualizer.bassBounce._barStart, visualizer.bassBounce._barEnd);
 
-            if(visualizer.bassBounce.smooth === true) visualizer.values.bassSmoothRadius = ~~((visualizer.values.bassSmoothRadius + (averageOfArray(visualizer.values.bass) / 2)) / 2);
-            else visualizer.values.bassSmoothRadius = ~~(averageOfArray(visualizer.values.bass) / 2);
+            const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-            if(visualizer.bassBounce.enabled === true) visualizer.values.radius = ~~(visualizer.values.HEIGHT / 8) + visualizer.values.bassSmoothRadius * visualizer.values.heightModifier * 1.25;
+            visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
+
+            const maxBassValue = 1 - visualizer.bassBounce.threshold;
+
+            if(visualizer.bassBounce.enabled === true) {
+                if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
+
+                visualizer.values.radius = (visualizer.values.radius + (visualizer.values.minRadius + (visualizer.values.bassSmoothRadius - visualizer.bassBounce.threshold) / maxBassValue * maxAddedRadius)) / 2;
+            }
         }
 
         function getRotationValue() {
@@ -1260,6 +1103,7 @@ try {
         }
 
         function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
+            if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold / 100) preShake();
             if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
             else visualizer.values.circleSize = 1; // 1(pi) = half;
 
@@ -1269,27 +1113,25 @@ try {
 
             if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-            visualizer.values.reactiveBarHeightMultiplier = 0.3 + visualizer.values.bassSmoothRadius / 512; // 0.3 . . 0.55
+            const maxBarHeight = (visualizer.values.HEIGHT / 2) - (visualizer.values.maxRadius);
 
-            if(visualizer.startsFrom === 'Right') drawArcs(false);
-            else if(visualizer.startsFrom === 'Left') drawArcs(true);
+            if(visualizer.startsFrom === 'Right') drawArcs(false, maxBarHeight);
+            else if(visualizer.startsFrom === 'Left') drawArcs(true, maxBarHeight);
             else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
-                drawArcs(false);
-                drawArcs(true);
+                drawArcs(false, maxBarHeight);
+                drawArcs(true, maxBarHeight);
             }
+            if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold / 100) postShake();
         }
 
-        function drawArcs(backwards) {
+        function drawArcs(backwards, maxBarHeight) {
             visualizer.ctx.save();
             visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
             visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
-            let barHeight;
             for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
                 getBarColor(i);
-
-                if(visualizer.bassBounce.enabled === true) barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * visualizer.values.reactiveBarHeightMultiplier;
-                else barHeight = visualizer.audioData[i] * visualizer.values.heightModifier * 0.5;
+                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
 
                 if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + barHeight;
                 else visualizer.values.outerRadius = visualizer.values.radius;
@@ -1310,13 +1152,27 @@ try {
             visualizer.ctx.restore();
         }
 
+        function preShake() {
+            visualizer.ctx.save();
+            const floatingThreshold = visualizer.shake.threshold / 100;
+            const whatever = 1 - floatingThreshold;
+            const dx = (visualizer.values.bassSmoothRadius - floatingThreshold) / whatever * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
+            const dy = (visualizer.values.bassSmoothRadius - floatingThreshold) / whatever * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
+            console.log(`dx: ${dx}, dy: ${dy}`);
+            visualizer.ctx.translate(dx, dy);
+        }
+
+        function postShake() {
+            visualizer.ctx.restore();
+        }
+
         function visualizerNavbar() {
             let xPosOffset;
             if(visualizer.startsFrom === 'Center') xPosOffset = visualizer.values.barWidth + visualizer.values.barSpace / 2; // Centers 1 bar
             else if(visualizer.startsFrom === 'Edges') xPosOffset = visualizer.values.barSpace / 2; // Both sides are offset a bit for perfect centering
             else xPosOffset = 0;
 
-            const maxBarHeight = (visualizer.values.HEIGHT / 255);
+            const maxBarHeight = visualizer.values.HEIGHT;
 
             firstDraw(maxBarHeight, xPosOffset);
 
@@ -1332,7 +1188,7 @@ try {
 
         function firstDraw(maxBarHeight, xPosOffset) {
             for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-                const barHeight = visualizer.audioData[i] * maxBarHeight;
+                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
 
                 getBarColor(i);
 
@@ -1377,7 +1233,7 @@ try {
 
         function secondDraw(maxBarHeight, xPosOffset) {
             for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-                const barHeight = visualizer.audioData[i] * maxBarHeight;
+                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
 
                 getBarColor(i);
 
@@ -1408,7 +1264,7 @@ try {
         // NEVER REMOVE TIME const FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
         function renderFrame(time) {
         // If player is in fullscreen, hide playlist, TODO: put it in a mutation observer
-            if(elements.player.playerUiState !== 'FULLSCREEN' && elements.playlist.style !== 'visible') elements.playlist.style = 'visible'; // .removeProperty('visibility');
+            if(elements.player.playerUiState !== 'FULLSCREEN' && elements.playlist.style.visibility !== 'visible') elements.playlist.style.visibility = 'visible'; // .removeProperty('visibility');
             else if(elements.player.playerUiState === 'FULLSCREEN' && elements.playlist.style.visibility !== 'hidden') elements.playlist.style.visibility = 'hidden';
 
             // Don't do anything if True Pause energy saver is on and playback is paused
@@ -1426,6 +1282,9 @@ try {
 
             // Get audio data
             visualizer.analyser.getByteFrequencyData(visualizer.audioData);
+
+            // Normalize audio data to 0 - 1
+            for(let i = 0; i < visualizer.audioData.length; i++) visualizer.normalizedAudioData[i] = visualizer.audioData[i] / 255;
 
             // Cheap color cycle effect, speed scales with fps so probably not the best
             if(visualizer.rgb.enabled === true) {
@@ -1466,28 +1325,10 @@ try {
                 }
             }
 
-            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
-                if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold) {
-                    preShake();
-                    visualizerCircle();
-                    postShake();
-                }
-                else visualizerCircle(visualizer.ctx);
-            }
+            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
             else visualizerNavbar(visualizer.ctx);
 
             requestAnimationFrame(renderFrame);
-        }
-
-        function preShake() {
-            visualizer.ctx.save();
-            const dx = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
-            const dy = (visualizer.values.bassSmoothRadius - visualizer.shake.threshold) / visualizer.shake._normalized * visualizer.values.heightModifier * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
-            visualizer.ctx.translate(dx, dy);
-        }
-
-        function postShake() {
-            visualizer.ctx.restore();
         }
 
         async function setupVisualizer() {
@@ -1580,6 +1421,80 @@ try {
             logoObserver.observe(navbarLogo, { attributes: true });
         }
 
+        function changeWindowSize(option) {
+            if(option === 'small') {
+                ytmpConfig.frame.style.height = '512px';
+                ytmpConfig.frame.style.fontSize = '12px';
+            }
+            else if(option === 'medium') {
+                ytmpConfig.frame.style.height = '768px';
+                ytmpConfig.frame.style.fontSize = '18px';
+            }
+            else if(option === 'large') {
+                ytmpConfig.frame.style.height = '1080px';
+                ytmpConfig.frame.style.fontSize = '24px';
+            }
+            else {
+                ytmpConfig.frame.style.removeProperty('height');
+                ytmpConfig.frame.style.removeProperty('font-size');
+            }
+        }
+
+        function extraPlaybackButtons(turnOn) {
+            const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
+            const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
+            if(!turnOn) {
+                playbackButtons[1].hidden = true;
+                playbackButtons[4].hidden = true;
+                playbackRateButton.hidden = true;
+            }
+            else {
+                playbackButtons[1].hidden = false;
+                playbackButtons[4].hidden = false;
+                playbackRateButton.hidden = false;
+            }
+        }
+
+        const functions = {
+            clock: undefined, // Holds the interval function that updates the digital clock
+            neverAfk: undefined, // Holds the anti-afk interval function
+            noPromotions: undefined, // Holds the no promotions function
+            skipDisliked: undefined, // Holds the skip disliked songs function
+            fixLayout: undefined
+        };
+
+        const layoutOverrides = 'ytmusic-player {\r\n    width: 75%;\r\n}\r\n\r\nytmusic-tab-renderer {\r\n    flex: unset;\r\n    height: 1561px;\r\n}\r\n\r\ntp-yt-paper-tabs {\r\n    flex: none;\r\n}';
+
+        let layoutCss;
+        function fixLayout(turnOn) {
+            if(!turnOn) {
+                clearInterval(functions.fixLayout);
+                elements.player.style.removeProperty('flex');
+                // elements.player.style.removeProperty('width');
+                elements.player.style.removeProperty('margin');
+                elements.playerPageDiv.style.removeProperty('padding');
+                elements.mainPanel.style.removeProperty('align-items');
+                elements.mainPanel.style.removeProperty('justify-content');
+                try {
+                    layoutCss.remove();
+                }
+                catch {}
+                return;
+            }
+
+            functions.fixLayout = setInterval(() => {
+                if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
+            // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
+            // else elements.player.style.width = '75%';
+            }, 1000);
+            elements.player.style.flex = 'unset';
+            elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
+            elements.mainPanel.style.alignItems = 'center';
+            elements.mainPanel.style.justifyContent = 'center';
+            elements.playlist.style.justifyContent = 'center';
+            layoutCss = injectStyle(layoutOverrides);
+        }
+
         function navbarBackgroundChange(turnOn) {
             if(!turnOn) return elements.navBarBg.style.removeProperty('background-image');
 
@@ -1606,31 +1521,39 @@ try {
         // if(overflowOn === false) elementStyle.overflow = 'hidden';
         }
 
-        let clone;
-        function videoSongSwitcher(turnOn) {
-            const avSwitch = document.getElementById('av-id');
-            if(!turnOn) {
-                elements.player.removeAttribute('has-av-switcher');
-                elements.playerPage.removeAttribute('has-av-switcher');
-                avSwitch.style.display = 'none';
-                if(clone) clone.style.display = 'none';
-                return;
-            }
-            elements.player.setAttribute('has-av-switcher');
-            elements.playerPage.setAttribute('has-av-switcher');
-            avSwitch.style.display = 'none';
-            if(clone) return clone.style.display = 'block';
+        function neverAfk(turnOn) { // Credit to q1k - https://greasyfork.org/en/users/1262-q1k
+            clearInterval(functions.noAfkFunction);
+            if(!turnOn) return;
+            functions.noAfkFunction = setInterval(() => {
+                document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                console.log('Nudged the page so user is not AFK.');
+            }, 15000);
+        }
 
-            try {
-                if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
-                const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
-                navbar.children[1].style.justifyContent = 'space-around';
-                clone = avSwitch.cloneNode(true);
-                navbar.children[1].append(clone);
-                clone.style.display = 'block';
+        function noPromotions(turnOn) {
+            clearInterval(functions.noPromotions);
+            if(!turnOn) return;
+            functions.noPromotions = setInterval(() => {
+                const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
+                if(popup.length > 0) {
+                    popup[0].remove();
+                    console.log('Removed a promotion.');
+                }
+            }, 1000);
+        }
+
+        async function removeAlbumCover(turnOn) {
+            elements.player.style.backgroundColor = '#00000001'; // minimal visibility required so shit doesn't break, don't ask
+            const songImage = document.getElementById('song-image');
+            const songMediaControls = await elements.player.children[elements.player.children.length - 2];
+
+            if(!turnOn) {
+                songImage.style.opacity = 1;
+                songMediaControls.style.removeProperty('background');
             }
-            catch (err) {
-                console.error(err);
+            else {
+                songImage.style.opacity = 0.001;
+                songMediaControls.style.background = '#0000';
             }
         }
 
@@ -1697,6 +1620,76 @@ try {
         //     buttonStyle.fontSize = '20px';
         // }
 
+        function siteBackgroundChange(turnOn) {
+            if(turnOn === false) {
+                if(document.body.style.backgroundImage !== '') {
+                    document.body.style.backgroundColor = '#000000';
+                    document.body.style.backgroundImage = '';
+                    elements.playerPage.style.background = '';
+                }
+                return;
+            }
+
+            document.getElementsByClassName('background-gradient style-scope ytmusic-browse-response')[0].style.backgroundImage = 'none';
+            const animation = ytmpConfig.get('siteBackgroundGradientAnimation');
+            animateBackground(document.body.style, true, animation);
+            animateBackground(elements.playerPage.style, false, animation);
+
+            const browsePages = document.getElementsByTagName('ytmusic-browse-response');
+            if(browsePages.length === 0) return console.error('BackgroundError: No browsePage');
+            if(browsePages[0].children.length === 0) return console.error('BackgroundError: No browsePage children');
+            const maybeBackground = browsePages[0].children[0];
+            if(maybeBackground.id === 'background') maybeBackground.remove();
+        }
+
+        function animateBackground(elementStyle, overflowOn, animation) {
+            elementStyle.backgroundImage = `linear-gradient(${ytmpConfig.get('siteBackgroundGradientAngle')}deg, ${ytmpConfig.get('siteBackgroundColor')}, ${ytmpConfig.get('siteBackgroundGradientEnabled') === true ? ytmpConfig.get('siteBackgroundGradientColor') : ytmpConfig.get('siteBackgroundColor')})`;
+            elementStyle.backgroundAttachment = 'fixed';
+
+            if(animation !== 'Disabled') {
+                elementStyle.backgroundSize = '200% 200%';
+                elementStyle.animation = `backgroundGradient${animation} 5s linear infinite alternate`;
+            }
+            else {
+                elementStyle.backgroundSize = '100% 100%';
+                elementStyle.animation = '';
+                elementStyle.backgroundPosition = 'center center';
+            }
+
+        // if(overflowOn === false) elementStyle.overflow = 'hidden';
+        }
+
+        function skipDisliked(turnOn) {
+            const titleHolder = document.getElementsByClassName('title style-scope ytmusic-player-bar')[0];
+            titleHolder.removeEventListener('DOMSubtreeModified', checkDislike, false);
+            if(!turnOn) return;
+            titleHolder.addEventListener('DOMSubtreeModified', checkDislike, false);
+        }
+
+        // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
+        function checkDislike() {
+            if(elements.dumbFix === 0) return elements.dumbFix++;
+
+            clearTimeout(functions.skipDislikedFunction);
+            functions.skipDislikedFunction = setTimeout(() => {
+                if(document.getElementById('like-button-renderer').children[0].ariaPressed == 'true') document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
+            }, 5000);
+            elements.dumbFix = 0;
+        }
+
+        async function swapMainPanelWithPlaylist(turnOn) {
+            if(turnOn) {
+                if(elements.mainPanel.parentNode.lastElementChild.id === elements.mainPanel.id) return;
+                await elements.mainPanel.parentNode.append(elements.mainPanel);
+                elements.playlist.style.margin = '0 var(--ytmusic-player-page-content-gap) 0 0';
+            }
+            else {
+                if(elements.mainPanel.parentNode.firstElementChild.id === elements.mainPanel.id) return;
+                await elements.mainPanel.parentNode.prepend(elements.mainPanel);
+                elements.playlist.style.margin = '0 0 0 var(--ytmusic-player-page-content-gap)';
+            }
+        }
+
         function unlockWidth(option) {
             if(option === 'Playlist') {
                 elements.playlist.style.maxWidth = 'unset';
@@ -1716,58 +1709,94 @@ try {
             }
         }
 
-        async function setup() {
-            elements.player = await document.getElementById('player');
-            elements.playerPage = await document.getElementById('player-page');
-            elements.playerPageDiv = elements.playerPage.firstElementChild;
-            elements.navBarBg = await document.getElementById('nav-bar-background');
-            elements.mainPanel = await document.getElementById('main-panel');
-            const playlistFinder = await document.getElementsByClassName('side-panel modular style-scope ytmusic-player-page');
-            elements.playlist = playlistFinder[0];
+        let clone;
+        function videoSongSwitcher(turnOn) {
+            const avSwitch = document.getElementById('av-id');
+            if(!turnOn) {
+                elements.player.removeAttribute('has-av-switcher');
+                elements.playerPage.removeAttribute('has-av-switcher');
+                avSwitch.style.display = 'none';
+                if(clone) clone.style.display = 'none';
+                return;
+            }
+            elements.player.setAttribute('has-av-switcher', true);
+            elements.playerPage.setAttribute('has-av-switcher', true);
+            avSwitch.style.display = 'none';
+            if(clone) return clone.style.display = 'block';
 
-            // Injecting animations for background and clock gradients
-            injectStyle(keyframes);
-
-            // Running each function
-            neverAfk(ytmpConfig.get('neverAfk'));
-
-            noPromotions(ytmpConfig.get('noPromotions'));
-
-            skipDisliked(ytmpConfig.get('skipDisliked'));
-
-            fixLayout(ytmpConfig.get('fixLayout'));
-
-            unlockWidth(ytmpConfig.get('unlockWidth'));
-
-            extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
-
-            videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
-
-            navbarBackgroundChange(ytmpConfig.get('navbarBackgroundChange'));
-
-            siteBackgroundChange(ytmpConfig.get('siteBackgroundChange'), true);
-
-            setupVisualizer();
-
-            // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
-            // If shit breaks just put back everything below in a timeout
             try {
-                const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
-                elements.bigGuide = guides[0].children[2];
-                elements.miniGuide = guides[2].children[2];
+                if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
+                const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
+                navbar.children[1].style.justifyContent = 'space-around';
+                clone = avSwitch.cloneNode(true);
+                navbar.children[1].append(clone);
+                clone.style.display = 'block';
             }
-            catch {
-                if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+            catch (err) {
+                console.error(err);
             }
+        }
 
-            // Adds a settings button on the navbar
-            createCogFrame();
+        // Collection of functions that are called windowLoad or onSave
+        const toCallOnEvents = {
+            changeWindowSize,
+            extraPlaybackButtons,
+            fixLayout,
+            navbarBackgroundChange,
+            neverAfk,
+            noPromotions,
+            removeAlbumCover,
+            removeUpgradeButton,
+            siteBackgroundChange,
+            skipDisliked,
+            swapMainPanelWithPlaylist,
+            unlockWidth,
+            videoSongSwitcher
+        };
 
-            removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
+        async function setup() {
+            console.log('ytmPlus: Setup started.');
+            try {
+                elements.player = await document.getElementById('player');
+                elements.playerPage = await document.getElementById('player-page');
+                elements.playerPageDiv = elements.playerPage.firstElementChild;
+                elements.navBarBg = await document.getElementById('nav-bar-background');
+                elements.mainPanel = await document.getElementById('main-panel');
+                const playlistFinder = await document.getElementsByClassName('side-panel style-scope ytmusic-player-page');
+                elements.playlist = playlistFinder[0];
 
-            swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
+                // Injecting animations for background and clock gradients
+                injectStyle(keyframes);
 
-            removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
+                setupVisualizer();
+
+                // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
+                // If shit breaks just put back everything below in a timeout
+                try {
+                    const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
+                    elements.bigGuide = guides[0].children[2];
+                    elements.miniGuide = guides[2].children[2];
+                }
+                catch {
+                    if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+                }
+
+                // Adds a settings button on the navbar
+                createCogFrame();
+
+                // Iterate through toCallOnEvents
+                for(const fn in toCallOnEvents) {
+                    try {
+                        toCallOnEvents[fn](ytmpConfig.get(fn));
+                    }
+                    catch (error) {
+                        console.error(error);
+                    }
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
         }
 
         function changeShortcut() {
@@ -1946,41 +1975,6 @@ try {
             }
         }
 
-        async function createTitlebar(wrapper, frame) {
-        // Creating titlebar
-            const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
-            const closeButton = await injectElement('input', 'titlebar_x', titlebar, 'titlebarButtons');
-            closeButton.type = 'button';
-            closeButton.value = 'X';
-            closeButton.addEventListener('click', () => {
-                ytmpConfig.close();
-                ytmpConfig.shrunk = false;
-            });
-
-            // Support button
-            const kofi = await injectElement('div', 'supportMePls', titlebar, 'titlebarButtons');
-            const kofiA = await injectElement('a', 'goToKofi', kofi);
-            kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
-            kofiA.href = 'https://ko-fi.com/realmariod';
-            kofiA.title = 'Buy me a Coffee!';
-            kofiA.target = '_blank';
-
-            // Hide categories button
-            const hideCategoriesBtn = await injectElement('input', 'hideCategories', titlebar, 'titlebarButtons');
-            hideCategoriesBtn.type = 'button';
-            hideCategoriesBtn.value = '>>';
-            hideCategoriesBtn.addEventListener('click', () => expandDong(frame, hideCategoriesBtn));
-
-            // Adding draggable part to titlebar now so that you can actually click X and support
-            const draggablePart = await injectElement('div', 'titlebar_draggable', titlebar);
-            const titlebarIcon = await injectElement('img', 'titlebar_icon', draggablePart);
-            titlebarIcon.src = 'https://i.imgur.com/gfg6VLJ.png';
-            const titlebarTitle = await injectElement('span', 'titlebar_title', draggablePart);
-            // eslint-disable-next-line no-undef
-            titlebarTitle.innerHTML = `ytmPlus ${vNumber}`;
-            dragElement(draggablePart, frame);
-        }
-
         function dragElement(elmnt, frame) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             elmnt.addEventListener('mousedown', dragMouseDown);
@@ -2015,18 +2009,23 @@ try {
                 document.removeEventListener('mouseup', closeDragElement);
                 document.removeEventListener('mousemove', elementDrag);
                 frame.style.transition = '0.1s';
-                fixPlacemenet(frame);
+                fixPlacement(frame);
             }
         }
 
-        function fixPlacemenet(frame) {
+        function fixPlacement(frame) {
+        // If frame is out of bounds, move it back in
             if(frame.offsetTop < 0) frame.style.top = '0px';
-            if(frame.offsetTop + frame.clientHeight > window.innerHeight) frame.style.top = window.innerHeight - frame.clientHeight + 'px';
             if(frame.offsetLeft < 0) frame.style.left = '0px';
-            if(frame.offsetLeft + frame.clientWidth > window.innerWidth) frame.style.left = window.innerWidth - frame.clientWidth + 'px';
+            if(frame.offsetTop > window.innerHeight - frame.offsetHeight) frame.style.top = (window.innerHeight - frame.offsetHeight) + 'px';
+            if(frame.offsetLeft > window.innerWidth - frame.offsetWidth) frame.style.left = (window.innerWidth - frame.offsetWidth) + 'px';
+
+            // If frame is too big to fit on the screen, move it to the top left corner
+            if(frame.offsetHeight > window.innerHeight) frame.style.top = '0px';
+            if(frame.offsetWidth > window.innerWidth) frame.style.left = '0px';
         }
 
-        function expandDong(frame, hideCategoriesBtn) {
+        function expandOrShrink(frame, hideCategoriesBtn) {
             if(!ytmpConfig.shrunk) hideThem(frame, hideCategoriesBtn);
             else showThem(frame, hideCategoriesBtn);
         }
@@ -2047,7 +2046,42 @@ try {
             frame.style.aspectRatio = '4 / 3';
             ytmpConfig.shrunk = false;
             hideCategoriesBtn.value = '>>';
-            setTimeout(() => fixPlacemenet(frame), 110); // we need to wait for transition to finish which is 100ms plud leeway
+            setTimeout(() => fixPlacement(frame), 110); // we need to wait for transition to finish which is 100ms plud leeway
+        }
+
+        async function createTitlebar(wrapper, frame) {
+        // Creating titlebar
+            const titlebar = await injectElement('div', 'ytmPlusCfg_titlebar', wrapper, undefined, undefined, true);
+            const closeButton = await injectElement('input', 'titlebar_x', titlebar, 'titlebarButtons');
+            closeButton.type = 'button';
+            closeButton.value = '✕';
+            closeButton.addEventListener('click', () => {
+                ytmpConfig.close();
+                ytmpConfig.shrunk = false;
+            });
+
+            // Support button
+            const kofi = await injectElement('div', 'supportMePls', titlebar, 'titlebarButtons');
+            const kofiA = await injectElement('a', 'goToKofi', kofi);
+            kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
+            kofiA.href = 'https://ko-fi.com/realmariod';
+            kofiA.title = 'Buy me a Coffee!';
+            kofiA.target = '_blank';
+
+            // Hide categories button
+            const hideCategoriesBtn = await injectElement('input', 'hideCategories', titlebar, 'titlebarButtons');
+            hideCategoriesBtn.type = 'button';
+            hideCategoriesBtn.value = '>>';
+            hideCategoriesBtn.addEventListener('click', () => expandOrShrink(frame, hideCategoriesBtn));
+
+            // Adding draggable part to titlebar now so that you can actually click X and support
+            const draggablePart = await injectElement('div', 'titlebar_draggable', titlebar);
+            const titlebarIcon = await injectElement('img', 'titlebar_icon', draggablePart);
+            titlebarIcon.src = 'https://i.imgur.com/gfg6VLJ.png';
+            const titlebarTitle = await injectElement('span', 'titlebar_title', draggablePart);
+            // eslint-disable-next-line no-undef
+            titlebarTitle.innerHTML = `ytmPlus ${vNumber}`;
+            dragElement(draggablePart, frame);
         }
 
         const headerSVG = '<svg id="header_svg">\r\n    <g style="overflow:hidden; text-anchor: middle;">\r\n        <defs>\r\n            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">\r\n                <feGaussianBlur stdDeviation="5" result="glow"/>\r\n                <feMerge>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                <feMergeNode in="glow"/>\r\n                </feMerge>\r\n            </filter>\r\n        </defs>\r\n        <text x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text>\r\n        <a href="https://github.com/RealMarioD/ytmplus" target="_blank"><text style="filter: url(#glow);" x="50%" y="50%" dy=".35em" text-anchor="middle">YTMPlus</text></a>\r\n    </g>\r\n</svg>';
@@ -2117,9 +2151,13 @@ try {
 
             setupAutosave();
 
+            // gmconfig probably does frame.style = {} onOpen or some other fuckery, so we say fuck you and reapply
+            changeWindowSize(ytmpConfig.get('changeWindowSize'));
+            // surely there is a better way to do this, but this is seems better than the better way, i better be right xdx im so funny
+
             setTimeout(() => {
                 ytmpConfig.frame.style.transition = '0.1s';
-                fixPlacemenet(frame);
+                fixPlacement(frame);
             }, 100);
         }
 
@@ -2129,29 +2167,7 @@ try {
 
         function saveEvent() {
         // Updates updateable stuff on save
-            navbarBackgroundChange(ytmpConfig.get('navbarBackgroundChange'));
-
-            siteBackgroundChange(ytmpConfig.get('siteBackgroundChange'));
-
-            removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
-
-            neverAfk(ytmpConfig.get('neverAfk'));
-
-            noPromotions(ytmpConfig.get('noPromotions'));
-
-            skipDisliked(ytmpConfig.get('skipDisliked'));
-
-            extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
-
-            fixLayout(ytmpConfig.get('fixLayout'));
-
-            unlockWidth(ytmpConfig.get('unlockWidth'));
-
-            videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
-
-            removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
-
-            swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
+            for(const fn in toCallOnEvents) toCallOnEvents[fn](ytmpConfig.get(fn));
 
             startVisualizer();
 
@@ -2161,21 +2177,8 @@ try {
         ytmpConfig.onOpen = openEvent;
         ytmpConfig.onSave = saveEvent;
         ytmpConfig.onClose = closeEvent;
-        configFields.changeShortcut.click = changeShortcut;
 
-        /* // We don't need this anymore
-    ytmpConfig.getRawValue = function(settingName) {
-        const field = ytmpConfig.fields[settingName];
-        if(!field) throw new Error(`No field called ${settingName}`);
-        if(!field.settings.rawOptions) throw new Error(`Field ${settingName} is not select input or does not have rawOptions`);
-        if(!field.settings.options) throw new Error(`Field ${settingName} does not even have English options, this is not supposed to happen`);
-        const index = field.settings.options.indexOf(field.value);
-        if(!index) throw new Error(`Options of ${settingName} does NOT have selected value (${field.value}), [${field.settings.options.toString()}]`);
-        const rawValue = field.settings.rawOptions[index];
-        if(!rawValue) throw new Error('Fucking fucked');
-        return rawValue;
-    };
-    */
+        configFields.changeShortcut.click = changeShortcut;
 
         window.addEventListener('keydown', keydownEvent);
 

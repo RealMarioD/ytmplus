@@ -1,0 +1,12 @@
+ytmusic-player {
+    width: 75%;
+}
+
+ytmusic-tab-renderer {
+    flex: unset;
+    height: 1561px;
+}
+
+tp-yt-paper-tabs {
+    flex: none;
+}

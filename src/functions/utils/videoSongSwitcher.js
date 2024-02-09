@@ -10,8 +10,8 @@ export function videoSongSwitcher(turnOn) {
         if(clone) clone.style.display = 'none';
         return;
     }
-    elements.player.setAttribute('has-av-switcher');
-    elements.playerPage.setAttribute('has-av-switcher');
+    elements.player.setAttribute('has-av-switcher', true);
+    elements.playerPage.setAttribute('has-av-switcher', true);
     avSwitch.style.display = 'none';
     if(clone) return clone.style.display = 'block';
 

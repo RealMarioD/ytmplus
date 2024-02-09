@@ -9,7 +9,7 @@ export function skipDisliked(turnOn) {
 }
 
 // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
-export function checkDislike() {
+function checkDislike() {
     if(elements.dumbFix === 0) return elements.dumbFix++;
 
     clearTimeout(functions.skipDislikedFunction);

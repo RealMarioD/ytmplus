@@ -2,7 +2,7 @@ import settingsMenu from './css/settingsMenu.css';
 import { injectElement } from './functions/backend/injectElement';
 import { fixupFields } from './settingsMenu/fields';
 
-export const customButton = {
+const customButton = {
     default: 'Change',
     toNode: function() {
         const configId = 'ytmPlusCfg';
@@ -41,7 +41,7 @@ export const customButton = {
 };
 
 // ALL THIS BULLSHIT SO THAT SELECT INPUTS CAN CHANGE LANGUAGE
-export const customSelect = {
+const customSelect = {
     default: null,
     toNode: function() {
         const configId = 'ytmPlusCfg';

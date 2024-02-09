@@ -1,14 +1,25 @@
-@media screen and (max-height: 768px) {
+/* Width calculations based on 4:3 aspect ratio */
+/* Small screen */
+@media screen and (min-height: 0px) {
     #ytmPlusCfg {
         height: 512px;
         font-size: 12px;
     }
 }
 
-@media screen and (min-height: 769px) {
+/* Medium screen */
+@media screen and (min-height: 768px) and (min-width: 1024px){
     #ytmPlusCfg {
         height: 768px;
         font-size: 18px;
+    }
+}
+
+/* Large screen */
+@media screen and (min-height: 1080px) and (min-width: 1440px) {
+    #ytmPlusCfg {
+        height: 1080px;
+        font-size: 24px;
     }
 }
 
@@ -40,12 +51,12 @@
     flex-direction: row-reverse;
     background-color: rgb(66, 66, 66, 0.925);
     width: 100%;
-    height: 7.68%;
+    height: 6%;
     align-items: center;
 }
 
 .titlebarButtons {
-    font-size: 1.5em;
+    font-size: 1.25em;
     padding: 0;
     height: 100%;
     aspect-ratio: 1;
@@ -98,7 +109,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
-    height: calc(100% - 52px);
+    height: 94%;
     align-content: space-evenly;
 }
 
@@ -133,7 +144,7 @@
     background-size: 200% 100%;
     background-position: 0% 0%;
     border: 0;
-    border-radius: 8px;
+    border-radius: 0.75em;
     box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
     width: 95%;
     padding: 3.25%;
@@ -273,7 +284,7 @@ input[type="checkbox"]:checked:before {
     content: "";
     background: linear-gradient(135deg, #8276ff, #8abfff);
     color: #89befe;
-    margin-left: 50%;
+    margin-left: auto;
 }
 
 input[type="checkbox"]:hover {
@@ -335,7 +346,7 @@ input {
 }
 
 #ytmPlusCfg *::-webkit-scrollbar {
-    width: 12px;
+    width: 0.7em;
 }
 
 #ytmPlusCfg *::-webkit-scrollbar-track {
@@ -469,6 +480,7 @@ svg text {
     width: 8em;
 }
 
+/** don't be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */
 #shortcutButtonHolder input {
     width: 4em;
     color: white;
@@ -494,6 +506,7 @@ svg text {
 
 .userButtons {
     width: 30%;
+    height: 2.5em;
     background-color: #77f;
     transition: 100ms linear;
 }

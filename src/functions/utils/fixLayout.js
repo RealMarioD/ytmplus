@@ -1,12 +1,12 @@
 import { elements } from '../../globals/elements';
 import { functions } from '../../globals/functions';
 import { injectStyle } from '../backend/injectStyle';
-import playerStyle from '../../css/playerStyle.css';
+import layoutOverrides from '../../css/layoutOverrides.css';
 
 let layoutCss;
 export function fixLayout(turnOn) {
     if(!turnOn) {
-        clearInterval(elements.fixLayout);
+        clearInterval(functions.fixLayout);
         elements.player.style.removeProperty('flex');
         // elements.player.style.removeProperty('width');
         elements.player.style.removeProperty('margin');
@@ -29,5 +29,6 @@ export function fixLayout(turnOn) {
     elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
     elements.mainPanel.style.alignItems = 'center';
     elements.mainPanel.style.justifyContent = 'center';
-    layoutCss = injectStyle(playerStyle);
+    elements.playlist.style.justifyContent = 'center';
+    layoutCss = injectStyle(layoutOverrides);
 }

@@ -56,7 +56,7 @@ export const configFields = {
     },
     changeWindowSize: {
         type: 'customSelect',
-        rawOptions: ['auto', 'small', 'normal', 'large'],
+        rawOptions: ['auto', 'small', 'medium', 'large'],
         default: 'auto'
     },
     neverAfk: {
@@ -235,11 +235,6 @@ export const configFields = {
         type: 'checkbox',
         default: true,
     },
-    visualizerShakeEnabled: {
-        type: 'checkbox',
-        default: true,
-        subCheckbox: 'visualizerCircleEnabled'
-    },
     visualizerRotate: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
@@ -256,6 +251,11 @@ export const configFields = {
         type: 'customSelect',
         rawOptions: ['Inside', 'Outside', 'Both Sides'],
         default: 'Outside',
+        subCheckbox: 'visualizerCircleEnabled'
+    },
+    visualizerShakeEnabled: {
+        type: 'checkbox',
+        default: true,
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerBassBounceEnabled: {
@@ -336,6 +336,12 @@ export const configFields = {
         min: 1,
         max: 44100,
         default: 4000
+    },
+    visualizerBassBounceThreshold: {
+        type: 'float',
+        min: 0,
+        max: 1,
+        default: 0.5
     },
     visualizerBassBounceMinHertz: {
         type: 'float',

@@ -1,21 +1,11 @@
-import { siteBackgroundChange } from '../functions/utils/siteBackgroundChange';
-import { removeUpgradeButton } from '../functions/utils/removeUpgradeButton';
-import { neverAfk } from '../functions/utils/neverAfk';
-import { noPromotions } from '../functions/utils/noPromotions';
-import { skipDisliked } from '../functions/utils/skipDisliked';
-import { extraPlaybackButtons } from '../functions/utils/extraPlaybackButtons';
-import { fixLayout } from '../functions/utils/fixLayout';
-import { removeAlbumCover } from '../functions/utils/removeAlbumCover';
-import { swapMainPanelWithPlaylist } from '../functions/utils/swapMainPanelWithPlaylist';
 import { startVisualizer } from '../functions/visualizer/init';
 import { ytmpConfig } from '../ytmpConfig';
 import { manageUI } from './ui/init';
 import { configFields } from './fields';
 import { setupAutosave } from './ui/autosave';
-import { navbarBackgroundChange } from '../functions/utils/navbarBackgroundChange';
-import { videoSongSwitcher } from '../functions/utils/videoSongSwitcher';
-import { fixPlacemenet } from './ui/titlebar';
-import { unlockWidth } from '../functions/utils/unlockWidth';
+import { fixPlacement } from './ui/movement';
+import { toCallOnEvents } from '../events/toCallOnEvents';
+import { changeWindowSize } from '../functions/utils/changeWindowSize';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Quick hack for color fields
@@ -32,9 +22,13 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
 
     setupAutosave();
 
+    // gmconfig probably does frame.style = {} onOpen or some other fuckery, so we say fuck you and reapply
+    changeWindowSize(ytmpConfig.get('changeWindowSize'));
+    // surely there is a better way to do this, but this is seems better than the better way, i better be right xdx im so funny
+
     setTimeout(() => {
         ytmpConfig.frame.style.transition = '0.1s';
-        fixPlacemenet(frame);
+        fixPlacement(frame);
     }, 100);
 }
 
@@ -44,29 +38,7 @@ export function closeEvent() {
 
 export function saveEvent() {
     // Updates updateable stuff on save
-    navbarBackgroundChange(ytmpConfig.get('navbarBackgroundChange'));
-
-    siteBackgroundChange(ytmpConfig.get('siteBackgroundChange'));
-
-    removeUpgradeButton(ytmpConfig.get('removeUpgradeButton'));
-
-    neverAfk(ytmpConfig.get('neverAfk'));
-
-    noPromotions(ytmpConfig.get('noPromotions'));
-
-    skipDisliked(ytmpConfig.get('skipDisliked'));
-
-    extraPlaybackButtons(ytmpConfig.get('extraPlaybackButtons'));
-
-    fixLayout(ytmpConfig.get('fixLayout'));
-
-    unlockWidth(ytmpConfig.get('unlockWidth'));
-
-    videoSongSwitcher(ytmpConfig.get('videoSongSwitcher'));
-
-    removeAlbumCover(ytmpConfig.get('removeAlbumCover'));
-
-    swapMainPanelWithPlaylist(ytmpConfig.get('swapMainPanelWithPlaylist'));
+    for(const fn in toCallOnEvents) toCallOnEvents[fn](ytmpConfig.get(fn));
 
     startVisualizer();
 

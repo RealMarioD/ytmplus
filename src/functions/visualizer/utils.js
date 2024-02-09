@@ -65,8 +65,6 @@ export function initValues() {
         if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
         else getFMT(60);
 
-        visualizer.shake._normalized = (100 - visualizer.shake.threshold);
-
         clearInterval(visualizer.resizeInterval);
         if(visualizer.place !== 'Disabled') visualizer.resizeInterval = setInterval(() => visualizerResizeFix(), 1000);
         return; // So we don't check anything beyond bassBounce
@@ -90,30 +88,17 @@ function getRGB() {
 }
 
 export function visualizerResizeFix() {
-    const renderScale = ytmpConfig.get('visualizerRenderScale');
+    let currentCanvasHolder;
     switch(visualizer.canvas.id) {
-        case visualizer.canvases.navbar.id: {
-            if(visualizer.canvas.width !== elements.navBarBg.offsetWidth * renderScale) visualizer.canvas.width = elements.navBarBg.offsetWidth * renderScale;
-            if(visualizer.canvas.height !== elements.navBarBg.offsetHeight * renderScale) visualizer.canvas.height = elements.navBarBg.offsetHeight * renderScale;
-            break;
-        }
-        case visualizer.canvases.albumCover.id: {
-            if(visualizer.canvas.width !== elements.player.offsetWidth * renderScale) visualizer.canvas.width = elements.player.offsetWidth * renderScale;
-            if(visualizer.canvas.height !== elements.player.offsetHeight * renderScale) visualizer.canvas.height = elements.player.offsetHeight * renderScale;
-            break;
-        }
-        case visualizer.canvases.playerBackground.id: {
-            if(visualizer.canvas.width !== visualizer.canvases.playerBackground.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.playerBackground.offsetWidth * renderScale;
-            if(visualizer.canvas.height !== visualizer.canvases.playerBackground.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.playerBackground.offsetHeight * renderScale;
-            break;
-        }
-        case visualizer.canvases.background.id: {
-            if(visualizer.canvas.width !== visualizer.canvases.background.offsetWidth * renderScale) visualizer.canvas.width = visualizer.canvases.background.offsetWidth * renderScale;
-            if(visualizer.canvas.height !== visualizer.canvases.background.offsetHeight * renderScale) visualizer.canvas.height = visualizer.canvases.background.offsetHeight * renderScale;
-            break;
-        }
-        default: break;
+        case visualizer.canvases.navbar.id: currentCanvasHolder = elements.navBarBg; break;
+        case visualizer.canvases.albumCover.id: currentCanvasHolder = elements.player; break;
+        case visualizer.canvases.playerBackground.id: currentCanvasHolder = visualizer.canvases.playerBackground; break;
+        case visualizer.canvases.background.id: currentCanvasHolder = visualizer.canvases.background; break;
+        default: throw new Error('visualizer.canvas.id is not valid!');
     }
+
+    if(visualizer.canvas.width !== currentCanvasHolder.offsetWidth * visualizer.renderScale) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
+    if(visualizer.canvas.height !== currentCanvasHolder.offsetHeight * visualizer.renderScale) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
 
     if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
     else elements.playlist.style.opacity = '';
@@ -128,11 +113,14 @@ export function visualizerResizeFix() {
     // elements.player.style.margin = 'auto 0px';
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
-        if(visualizer.bassBounce.enabled === false) {
-            visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
-            visualizer.values.heightModifier = (visualizer.values.HEIGHT - visualizer.values.radius) / 2 / 255;
+        if(visualizer.bassBounce.enabled === true) {
+            visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 5);
+            visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
         }
-        else visualizer.values.heightModifier = (visualizer.values.HEIGHT - ~~(visualizer.values.HEIGHT / 8)) / 2 / 255;
+        else {
+            visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
+            visualizer.values.maxRadius = visualizer.values.radius;
+        }
 
         visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
         visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
@@ -166,15 +154,19 @@ export function getBarColor(i) {
 }
 
 export function calculateBass() {
-    visualizer.values.bass = visualizer.audioData.slice(
-        visualizer.bassBounce._barStart,
-        visualizer.bassBounce._barEnd
-    );
+    visualizer.values.bass = visualizer.normalizedAudioData.slice(visualizer.bassBounce._barStart, visualizer.bassBounce._barEnd);
 
-    if(visualizer.bassBounce.smooth === true) visualizer.values.bassSmoothRadius = ~~((visualizer.values.bassSmoothRadius + (averageOfArray(visualizer.values.bass) / 2)) / 2);
-    else visualizer.values.bassSmoothRadius = ~~(averageOfArray(visualizer.values.bass) / 2);
+    const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-    if(visualizer.bassBounce.enabled === true) visualizer.values.radius = ~~(visualizer.values.HEIGHT / 8) + visualizer.values.bassSmoothRadius * visualizer.values.heightModifier * 1.25;
+    visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
+
+    const maxBassValue = 1 - visualizer.bassBounce.threshold;
+
+    if(visualizer.bassBounce.enabled === true) {
+        if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
+
+        visualizer.values.radius = (visualizer.values.radius + (visualizer.values.minRadius + (visualizer.values.bassSmoothRadius - visualizer.bassBounce.threshold) / maxBassValue * maxAddedRadius)) / 2;
+    }
 }
 
 export function getRotationValue() {

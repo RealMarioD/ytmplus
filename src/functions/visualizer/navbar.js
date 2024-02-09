@@ -7,7 +7,7 @@ export function visualizerNavbar() {
     else if(visualizer.startsFrom === 'Edges') xPosOffset = visualizer.values.barSpace / 2; // Both sides are offset a bit for perfect centering
     else xPosOffset = 0;
 
-    const maxBarHeight = (visualizer.values.HEIGHT / 255);
+    const maxBarHeight = visualizer.values.HEIGHT;
 
     firstDraw(maxBarHeight, xPosOffset);
 
@@ -23,7 +23,7 @@ export function visualizerNavbar() {
 
 function firstDraw(maxBarHeight, xPosOffset) {
     for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-        const barHeight = visualizer.audioData[i] * maxBarHeight;
+        const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
 
         getBarColor(i);
 
@@ -68,7 +68,7 @@ function firstDraw(maxBarHeight, xPosOffset) {
 
 function secondDraw(maxBarHeight, xPosOffset) {
     for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-        const barHeight = visualizer.audioData[i] * maxBarHeight;
+        const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
 
         getBarColor(i);
 

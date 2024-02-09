@@ -1,12 +1,12 @@
 export const fieldTexts = {
     refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
-    changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
+    changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     language: { english: 'Language', hungarian: 'Nyelv',
-        options: { english: ['English', 'Hungarian'], hungarian: ['Angol', 'Magyar'] }
+        options: { english: ['English', 'Magyar'] }
     },
     changeWindowSize: { english: 'Window Size', hungarian: 'Ablak Méret',
-        options: { english: ['Auto', 'Small', 'Normal', 'Large'], hungarian: ['Auto', 'Kicsi', 'Normál', 'Nagy'] }
+        options: { english: ['Auto', 'Small', 'Medium', 'Large'], hungarian: ['Auto', 'Kicsi', 'Közepes', 'Nagy'] }
     },
     neverAfk: { english: 'Never AFK', hungarian: 'Sosem AFK' },
     noPromotions: { english: 'No Promotions', hungarian: 'Promóciók kikapcsolása' },
@@ -89,6 +89,7 @@ export const fieldTexts = {
     visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
     visualizerMinHertz: { english: 'AudioData Min Hertz' },
     visualizerMaxHertz: { english: 'AudioData Max Hertz' },
+    visualizerBassBounceThreshold: { english: 'Bass Bounce Threshold' },
     visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
     visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
     visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
