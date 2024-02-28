@@ -527,9 +527,9 @@ try {
             },
             visualizerShakeMultiplier: {
                 type: 'float',
-                min: 1,
+                min: 0,
                 max: 100,
-                default: 10
+                default: 1
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
@@ -1022,8 +1022,8 @@ try {
                 default: throw new Error('visualizer.canvas.id is not valid!');
             }
 
-            if(visualizer.canvas.width !== currentCanvasHolder.offsetWidth * visualizer.renderScale) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
-            if(visualizer.canvas.height !== currentCanvasHolder.offsetHeight * visualizer.renderScale) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
+            if(visualizer.canvas.width !== ~~(currentCanvasHolder.offsetWidth * visualizer.renderScale)) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
+            if(visualizer.canvas.height !== ~~(currentCanvasHolder.offsetHeight * visualizer.renderScale)) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
 
             if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
             else elements.playlist.style.opacity = '';
@@ -1161,7 +1161,7 @@ try {
 
         function preShake() {
             visualizer.ctx.save();
-            const movement = visualizer.values.halfHeight * 0.1 * visualizer.shake.multiplier;
+            const movement = visualizer.values.halfHeight * 0.01 * visualizer.shake.multiplier;
             let dx = movement, dy = movement;
             if(~~(Math.random() * 2) === 0) dx *= 1;
             else dx *= -1;
@@ -1484,7 +1484,7 @@ try {
                 elements.mainPanel.style.removeProperty('align-items');
                 elements.mainPanel.style.removeProperty('justify-content');
                 try {
-                    layoutCss.remove();
+                    layoutCss = layoutCss.remove();
                 }
                 catch {}
                 return;
@@ -1500,7 +1500,8 @@ try {
             elements.mainPanel.style.alignItems = 'center';
             elements.mainPanel.style.justifyContent = 'center';
             elements.playlist.style.justifyContent = 'center';
-            layoutCss = injectStyle(layoutOverrides);
+            // layoutCss = injectStyle(layoutOverrides);
+            if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
         }
 
         function navbarBackgroundChange(turnOn) {

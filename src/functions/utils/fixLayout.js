@@ -14,7 +14,7 @@ export function fixLayout(turnOn) {
         elements.mainPanel.style.removeProperty('align-items');
         elements.mainPanel.style.removeProperty('justify-content');
         try {
-            layoutCss.remove();
+            layoutCss = layoutCss.remove();
         }
         catch {}
         return;
@@ -30,5 +30,6 @@ export function fixLayout(turnOn) {
     elements.mainPanel.style.alignItems = 'center';
     elements.mainPanel.style.justifyContent = 'center';
     elements.playlist.style.justifyContent = 'center';
-    layoutCss = injectStyle(layoutOverrides);
+    // layoutCss = injectStyle(layoutOverrides);
+    if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
 }

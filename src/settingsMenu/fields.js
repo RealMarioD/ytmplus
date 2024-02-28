@@ -380,9 +380,9 @@ export const configFields = {
     },
     visualizerShakeMultiplier: {
         type: 'float',
-        min: 1,
+        min: 0,
         max: 100,
-        default: 10
+        default: 1
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

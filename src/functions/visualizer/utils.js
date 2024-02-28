@@ -97,8 +97,8 @@ export function visualizerResizeFix() {
         default: throw new Error('visualizer.canvas.id is not valid!');
     }
 
-    if(visualizer.canvas.width !== currentCanvasHolder.offsetWidth * visualizer.renderScale) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
-    if(visualizer.canvas.height !== currentCanvasHolder.offsetHeight * visualizer.renderScale) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
+    if(visualizer.canvas.width !== ~~(currentCanvasHolder.offsetWidth * visualizer.renderScale)) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
+    if(visualizer.canvas.height !== ~~(currentCanvasHolder.offsetHeight * visualizer.renderScale)) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
 
     if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
     else elements.playlist.style.opacity = '';

@@ -57,7 +57,7 @@ function drawArcs(backwards, maxBarHeight) {
 
 function preShake() {
     visualizer.ctx.save();
-    const movement = visualizer.values.halfHeight * 0.1 * visualizer.shake.multiplier;
+    const movement = visualizer.values.halfHeight * 0.01 * visualizer.shake.multiplier;
     let dx = movement, dy = movement;
     if(~~(Math.random() * 2) === 0) dx *= 1;
     else dx *= -1;
