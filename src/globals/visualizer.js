@@ -54,6 +54,7 @@ export const visualizer = {
         halfHeight: undefined,
         xPosOffset: undefined,
         barTotal: undefined,
+        barTotalHalf: undefined,
         barWidth: undefined,
         barSpace: undefined,
         barHeight: undefined,

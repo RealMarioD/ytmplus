@@ -44,7 +44,7 @@ export function fixupFields() {
 // type: 'color' just results in a text input, they are later converted to actual color input, see open event
 export const configFields = {
     changeShortcut: {
-        section: fieldTexts.utilities,
+        section: fieldTexts.ytmpSettings,
         type: 'customButton',
         valueStorage: 'shortcut'
     },
@@ -60,6 +60,7 @@ export const configFields = {
         default: 'auto'
     },
     neverAfk: {
+        section: fieldTexts.utilities,
         type: 'checkbox',
         default: true
     },
@@ -78,7 +79,7 @@ export const configFields = {
     unlockWidth: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
-        default: 'Disabled'
+        default: 'Album Cover'
     },
     extraPlaybackButtons: {
         type: 'checkbox',
@@ -341,7 +342,7 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.5
+        default: 0.45
     },
     visualizerBassBounceMinHertz: {
         type: 'float',
@@ -372,16 +373,16 @@ export const configFields = {
         default: 1
     },
     visualizerShakeThreshold: {
-        type: 'int',
+        type: 'float',
         min: 0,
-        max: 100,
-        default: 70
+        max: 1,
+        default: 0.45
     },
     visualizerShakeMultiplier: {
         type: 'float',
         min: 1,
         max: 100,
-        default: 7.5
+        default: 10
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

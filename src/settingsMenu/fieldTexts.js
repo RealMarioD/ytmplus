@@ -1,6 +1,7 @@
 export const fieldTexts = {
     refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
     utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
+    ytmpSettings: { english: 'ytmPlus Settings', hungarian: 'ytmPlus Beállítások' },
     changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
     language: { english: 'Language', hungarian: 'Nyelv',
         options: { english: ['English', 'Magyar'] }

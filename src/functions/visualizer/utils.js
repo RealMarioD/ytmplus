@@ -123,6 +123,7 @@ export function visualizerResizeFix() {
         }
 
         visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
+        visualizer.values.barTotalHalf = visualizer.values.barTotal / 2;
         visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
     }
     else {
@@ -160,12 +161,12 @@ export function calculateBass() {
 
     visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
 
-    const maxBassValue = 1 - visualizer.bassBounce.threshold;
-
     if(visualizer.bassBounce.enabled === true) {
         if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
 
-        visualizer.values.radius = (visualizer.values.radius + (visualizer.values.minRadius + (visualizer.values.bassSmoothRadius - visualizer.bassBounce.threshold) / maxBassValue * maxAddedRadius)) / 2;
+        const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
+        if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
+        else visualizer.values.radius = newRadius;
     }
 }
 
@@ -175,7 +176,7 @@ export function getRotationValue() {
     switch(visualizer.rotate) {
         case 'Disabled': default: { visualizer.values.rotationValue = 0; } break;
         case 'On': { visualizer.values.rotationValue += 0.005 * direction; } break;
-        case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
-        case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
+        case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.normalizedAudioData) / 100 + 1, 2) - 1) * direction; } break;
+        case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 100 + 1, 2) - 1) * direction; } break;
     }
 }

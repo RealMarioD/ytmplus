@@ -44,6 +44,7 @@ try {
         const fieldTexts = {
             refreshTitle: { english: 'Refresh for changes', hungarian: 'Frissíts a változásokhoz' },
             utilities: { english: 'Utilities', hungarian: 'Hasznosságok' },
+            ytmpSettings: { english: 'ytmPlus Settings', hungarian: 'ytmPlus Beállítások' },
             changeShortcut: { english: 'Current shortcut:', hungarian: 'Jelenlegi gyorsbillentyű:' },
             language: { english: 'Language', hungarian: 'Nyelv',
                 options: { english: ['English', 'Magyar'] }
@@ -190,7 +191,7 @@ try {
         // type: 'color' just results in a text input, they are later converted to actual color input, see open event
         const configFields = {
             changeShortcut: {
-                section: fieldTexts.utilities,
+                section: fieldTexts.ytmpSettings,
                 type: 'customButton',
                 valueStorage: 'shortcut'
             },
@@ -206,6 +207,7 @@ try {
                 default: 'auto'
             },
             neverAfk: {
+                section: fieldTexts.utilities,
                 type: 'checkbox',
                 default: true
             },
@@ -224,7 +226,7 @@ try {
             unlockWidth: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
-                default: 'Disabled'
+                default: 'Album Cover'
             },
             extraPlaybackButtons: {
                 type: 'checkbox',
@@ -487,7 +489,7 @@ try {
                 type: 'float',
                 min: 0,
                 max: 1,
-                default: 0.5
+                default: 0.45
             },
             visualizerBassBounceMinHertz: {
                 type: 'float',
@@ -518,16 +520,16 @@ try {
                 default: 1
             },
             visualizerShakeThreshold: {
-                type: 'int',
+                type: 'float',
                 min: 0,
-                max: 100,
-                default: 70
+                max: 1,
+                default: 0.45
             },
             visualizerShakeMultiplier: {
                 type: 'float',
                 min: 1,
                 max: 100,
-                default: 7.5
+                default: 10
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
@@ -747,6 +749,7 @@ try {
                 halfHeight: undefined,
                 xPosOffset: undefined,
                 barTotal: undefined,
+                barTotalHalf: undefined,
                 barWidth: undefined,
                 barSpace: undefined,
                 barHeight: undefined,
@@ -1045,6 +1048,7 @@ try {
                 }
 
                 visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
+                visualizer.values.barTotalHalf = visualizer.values.barTotal / 2;
                 visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
             }
             else {
@@ -1082,12 +1086,12 @@ try {
 
             visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
 
-            const maxBassValue = 1 - visualizer.bassBounce.threshold;
-
             if(visualizer.bassBounce.enabled === true) {
                 if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
 
-                visualizer.values.radius = (visualizer.values.radius + (visualizer.values.minRadius + (visualizer.values.bassSmoothRadius - visualizer.bassBounce.threshold) / maxBassValue * maxAddedRadius)) / 2;
+                const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
+                if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
+                else visualizer.values.radius = newRadius;
             }
         }
 
@@ -1097,13 +1101,15 @@ try {
             switch(visualizer.rotate) {
                 case 'Disabled': default: { visualizer.values.rotationValue = 0; } break;
                 case 'On': { visualizer.values.rotationValue += 0.005 * direction; } break;
-                case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.audioData) / 10000 + 1, 2) - 1) * direction; } break;
-                case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 10000 + 1, 2) - 1) * direction; } break;
+                case 'Reactive': { visualizer.values.rotationValue += (Math.pow(averageOfArray(visualizer.normalizedAudioData) / 100 + 1, 2) - 1) * direction; } break;
+                case 'Reactive (Bass)': { visualizer.values.rotationValue += (Math.pow(visualizer.values.bassSmoothRadius / 100 + 1, 2) - 1) * direction; } break;
             }
         }
 
         function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-            if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold / 100) preShake();
+            const doWeShake = visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold;
+            if(doWeShake === true) preShake();
+
             if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
             else visualizer.values.circleSize = 1; // 1(pi) = half;
 
@@ -1113,7 +1119,7 @@ try {
 
             if(visualizer.image.type !== 'Disabled' && imgLoaded === true) drawVisImage();
 
-            const maxBarHeight = (visualizer.values.HEIGHT / 2) - (visualizer.values.maxRadius);
+            const maxBarHeight = (visualizer.values.halfHeight) - (visualizer.values.maxRadius);
 
             if(visualizer.startsFrom === 'Right') drawArcs(false, maxBarHeight);
             else if(visualizer.startsFrom === 'Left') drawArcs(true, maxBarHeight);
@@ -1121,13 +1127,14 @@ try {
                 drawArcs(false, maxBarHeight);
                 drawArcs(true, maxBarHeight);
             }
-            if(visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold / 100) postShake();
+
+            if(doWeShake === true) postShake();
         }
 
         function drawArcs(backwards, maxBarHeight) {
             visualizer.ctx.save();
             visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
-            visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotal / 2 + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
+            visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
             for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
                 getBarColor(i);
@@ -1154,11 +1161,12 @@ try {
 
         function preShake() {
             visualizer.ctx.save();
-            const floatingThreshold = visualizer.shake.threshold / 100;
-            const whatever = 1 - floatingThreshold;
-            const dx = (visualizer.values.bassSmoothRadius - floatingThreshold) / whatever * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
-            const dy = (visualizer.values.bassSmoothRadius - floatingThreshold) / whatever * visualizer.shake.multiplier * (~~(Math.random() * 2) === 0 ? 1 : -1);
-            console.log(`dx: ${dx}, dy: ${dy}`);
+            const movement = visualizer.values.halfHeight * 0.1 * visualizer.shake.multiplier;
+            let dx = movement, dy = movement;
+            if(~~(Math.random() * 2) === 0) dx *= 1;
+            else dx *= -1;
+            if(~~(Math.random() * 2) === 0) dy *= 1;
+            else dy *= -1;
             visualizer.ctx.translate(dx, dy);
         }
 
