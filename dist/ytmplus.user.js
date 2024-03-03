@@ -117,6 +117,9 @@ try {
                 options: { english: ['Inside', 'Outside', 'Both'], hungarian: ['Befelé', 'Kifelé', 'Mindkettő'] }
             },
             visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
+            visualizerBassBounceCalculation: { english: 'Bass Threshold Calculation', hungarian: 'Basszus Küszöb Számítás',
+                options: { english: ['Average', 'Median'], hungarian: ['Átlag', 'Medián'] }
+            },
             visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
             visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
                 options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }
@@ -409,6 +412,12 @@ try {
             visualizerBassBounceEnabled: {
                 type: 'checkbox',
                 default: true,
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerBassBounceCalculation: {
+                type: 'customSelect',
+                rawOptions: ['average', 'median'],
+                default: 'average',
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerBassBounceSmooth: {
@@ -731,6 +740,7 @@ try {
                 threshold: undefined,
                 minHertz: undefined,
                 maxHertz: undefined,
+                calculation: undefined,
                 smooth: undefined,
                 debug: undefined,
                 _barStart: undefined,
@@ -976,6 +986,11 @@ try {
 
                 if(key !== 'bassBounce') continue;
 
+                switch(visualizer.bassBounce.calculation) {
+                    default: case 'average': calcFunction = averageOfArray; break;
+                    case 'median': calcFunction = medianOfArray; break;
+                }
+
                 // Last things to do (everything here runs only once)
                 if(visualizer.analyser !== undefined) {
                     visualizer.analyser.smoothingTimeConstant = ytmpConfig.get('visualizerSmoothing');
@@ -1039,7 +1054,7 @@ try {
 
             if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
                 if(visualizer.bassBounce.enabled === true) {
-                    visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 5);
+                    visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 4);
                     visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
                 }
                 else {
@@ -1059,10 +1074,22 @@ try {
             }
         }
 
+        let calcFunction;
+
         function averageOfArray(numbers) {
             let result = 0;
             for(let i = 0; i < numbers.length; i++) result += numbers[i];
             return result / numbers.length;
+        }
+
+        function medianOfArray(values) {
+            if(values.length === 0) throw new Error('Array is empty');
+
+            values = [...values].sort((a, b) => a - b);
+            const half = Math.floor(values.length / 2);
+
+            if(values.length % 2) return values[half];
+            return (values[half - 1] + values[half]) / 2;
         }
 
         function getBarColor(i) {
@@ -1084,12 +1111,13 @@ try {
 
             const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-            visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
+            visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
             if(visualizer.bassBounce.enabled === true) {
                 if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
 
                 const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
+
                 if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
                 else visualizer.values.radius = newRadius;
             }

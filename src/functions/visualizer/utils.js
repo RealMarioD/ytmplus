@@ -51,6 +51,11 @@ export function initValues() {
 
         if(key !== 'bassBounce') continue;
 
+        switch(visualizer.bassBounce.calculation) {
+            default: case 'average': calcFunction = averageOfArray; break;
+            case 'median': calcFunction = medianOfArray; break;
+        }
+
         // Last things to do (everything here runs only once)
         if(visualizer.analyser !== undefined) {
             visualizer.analyser.smoothingTimeConstant = ytmpConfig.get('visualizerSmoothing');
@@ -114,7 +119,7 @@ export function visualizerResizeFix() {
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
         if(visualizer.bassBounce.enabled === true) {
-            visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 5);
+            visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 4);
             visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
         }
         else {
@@ -134,10 +139,22 @@ export function visualizerResizeFix() {
     }
 }
 
+let calcFunction;
+
 export function averageOfArray(numbers) {
     let result = 0;
     for(let i = 0; i < numbers.length; i++) result += numbers[i];
     return result / numbers.length;
+}
+
+function medianOfArray(values) {
+    if(values.length === 0) throw new Error('Array is empty');
+
+    values = [...values].sort((a, b) => a - b);
+    const half = Math.floor(values.length / 2);
+
+    if(values.length % 2) return values[half];
+    return (values[half - 1] + values[half]) / 2;
 }
 
 export function getBarColor(i) {
@@ -159,12 +176,13 @@ export function calculateBass() {
 
     const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-    visualizer.values.bassSmoothRadius = averageOfArray(visualizer.values.bass);
+    visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
     if(visualizer.bassBounce.enabled === true) {
         if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
 
         const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
+
         if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
         else visualizer.values.radius = newRadius;
     }

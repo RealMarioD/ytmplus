@@ -74,6 +74,9 @@ export const fieldTexts = {
         options: { english: ['Inside', 'Outside', 'Both'], hungarian: ['Befelé', 'Kifelé', 'Mindkettő'] }
     },
     visualizerBassBounceEnabled: { english: 'Bass Bounce', hungarian: 'Basszusugrálás' },
+    visualizerBassBounceCalculation: { english: 'Bass Threshold Calculation', hungarian: 'Basszus Küszöb Számítás',
+        options: { english: ['Average', 'Median'], hungarian: ['Átlag', 'Medián'] }
+    },
     visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
     visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
         options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }

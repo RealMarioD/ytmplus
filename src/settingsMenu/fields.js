@@ -264,6 +264,12 @@ export const configFields = {
         default: true,
         subCheckbox: 'visualizerCircleEnabled'
     },
+    visualizerBassBounceCalculation: {
+        type: 'customSelect',
+        rawOptions: ['average', 'median'],
+        default: 'average',
+        subCheckbox: 'visualizerCircleEnabled'
+    },
     visualizerBassBounceSmooth: {
         type: 'checkbox',
         default: true,

@@ -36,6 +36,7 @@ export const visualizer = {
         threshold: undefined,
         minHertz: undefined,
         maxHertz: undefined,
+        calculation: undefined,
         smooth: undefined,
         debug: undefined,
         _barStart: undefined,
