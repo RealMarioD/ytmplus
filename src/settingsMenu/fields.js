@@ -1,4 +1,4 @@
-import { fieldTexts } from './fieldTexts';
+import { fieldTexts } from './fieldTexts.js';
 
 export function fixupFields() {
     // When we first call this function, ytmpConfig is not initalized yet, so we can't use ytmpConfig.get('language'), yadi yadi yada
@@ -12,7 +12,7 @@ export function fixupFields() {
 
     for(const field in configFields) {
         if(fieldTexts[field] === undefined) {
-            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields!`);
+            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
             continue;
         }
 
@@ -27,13 +27,20 @@ export function fixupFields() {
 
         if(configFields[field].label === undefined) {
             const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-            configFields[field] = Object.assign(newLabel, configFields[field]); // We merge so label is the first property, if label is not the first property, label/input order will be messed up
+            // We use assign() so label is the first property, if label is not the first property, label/input order will be messed up
+            configFields[field] = Object.assign(newLabel, configFields[field]);
         }
         else configFields[field].label = fieldTexts[field][langOption] || fieldTexts[field]['english'];
 
         if(configFields[field].refresh === true) {
             configFields[field].label += '↻';
             configFields[field].title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+        }
+
+        if(configFields[field].setTitle === true) {
+            configFields[field].label += '<span style="font-weight: 100;">⚠</span>';
+            if(configFields[field].refresh === true) configFields[field].title += ' | ' + fieldTexts[field].title[langOption] || fieldTexts[field].title['english'];
+            else configFields[field].title = fieldTexts[field].title[langOption] || fieldTexts[field].title['english'];
         }
 
         if(configFields[field].section !== undefined) configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
@@ -51,7 +58,7 @@ export const configFields = {
     language: {
         refresh: true,
         type: 'customSelect',
-        rawOptions: ['English', 'Hungarian'],
+        rawOptions: ['english', 'hungarian'],
         default: 'English'
     },
     changeWindowSize: {
@@ -79,7 +86,8 @@ export const configFields = {
     unlockWidth: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
-        default: 'Album Cover'
+        default: 'Album Cover',
+        setTitle: true
     },
     extraPlaybackButtons: {
         type: 'checkbox',
@@ -169,7 +177,7 @@ export const configFields = {
     // },
     removeUpgradeButton: {
         type: 'checkbox',
-        default: true
+        default: false
     },
     // clockColor: {
     //     type: 'color',
@@ -226,6 +234,7 @@ export const configFields = {
         type: 'customSelect',
         rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
         default: '4096',
+        setTitle: true
     },
     visualizerEnergySaverType: {
         type: 'customSelect',
@@ -273,6 +282,20 @@ export const configFields = {
     visualizerBassBounceSmooth: {
         type: 'checkbox',
         default: true,
+        subCheckbox: 'visualizerCircleEnabled'
+    },
+    visualizerBassBounceFallSmoothing: {
+        type: 'int',
+        min: 1,
+        max: 10,
+        default: 4,
+        subCheckbox: 'visualizerCircleEnabled'
+    },
+    visualizerBassBounceGrowSmoothing: {
+        type: 'int',
+        min: 1,
+        max: 10,
+        default: 2,
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerImageType: {
@@ -330,7 +353,7 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.75
+        default: 0.4
     },
     visualizerMinHertz: {
         type: 'int',
@@ -366,6 +389,18 @@ export const configFields = {
         type: 'checkbox',
         default: false
     },
+    visualizerBassBounceMinRadius: {
+        type: 'float',
+        min: 0.001,
+        max: 100,
+        default: 4
+    },
+    visualizerBassBounceMaxRadius: {
+        type: 'float',
+        min: 0.001,
+        max: 100,
+        default: 3
+    },
     visualizerEnergySaverFps: {
         type: 'int',
         min: 1,
@@ -388,7 +423,7 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 100,
-        default: 1
+        default: 0.5
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

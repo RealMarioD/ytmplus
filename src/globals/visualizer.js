@@ -38,7 +38,11 @@ export const visualizer = {
         maxHertz: undefined,
         calculation: undefined,
         smooth: undefined,
+        fallSmoothing: undefined,
+        growSmoothing: undefined,
         debug: undefined,
+        minRadius: undefined,
+        maxRadius: undefined,
         _barStart: undefined,
         _barEnd: undefined
     },

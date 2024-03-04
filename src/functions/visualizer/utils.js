@@ -119,8 +119,8 @@ export function visualizerResizeFix() {
 
     if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
         if(visualizer.bassBounce.enabled === true) {
-            visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 4);
-            visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
+            visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / visualizer.bassBounce.minRadius);
+            visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / visualizer.bassBounce.maxRadius);
         }
         else {
             visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
@@ -179,11 +179,13 @@ export function calculateBass() {
     visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
     if(visualizer.bassBounce.enabled === true) {
-        if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
+        const n = visualizer.bassBounce.fallSmoothing;
+        const n2 = visualizer.bassBounce.growSmoothing;
+        if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = ((visualizer.values.radius * n) + visualizer.values.minRadius) / (n + 1);
 
         const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
 
-        if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
+        if(visualizer.bassBounce.smooth === true) visualizer.values.radius = ((visualizer.values.radius * n2) + newRadius) / (n2 + 1);
         else visualizer.values.radius = newRadius;
     }
 }

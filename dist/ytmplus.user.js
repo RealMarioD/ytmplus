@@ -57,7 +57,8 @@ try {
             skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
             fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
             unlockWidth: { english: 'Unlock Width',
-                options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] }
+                options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] },
+                title: { english: 'Changes mostly visible above 1080p resolution', hungarian: 'Változtatások leginkább 1080p felbontás felett láthatóak' }
             },
             extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
             videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
@@ -93,14 +94,15 @@ try {
                 options: { english: ['Disabled', 'Navbar', 'Album Cover', 'Background'], hungarian: ['Kikapcsolva', 'Navbar', 'Album Borító', 'Háttér'] }
             },
             visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
-            visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:',
+            visualizerStartsFrom: { english: 'Bars are placed from:', hungarian: 'Sávok elhelyezése innen:',
                 options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
             },
             visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
             visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
             visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-            visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>',
-                options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] }
+            visualizerFft: { english: 'Audio Samples', hungarian: 'Hang Minták',
+                options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] },
+                title: { english: 'High values can affect performance.', hungarian: 'Magas értékek befolyásolhatják a teljesítményt.' }
             },
             visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
                 options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
@@ -121,6 +123,8 @@ try {
                 options: { english: ['Average', 'Median'], hungarian: ['Átlag', 'Medián'] }
             },
             visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
+            visualizerBassBounceFallSmoothing: { english: 'Bass Bounce Fall Smoothing', hungarian: 'Basszusugrálás Simítása (esésnél)' },
+            visualizerBassBounceGrowSmoothing: { english: 'Bass Bounce Grow Smoothing', hungarian: 'Basszusugrálás Simítása (növekedésnél)' },
             visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
                 options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }
             },
@@ -133,13 +137,15 @@ try {
             visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
             visualizerMinDecibels: { english: 'Min Decibels' },
             visualizerMaxDecibels: { english: 'Max Decibels' },
-            visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
+            visualizerSmoothing: { english: 'Smoothing', hungarian: 'Simítás' },
             visualizerMinHertz: { english: 'AudioData Min Hertz' },
             visualizerMaxHertz: { english: 'AudioData Max Hertz' },
             visualizerBassBounceThreshold: { english: 'Bass Bounce Threshold' },
             visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
             visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
             visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
+            visualizerBassBounceMinRadius: { english: 'Bass Bounce Min Radius', hungarian: 'Basszusugrálás Min Sugár' },
+            visualizerBassBounceMaxRadius: { english: 'Bass Bounce Max Radius', hungarian: 'Basszusugrálás Max Sugár' },
             visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
             visualizerRenderScale: { english: 'Render Scale' },
             visualizerShakeThreshold: { english: 'Shake Threshold' },
@@ -162,7 +168,7 @@ try {
 
             for(const field in configFields) {
                 if(fieldTexts[field] === undefined) {
-                    console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields!`);
+                    console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
                     continue;
                 }
 
@@ -177,13 +183,20 @@ try {
 
                 if(configFields[field].label === undefined) {
                     const newLabel = { label: fieldTexts[field][langOption] || fieldTexts[field]['english'] };
-                    configFields[field] = Object.assign(newLabel, configFields[field]); // We merge so label is the first property, if label is not the first property, label/input order will be messed up
+                    // We use assign() so label is the first property, if label is not the first property, label/input order will be messed up
+                    configFields[field] = Object.assign(newLabel, configFields[field]);
                 }
                 else configFields[field].label = fieldTexts[field][langOption] || fieldTexts[field]['english'];
 
                 if(configFields[field].refresh === true) {
                     configFields[field].label += '↻';
                     configFields[field].title = fieldTexts.refreshTitle[langOption] || fieldTexts.refreshTitle['english'];
+                }
+
+                if(configFields[field].setTitle === true) {
+                    configFields[field].label += '<span style="font-weight: 100;">⚠</span>';
+                    if(configFields[field].refresh === true) configFields[field].title += ' | ' + fieldTexts[field].title[langOption] || fieldTexts[field].title['english'];
+                    else configFields[field].title = fieldTexts[field].title[langOption] || fieldTexts[field].title['english'];
                 }
 
                 if(configFields[field].section !== undefined) configFields[field].section = configFields[field].section[langOption] || configFields[field].section['english'];
@@ -201,7 +214,7 @@ try {
             language: {
                 refresh: true,
                 type: 'customSelect',
-                rawOptions: ['English', 'Hungarian'],
+                rawOptions: ['english', 'hungarian'],
                 default: 'English'
             },
             changeWindowSize: {
@@ -229,7 +242,8 @@ try {
             unlockWidth: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Album Cover', 'Playlist', 'Both'],
-                default: 'Album Cover'
+                default: 'Album Cover',
+                setTitle: true
             },
             extraPlaybackButtons: {
                 type: 'checkbox',
@@ -319,7 +333,7 @@ try {
             // },
             removeUpgradeButton: {
                 type: 'checkbox',
-                default: true
+                default: false
             },
             // clockColor: {
             //     type: 'color',
@@ -376,6 +390,7 @@ try {
                 type: 'customSelect',
                 rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
                 default: '4096',
+                setTitle: true
             },
             visualizerEnergySaverType: {
                 type: 'customSelect',
@@ -423,6 +438,20 @@ try {
             visualizerBassBounceSmooth: {
                 type: 'checkbox',
                 default: true,
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerBassBounceFallSmoothing: {
+                type: 'int',
+                min: 1,
+                max: 10,
+                default: 4,
+                subCheckbox: 'visualizerCircleEnabled'
+            },
+            visualizerBassBounceGrowSmoothing: {
+                type: 'int',
+                min: 1,
+                max: 10,
+                default: 2,
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerImageType: {
@@ -480,7 +509,7 @@ try {
                 type: 'float',
                 min: 0,
                 max: 1,
-                default: 0.75
+                default: 0.4
             },
             visualizerMinHertz: {
                 type: 'int',
@@ -516,6 +545,18 @@ try {
                 type: 'checkbox',
                 default: false
             },
+            visualizerBassBounceMinRadius: {
+                type: 'float',
+                min: 0.001,
+                max: 100,
+                default: 4
+            },
+            visualizerBassBounceMaxRadius: {
+                type: 'float',
+                min: 0.001,
+                max: 100,
+                default: 3
+            },
             visualizerEnergySaverFps: {
                 type: 'int',
                 min: 1,
@@ -538,7 +579,7 @@ try {
                 type: 'float',
                 min: 0,
                 max: 100,
-                default: 1
+                default: 0.5
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
@@ -742,7 +783,11 @@ try {
                 maxHertz: undefined,
                 calculation: undefined,
                 smooth: undefined,
+                fallSmoothing: undefined,
+                growSmoothing: undefined,
                 debug: undefined,
+                minRadius: undefined,
+                maxRadius: undefined,
                 _barStart: undefined,
                 _barEnd: undefined
             },
@@ -1054,8 +1099,8 @@ try {
 
             if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) {
                 if(visualizer.bassBounce.enabled === true) {
-                    visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / 4);
-                    visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / 3);
+                    visualizer.values.minRadius = ~~(visualizer.values.HEIGHT / visualizer.bassBounce.minRadius);
+                    visualizer.values.maxRadius = ~~(visualizer.values.HEIGHT / visualizer.bassBounce.maxRadius);
                 }
                 else {
                     visualizer.values.radius = ~~(visualizer.values.HEIGHT / 4);
@@ -1114,11 +1159,13 @@ try {
             visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
             if(visualizer.bassBounce.enabled === true) {
-                if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = (visualizer.values.radius + visualizer.values.minRadius) / 2;
+                const n = visualizer.bassBounce.fallSmoothing;
+                const n2 = visualizer.bassBounce.growSmoothing;
+                if(visualizer.values.bassSmoothRadius < visualizer.bassBounce.threshold) return visualizer.values.radius = ((visualizer.values.radius * n) + visualizer.values.minRadius) / (n + 1);
 
                 const newRadius = visualizer.values.minRadius + visualizer.values.bassSmoothRadius * maxAddedRadius;
 
-                if(visualizer.bassBounce.smooth === true) visualizer.values.radius = (visualizer.values.radius + newRadius) * 0.5;
+                if(visualizer.bassBounce.smooth === true) visualizer.values.radius = ((visualizer.values.radius * n2) + newRadius) / (n2 + 1);
                 else visualizer.values.radius = newRadius;
             }
         }
@@ -1595,6 +1642,9 @@ try {
         }
 
         // import { elements } from '../../globals/elements';
+        // import { functions } from '../../globals/functions';
+        // import { ytmpConfig } from '../../ytmpConfig';
+
 
         async function removeUpgradeButton(turnOn) {
             if(!turnOn) {

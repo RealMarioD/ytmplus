@@ -14,7 +14,8 @@ export const fieldTexts = {
     skipDisliked: { english: 'Skip Disliked Songs', hungarian: 'Nem kedvelt dalok kihagyása' },
     fixLayout: { english: 'Fix Layout', hungarian: 'Elrendezés javítása' },
     unlockWidth: { english: 'Unlock Width',
-        options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] }
+        options: { english: ['Disabled', 'Album Cover', 'Playlist', 'Both'], hungarian: ['Kikapcsolva', 'Album Borító', 'Lejátszási Lista', 'Mindkettő'] },
+        title: { english: 'Changes mostly visible above 1080p resolution', hungarian: 'Változtatások leginkább 1080p felbontás felett láthatóak' }
     },
     extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
     videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
@@ -50,14 +51,15 @@ export const fieldTexts = {
         options: { english: ['Disabled', 'Navbar', 'Album Cover', 'Background'], hungarian: ['Kikapcsolva', 'Navbar', 'Album Borító', 'Háttér'] }
     },
     visualizerPlaceSection: { english: 'Music Visualizer', hungarian: 'Zene Vizualizáló' },
-    visualizerStartsFrom: { english: 'Visualizer Starts from', hungarian: 'Vizualizáló innen kezdődik:',
+    visualizerStartsFrom: { english: 'Bars are placed from:', hungarian: 'Sávok elhelyezése innen:',
         options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
     },
     visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
     visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
     visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
-    visualizerFft: { english: '<span title="High values can affect performance and can break circle visualizer.">Audio Samples⚠</span>', hungarian: '<span title="Magas értékek befolyásolhatják a teljesítményt és hibát okozhatnak a kör vizualizálóban.">Hang Minták⚠</span>',
-        options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] }
+    visualizerFft: { english: 'Audio Samples', hungarian: 'Hang Minták',
+        options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] },
+        title: { english: 'High values can affect performance.', hungarian: 'Magas értékek befolyásolhatják a teljesítményt.' }
     },
     visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
         options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
@@ -78,6 +80,8 @@ export const fieldTexts = {
         options: { english: ['Average', 'Median'], hungarian: ['Átlag', 'Medián'] }
     },
     visualizerBassBounceSmooth: { english: 'Smooth Bounce', hungarian: 'Ugrálás Simítása' },
+    visualizerBassBounceFallSmoothing: { english: 'Bass Bounce Fall Smoothing', hungarian: 'Basszusugrálás Simítása (esésnél)' },
+    visualizerBassBounceGrowSmoothing: { english: 'Bass Bounce Grow Smoothing', hungarian: 'Basszusugrálás Simítása (növekedésnél)' },
     visualizerImageType: { english: 'Visualizer Image', hungarian: 'Vizualizáló Kép',
         options: { english: ['Disabled', 'Thumbnail', 'Custom URL'], hungarian: ['Kikapcsolva', 'Borítókép', 'Egyéni URL'] }
     },
@@ -90,13 +94,15 @@ export const fieldTexts = {
     visualizerRgbSamples: { english: 'RGB:Samples', hungarian: 'RGB:Minták' },
     visualizerMinDecibels: { english: 'Min Decibels' },
     visualizerMaxDecibels: { english: 'Max Decibels' },
-    visualizerSmoothing: { english: 'Smoothening', hungarian: 'Simítás' },
+    visualizerSmoothing: { english: 'Smoothing', hungarian: 'Simítás' },
     visualizerMinHertz: { english: 'AudioData Min Hertz' },
     visualizerMaxHertz: { english: 'AudioData Max Hertz' },
     visualizerBassBounceThreshold: { english: 'Bass Bounce Threshold' },
     visualizerBassBounceMinHertz: { english: 'Bass Bounce Min Hertz', hungarian: 'Basszusugrálás Min Hertz' },
     visualizerBassBounceMaxHertz: { english: 'Bass Bounce Max Hertz', hungarian: 'Basszusugrálás Max Hertz' },
     visualizerBassBounceDebug: { english: 'Bass Bounce Debug Color', hungarian: 'Basszusugrálás Debug Szín' },
+    visualizerBassBounceMinRadius: { english: 'Bass Bounce Min Radius', hungarian: 'Basszusugrálás Min Sugár' },
+    visualizerBassBounceMaxRadius: { english: 'Bass Bounce Max Radius', hungarian: 'Basszusugrálás Max Sugár' },
     visualizerEnergySaverFps: { english: 'Energy Saver FPS', hungarian: 'Energiatakarékos FPS' },
     visualizerRenderScale: { english: 'Render Scale' },
     visualizerShakeThreshold: { english: 'Shake Threshold' },
