@@ -26,6 +26,8 @@ export function changeShortcut() {
     let lastPressedKey, fancyKey;
     window.addEventListener('keydown', handleKeystrokes);
 
+    shortcutWindow.click();
+
     function handleKeystrokes(e) {
         if(e.key === 'Escape') return quitShortcut();
 

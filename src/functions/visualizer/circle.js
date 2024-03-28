@@ -19,18 +19,22 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
     if(visualizer.startsFrom === 'Right') drawArcs(false, maxBarHeight);
     else if(visualizer.startsFrom === 'Left') drawArcs(true, maxBarHeight);
-    else if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') {
+    else if(visualizer.startsFrom === 'Center') {
         drawArcs(false, maxBarHeight);
         drawArcs(true, maxBarHeight);
+    }
+    else if(visualizer.startsFrom === 'Edges') {
+        drawArcs(false, maxBarHeight);
+        drawArcs(false, maxBarHeight, 3);
     }
 
     if(doWeShake === true) postShake();
 }
 
-function drawArcs(backwards, maxBarHeight) {
+function drawArcs(backwards, maxBarHeight, startPoint = 1) {
     visualizer.ctx.save();
     visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
-    visualizer.ctx.rotate(visualizer.values.startingPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
+    visualizer.ctx.rotate(visualizer.values.startingPoint * startPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
     for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
         getBarColor(i);

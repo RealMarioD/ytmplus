@@ -45,6 +45,7 @@ export async function setup() {
                 console.error(error);
             }
         }
+        console.log('ytmPlus: Setup finished.');
     }
     catch (error) {
         console.error(error);

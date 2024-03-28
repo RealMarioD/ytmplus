@@ -1,14 +1,19 @@
-# V3 Beta
+# V3 ~~Beta~~ Gamma
 
-Due to breaking changes on YouTube Music's side, I'm pushing out V3 earlier than I'd wanted to, thus the "beta" tag.
-If you encounter any bugs, please message me on [Discord!](https://discord.gg/68Waxa4Qxz)
+Well hello there!
+Would you look at that, ytmPlus has been in beta for... at least 7 months. But we are now in gamma!..
+Welp. University struck me hard.
+
+I've been slowly working on it in the background, and now I'm finally releasing an update, because the last release version seemed to be a bit broken.
+
+If you encounter any bugs, [join the Discord server](https://discord.gg/68Waxa4Qxz) and message me please! (Or open an issue here, or DM me on Discord, or whatever you prefer.)
 
 # ytmPlus
 
 Ever wanted some nice addons for YouTube Music? If yes, you are at the right place.
 
 Multiple Language support!
-(Currently there's only English and Hungarian only.)
+(Currently there's English and Hungarian only.)
 
 # How to Install
 
@@ -42,7 +47,7 @@ You can bring up the settings by clicking on the cog in the top left, or by pres
 
 If you find bugs or have ideas or just want to discuss the script, feel free to [join the ytmPlus Discord server!](https://discord.gg/68Waxa4Qxz)
 
-# Screenshots
+# Screenshots (outdated)
 
 ![NoChanges](https://cdn.discordapp.com/attachments/859770660607229973/1086227358278746133/Disabled.png)
 ![CircleVisualizer](https://cdn.discordapp.com/attachments/859770660607229973/1086227357695758336/CircleVisualizer.png)

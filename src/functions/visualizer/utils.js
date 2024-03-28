@@ -92,6 +92,13 @@ function getRGB() {
     }
 }
 
+function setCanvas(canvas) {
+    visualizer.canvas = canvas;
+    visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
+    visualizer.ctx = visualizer.canvas.getContext('2d');
+    console.log(`Canvas set to: ${visualizer.canvas.id}`);
+}
+
 export function visualizerResizeFix() {
     let currentCanvasHolder;
     switch(visualizer.canvas.id) {
@@ -102,11 +109,23 @@ export function visualizerResizeFix() {
         default: throw new Error('visualizer.canvas.id is not valid!');
     }
 
+    // Check if canvas corresponds to selected place
+    if(visualizer.place === 'Navbar' && visualizer.canvas.id !== visualizer.canvases.navbar.id) setCanvas(visualizer.canvases.navbar);
+    else if(visualizer.place === 'Album Cover' && visualizer.canvas.id !== visualizer.canvases.albumCover.id) setCanvas(visualizer.canvases.albumCover);
+    else if(visualizer.place === 'Background') {
+        if(elements.player.playerUiState === 'MINIPLAYER') {
+            if(visualizer.canvas.id !== visualizer.canvases.background.id) setCanvas(visualizer.canvases.background);
+        }
+        else if(elements.player.playerUiState === 'FULLSCREEN') {
+            // playerBackground canvas height is not 100vh because YTM is a piece of fucking shit and my brain doesn't let me "hide" the bottom of the canvas under the miniplayer thing
+            // so to not have to fuck with scaling, we just switch to the already perfectly scaled album cover, EZ Clap
+            if(visualizer.canvas.id !== visualizer.canvases.albumCover.id) setCanvas(visualizer.canvases.albumCover);
+        }
+        else if(visualizer.canvas.id !== visualizer.canvases.playerBackground.id) setCanvas(visualizer.canvases.playerBackground);
+    }
+
     if(visualizer.canvas.width !== ~~(currentCanvasHolder.offsetWidth * visualizer.renderScale)) visualizer.canvas.width = currentCanvasHolder.offsetWidth * visualizer.renderScale;
     if(visualizer.canvas.height !== ~~(currentCanvasHolder.offsetHeight * visualizer.renderScale)) visualizer.canvas.height = currentCanvasHolder.offsetHeight * visualizer.renderScale;
-
-    if(elements.player.playerUiState_ === 'FULLSCREEN' && visualizer.canvas.id !== visualizer.canvases.navbar.id) elements.playlist.style.opacity = '0.01';
-    else elements.playlist.style.opacity = '';
 
     visualizer.values.WIDTH = visualizer.canvas.width;
     visualizer.values.halfWidth = visualizer.values.WIDTH / 2;
@@ -153,7 +172,7 @@ function medianOfArray(values) {
     values = [...values].sort((a, b) => a - b);
     const half = Math.floor(values.length / 2);
 
-    if(values.length % 2) return values[half];
+    if(values.length % 2 === 0) return values[half];
     return (values[half - 1] + values[half]) / 2;
 }
 

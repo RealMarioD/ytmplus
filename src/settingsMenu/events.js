@@ -38,7 +38,14 @@ export function closeEvent() {
 
 export function saveEvent() {
     // Updates updateable stuff on save
-    for(const fn in toCallOnEvents) toCallOnEvents[fn](ytmpConfig.get(fn));
+    for(const fn in toCallOnEvents) {
+        try {
+            toCallOnEvents[fn](ytmpConfig.get(fn));
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     startVisualizer();
 

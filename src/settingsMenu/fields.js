@@ -59,7 +59,7 @@ export const configFields = {
         refresh: true,
         type: 'customSelect',
         rawOptions: ['english', 'hungarian'],
-        default: 'English'
+        default: 'english'
     },
     changeWindowSize: {
         type: 'customSelect',
@@ -216,7 +216,7 @@ export const configFields = {
     visualizerStartsFrom: {
         type: 'customSelect',
         rawOptions: ['Left', 'Center', 'Right', 'Edges'],
-        default: 'Center'
+        default: 'Edges'
     },
     visualizerColor: {
         type: 'color',
@@ -228,12 +228,12 @@ export const configFields = {
     },
     visualizerFade: {
         type: 'checkbox',
-        default: false
+        default: true
     },
     visualizerFft: {
         type: 'customSelect',
         rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-        default: '4096',
+        default: '8192',
         setTitle: true
     },
     visualizerEnergySaverType: {
@@ -248,13 +248,13 @@ export const configFields = {
     visualizerRotate: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-        default: 'Disabled',
+        default: 'Reactive (Bass)',
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerRotateDirection: {
         type: 'customSelect',
         rawOptions: ['Clockwise', 'Counter-Clockwise'],
-        default: 'Clockwise',
+        default: 'Counter-Clockwise',
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerMove: {
@@ -273,29 +273,9 @@ export const configFields = {
         default: true,
         subCheckbox: 'visualizerCircleEnabled'
     },
-    visualizerBassBounceCalculation: {
-        type: 'customSelect',
-        rawOptions: ['average', 'median'],
-        default: 'average',
-        subCheckbox: 'visualizerCircleEnabled'
-    },
     visualizerBassBounceSmooth: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'visualizerCircleEnabled'
-    },
-    visualizerBassBounceFallSmoothing: {
-        type: 'int',
-        min: 1,
-        max: 10,
-        default: 4,
-        subCheckbox: 'visualizerCircleEnabled'
-    },
-    visualizerBassBounceGrowSmoothing: {
-        type: 'int',
-        min: 1,
-        max: 10,
-        default: 2,
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerImageType: {
@@ -377,23 +357,40 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 44100,
-        default: 0
+        default: 10
     },
     visualizerBassBounceMaxHertz: {
         type: 'float',
         min: 1,
         max: 44100,
-        default: 100
+        default: 80
     },
     visualizerBassBounceDebug: {
         type: 'checkbox',
         default: false
     },
+    visualizerBassBounceCalculation: {
+        type: 'customSelect',
+        rawOptions: ['average', 'median'],
+        default: 'average'
+    },
+    visualizerBassBounceFallSmoothing: {
+        type: 'int',
+        min: 1,
+        max: 10,
+        default: 5
+    },
+    visualizerBassBounceGrowSmoothing: {
+        type: 'int',
+        min: 1,
+        max: 10,
+        default: 3
+    },
     visualizerBassBounceMinRadius: {
         type: 'float',
         min: 0.001,
         max: 100,
-        default: 4
+        default: 6
     },
     visualizerBassBounceMaxRadius: {
         type: 'float',
@@ -417,13 +414,13 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.45
+        default: 0.5
     },
     visualizerShakeMultiplier: {
         type: 'float',
         min: 0,
         max: 100,
-        default: 0.5
+        default: 0.4
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,
