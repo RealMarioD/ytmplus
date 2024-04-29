@@ -104,7 +104,7 @@ export const configFields = {
     },
     removeAlbumCover: {
         type: 'checkbox',
-        default: false
+        default: true
     },
     swapMainPanelWithPlaylist: {
         type: 'checkbox',
@@ -112,7 +112,7 @@ export const configFields = {
     },
     removeUpgradeButton: {
         type: 'checkbox',
-        default: false
+        default: true
     },
     navbarBackgroundChange: {
         section: fieldTexts.themeSection,

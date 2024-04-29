@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-gamma.1
+// @version      3.0.0-gamma.2
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,7 +15,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-gamma.1';
+const vNumber = 'v3.0.0-gamma.2';
 try {
     (function() {
         'use strict';
@@ -169,10 +169,9 @@ try {
             }
 
             for(const field in configFields) {
-                if(fieldTexts[field] === undefined) {
-                    console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
+                if(fieldTexts[field] === undefined)
                     continue;
-                }
+
 
                 if(configFields[field].type === 'customSelect') {
                     if(configFields[field].rawOptions !== undefined) {
@@ -262,7 +261,7 @@ try {
             },
             removeAlbumCover: {
                 type: 'checkbox',
-                default: false
+                default: true
             },
             swapMainPanelWithPlaylist: {
                 type: 'checkbox',
@@ -270,7 +269,7 @@ try {
             },
             removeUpgradeButton: {
                 type: 'checkbox',
-                default: false
+                default: true
             },
             navbarBackgroundChange: {
                 section: fieldTexts.themeSection,
@@ -865,16 +864,14 @@ try {
             }
             widthRatio = image.width / image.height;
             imgLoaded = true;
-            console.log('Image loaded successfully');
             quality = 'maxresdefault';
         };
         image.onerror = (err) => { // we will most likely only get this is for custom images
             console.error(err);
-            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
-            else {
-                console.log('Visualizer Image couldn\'t be loaded. See above.');
+            if(visualizer.image.type === 'Custom') ;
+            else
                 return;
-            }
+
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -887,17 +884,13 @@ try {
                 else if(quality === 'hqdefault') quality = 'mqdefault';
                 return testForWorkingLink();
             }
-            console.log('Test Image loaded successfully');
             if(visualizer.image.type !== 'Thumbnail') return;
-            console.log('Setting thumbnailURL to testImage.src');
             image.src = thumbnailURL;
             validThumbnail = true;
         };
 
         function replaceImageURL() {
-            console.log('replaceImageURL');
             thumbnailURL = thumbnailChildSrc();
-            if(!thumbnailURL) console.log('thumbnailURL is undefined, ytmusic sucks');
 
             testForWorkingLink(); // we save this no matter what, because f*ck the way ytm handles everything, see src/functions/utils/videoSongSwitcher.js for spaghetti
 
@@ -906,9 +899,8 @@ try {
 
         function testForWorkingLink() {
             thumbnailURL = ytimgBuilder(currentVideoID());
-            if(!thumbnailURL) return console.log('thumbnailURL is undefined, ytimgBuilder failed');
+            if(!thumbnailURL) return (void 0);
             testImage.src = thumbnailURL;
-            console.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
         }
 
         function currentVideoURLHolder() {
@@ -1064,7 +1056,6 @@ try {
             visualizer.canvas = canvas;
             visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
             visualizer.ctx = visualizer.canvas.getContext('2d');
-            console.log(`Canvas set to: ${visualizer.canvas.id}`);
         }
 
         function visualizerResizeFix() {
@@ -1416,13 +1407,10 @@ try {
             visualizer.video = document.querySelector('video');
             if(visualizer.video) {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
-                console.log('Found video.');
                 startVisualizer();
             }
-            else {
-                console.warn('Query "video" not found, retrying in 100ms.');
+            else
                 setTimeout(getVideo, 100);
-            }
         }
 
         function startVisualizer() {
@@ -1599,7 +1587,6 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                console.log('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -1608,10 +1595,8 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    console.log('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -1744,7 +1729,6 @@ try {
 
         // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
         function checkDislike() {
-            console.log('Checking dislike in 3 seconds...');
             clearTimeout(functions.skipDislikedFunction);
 
             // If we don't time this out, we get the ability to skip at least 20 songs in a matter of seconds before it realizes it's not supposed to skip
@@ -1752,12 +1736,9 @@ try {
             // maybe timeout could be customizable too
             functions.skipDislikedFunction = setTimeout(async () => {
                 const likeButton = await document.getElementById('like-button-renderer');
-                if(!likeButton) return console.log('Could not find like button, skipping check');
-                if(likeButton.children[0].ariaPressed == 'true') {
-                    console.log('Song is disliked, skipping');
+                if(!likeButton) return (void 0);
+                if(likeButton.children[0].ariaPressed == 'true')
                     return document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
-                }
-                console.log('Song is not disliked, not skipping');
             }, 3000);
         }
 
@@ -1810,7 +1791,6 @@ try {
         }
 
         function videoSongSwitcher(mode) {
-            console.log('videoSongSwitcher');
             avSwitch = document.getElementById('av-id');
             if(!avSwitch) return console.error('videoSongSwitcher: avSwitch not found');
 
@@ -1842,7 +1822,6 @@ try {
             else if(mode === 'forceSong') {
                 getRidOfSwitch();
                 forceSongImageInterval = setInterval(() => {
-                    console.log('forceSongImageInterval');
                     if(validThumbnail === true && elements.songImage.src !== thumbnailURL) elements.songImage.src = thumbnailURL;
                 }, 1000);
                 elements.player.removeAttribute('video-mode');
@@ -1852,7 +1831,6 @@ try {
         }
 
         function getRidOfSwitch() {
-            console.log('getRidOfSwitch');
             elements.player.removeAttribute('has-av-switcher');
             elements.playerPage.removeAttribute('has-av-switcher');
             avSwitch.style.display = 'none';
@@ -1877,7 +1855,6 @@ try {
         };
 
         async function setup() {
-            console.log('ytmPlus: Setup started.');
             try {
                 elements.player = await document.getElementById('player');
                 elements.playerPage = await document.getElementById('player-page');
@@ -1902,7 +1879,7 @@ try {
                     elements.miniGuideItems = guides[2].children[2];
                 }
                 catch {
-                    if(!elements.miniGuideItems) console.warn('Could not find miniGuideItems!');
+                    if(!elements.miniGuideItems) (void 0);
                 }
 
                 // Adds a settings button on the navbar
@@ -1912,14 +1889,12 @@ try {
                 for(const fn in toCallOnEvents) {
                     try {
                         toCallOnEvents[fn](ytmpConfig.get(fn));
-                        console.log(`Loaded ${fn} on setup.`);
                     }
                     catch (error) {
                         console.error(`Failed to call ${fn} on setup:`);
                         console.error(error);
                     }
                 }
-                console.log('ytmPlus(windowLoad): Setup finished.');
             }
             catch (error) {
                 console.error('ytmPlus(windowLoad): Setup failed.');
@@ -2274,8 +2249,6 @@ try {
                 if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
                 ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
             }
-
-            console.log(ytmpConfig);
 
             manageUI(frame);
 

@@ -1,7 +1,7 @@
 {
   "name": "ytmplus",
   "metaname": "ytmPlus",
-  "version": "3.0.0-gamma.1",
+  "version": "3.0.0-gamma.2",
   "author": "mario_d",
   "license": "MIT",
   "namespace": "http://tampermonkey.net/",
