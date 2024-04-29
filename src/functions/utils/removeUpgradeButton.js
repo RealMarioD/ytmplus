@@ -5,23 +5,28 @@
 import { elements } from '../../globals/elements';
 
 export async function removeUpgradeButton(turnOn) {
+    // if bro has premium how about we don't remove their library button
+    if(elements.bigGuideItems.children.length < 4) return;
+
     if(!turnOn) {
-        elements.bigGuide.lastElementChild.style.display = 'inline-block';
-        elements.miniGuide.lastElementChild.style.display = 'inline-block';
+        elements.bigGuideItems.lastElementChild.style.removeProperty('display');
+        try { elements.miniGuideItems.lastElementChild.style.removeProperty('display'); }
+        catch {}
         return;
     }
 
-    elements.bigGuide.lastElementChild.style.display = 'none';
+    elements.bigGuideItems.lastElementChild.style.display = 'none';
 
-    if(!elements.miniGuide) {
+    if(!elements.miniGuideItems) {
         const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
         if(guides.length < 3) return;
-        elements.miniGuide = guides[2].children[2];
+        elements.miniGuideItems = guides[2].children[2];
     }
 
-    elements.miniGuide.lastElementChild.style.display = 'none';
+    elements.miniGuideItems.lastElementChild.style.display = 'none';
 }
 
+// // Old code that set the upgrade button to a digital clock in navbar
 // let currentTime;
 // clearInterval(functions.clockFunction);
 // if(mode === 'Original') {
