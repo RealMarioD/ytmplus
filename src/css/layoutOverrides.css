@@ -1,26 +1,5 @@
-ytmusic-player {
-    width: 75%; /* we should make this customizable, so visualizer can be BIG */
-}
-
-ytmusic-tab-renderer {
-    flex: unset;
-}
-
-tp-yt-paper-tabs {
-    flex: none;
-}
-
 #contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {
     margin-bottom: 0; /* remove random retarded padding on related list */
-}
-
-ytmusic-tab-renderer[page-type="MUSIC_PAGE_TYPE_TRACK_LYRICS"] {
-    display: flex;
-    align-items: center;
-}
-
-.description.ytmusic-description-shelf-renderer {
-    display: unset; /* we can center lyrics now, yippie! (WHY THO) */
 }
 
 html {

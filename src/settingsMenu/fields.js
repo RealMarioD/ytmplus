@@ -93,15 +93,24 @@ export const configFields = {
         type: 'checkbox',
         default: true
     },
+    // videoSongSwitcher: {
+    //     type: 'checkbox',
+    //     default: true
+    // },
     videoSongSwitcher: {
-        type: 'checkbox',
-        default: true
+        type: 'customSelect',
+        rawOptions: ['disabled', 'ogSwitch', 'forceSong'],
+        default: 'forceSong'
     },
     removeAlbumCover: {
         type: 'checkbox',
         default: false
     },
     swapMainPanelWithPlaylist: {
+        type: 'checkbox',
+        default: false
+    },
+    removeUpgradeButton: {
         type: 'checkbox',
         default: false
     },
@@ -175,10 +184,6 @@ export const configFields = {
     //     rawOptions: ['Original', 'Remove Button', 'Digital Clock'],
     //     default: 'Digital Clock'
     // },
-    removeUpgradeButton: {
-        type: 'checkbox',
-        default: false
-    },
     // clockColor: {
     //     type: 'color',
     //     default: '#AA3333',

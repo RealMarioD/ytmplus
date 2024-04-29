@@ -22,14 +22,11 @@ export function fixLayout(turnOn) {
 
     functions.fixLayout = setInterval(() => {
         if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
-        // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
-        // else elements.player.style.width = '75%';
     }, 1000);
-    elements.player.style.flex = 'unset';
+    elements.player.style.flex = '0.75';
     elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
     elements.mainPanel.style.alignItems = 'center';
     elements.mainPanel.style.justifyContent = 'center';
     elements.playlist.style.justifyContent = 'center';
-    // layoutCss = injectStyle(layoutOverrides);
     if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
 }

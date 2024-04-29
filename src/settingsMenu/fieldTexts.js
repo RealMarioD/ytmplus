@@ -18,7 +18,9 @@ export const fieldTexts = {
         title: { english: 'Changes mostly visible above 1080p resolution', hungarian: 'Változtatások leginkább 1080p felbontás felett láthatóak' }
     },
     extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
-    videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
+    videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó',
+        options: { english: ['Disabled', 'Original Switch', 'Force Song'], hungarian: ['Kikapcsolva', 'Eredeti Váltó', 'Zene Kényszerítés'] }
+    },
     removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
     swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
     themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },

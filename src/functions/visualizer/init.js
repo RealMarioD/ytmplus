@@ -1,7 +1,7 @@
 import { elements } from '../../globals/elements';
 import { visualizer } from '../../globals/visualizer';
 import { injectElement } from '../backend/injectElement';
-import { replaceImageURL } from './image';
+import { observeVideoID, replaceImageURL } from './image';
 import { renderFrame } from './renderer';
 import { getBufferData, initValues, visualizerResizeFix } from './utils';
 
@@ -25,7 +25,7 @@ export async function setupVisualizer() {
         });
     });
     playerObserver.observe(elements.player, { attributes: true });
-
+    observeVideoID();
     getVideo();
 }
 

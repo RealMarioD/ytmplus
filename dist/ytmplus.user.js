@@ -61,7 +61,9 @@ try {
                 title: { english: 'Changes mostly visible above 1080p resolution', hungarian: 'Változtatások leginkább 1080p felbontás felett láthatóak' }
             },
             extraPlaybackButtons: { english: 'Extra Playback Buttons', hungarian: 'Több Irányító Gomb' },
-            videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó' },
+            videoSongSwitcher: { english: 'Video/Song Switcher', hungarian: 'Videó/Zene Váltó',
+                options: { english: ['Disabled', 'Original Switch', 'Force Song'], hungarian: ['Kikapcsolva', 'Eredeti Váltó', 'Zene Kényszerítés'] }
+            },
             removeAlbumCover: { english: 'Remove Album Cover', hungarian: 'Album Borító Eltávolítása' },
             swapMainPanelWithPlaylist: { english: 'Swap Album Cover with Playlist', hungarian: 'Album Borító és Lejátszási Lista felcserélése' },
             themeSection: { english: 'Theme Settings', hungarian: 'Téma beállítások' },
@@ -249,15 +251,24 @@ try {
                 type: 'checkbox',
                 default: true
             },
+            // videoSongSwitcher: {
+            //     type: 'checkbox',
+            //     default: true
+            // },
             videoSongSwitcher: {
-                type: 'checkbox',
-                default: true
+                type: 'customSelect',
+                rawOptions: ['disabled', 'ogSwitch', 'forceSong'],
+                default: 'forceSong'
             },
             removeAlbumCover: {
                 type: 'checkbox',
                 default: false
             },
             swapMainPanelWithPlaylist: {
+                type: 'checkbox',
+                default: false
+            },
+            removeUpgradeButton: {
                 type: 'checkbox',
                 default: false
             },
@@ -331,10 +342,6 @@ try {
             //     rawOptions: ['Original', 'Remove Button', 'Digital Clock'],
             //     default: 'Digital Clock'
             // },
-            removeUpgradeButton: {
-                type: 'checkbox',
-                default: false
-            },
             // clockColor: {
             //     type: 'color',
             //     default: '#AA3333',
@@ -729,13 +736,14 @@ try {
             player: undefined, // Has the sizes we need for album cover canvas
             playerPage: undefined,
             playerPageDiv: undefined, // Set to the player "overlay" in window.onload
+            songImage: undefined, // Set to the song image in window.onload
             upgradeButton: undefined, // Set to the upgrade "button" in window.onload
             originalUpgradeText: undefined, // OGUpgrade text can differ based on YTM language
             navBarBg: undefined, // Holds the navbar bg's div, visualizer canvas is injected into its innerHTML
             mainPanel: undefined, // Holds something from around the album cover, - - | | - -
             playlist: undefined,
-            miniGuide: undefined,
-            bigGuide: undefined
+            miniGuideItems: undefined,
+            bigGuideItems: undefined
         };
 
         const keyframes = '@keyframes backgroundGradientHorizontal {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 100% center;\r\n    }\r\n}\r\n\r\n@keyframes backgroundGradientVertical {\r\n    0% {\r\n        background-position: center 0%;\r\n    }\r\n\r\n    100% {\r\n        background-position: center 100%;\r\n    }\r\n}\r\n\r\n@keyframes clockGradientHorizontal {\r\n    from {\r\n        background-position: 0% center;\r\n    }\r\n    to {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@keyframes clockGradientVertical {\r\n    from {\r\n        background-position: center 0%;\r\n    }\r\n    to {\r\n        background-position: center 200%;\r\n    }\r\n}';
@@ -836,10 +844,90 @@ try {
             resizeInterval: undefined
         };
 
-        const image = new Image();
+        // Complete redo of image.js
 
-        function currentVideoURL() {
+        let quality = 'maxresdefault', widthRatio;
+        let validThumbnail = false, imgLoaded = false, thumbnailURL;
+
+        function ytimgBuilder(videoID) {
+            if(!videoID) return undefined;
+            return `https://i.ytimg.com/vi/${videoID}/${quality}.jpg`;
+        }
+
+        const image = new Image();
+        image.onload = () => {
+            if(image.height < 100 && quality !== 'mqdefault') { // thumbnails return a very small image on 404
+                imgLoaded = false;
+                if(quality === 'maxresdefault') quality = 'sddefault';
+                else if(quality === 'sddefault') quality = 'hqdefault';
+                else if(quality === 'hqdefault') quality = 'mqdefault';
+                return replaceImageURL();
+            }
+            widthRatio = image.width / image.height;
+            imgLoaded = true;
+            console.log('Image loaded successfully');
+            quality = 'maxresdefault';
+        };
+        image.onerror = (err) => { // we will most likely only get this is for custom images
+            console.error(err);
+            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
+            else {
+                console.log('Visualizer Image couldn\'t be loaded. See above.');
+                return;
+            }
+            visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
+            replaceImageURL();
+        };
+
+        const testImage = new Image();
+        testImage.onload = () => {
+            if(testImage.height < 100 && quality !== 'mqdefault') { // very likely a 404
+                if(quality === 'maxresdefault') quality = 'sddefault';
+                else if(quality === 'sddefault') quality = 'hqdefault';
+                else if(quality === 'hqdefault') quality = 'mqdefault';
+                return testForWorkingLink();
+            }
+            console.log('Test Image loaded successfully');
+            if(visualizer.image.type !== 'Thumbnail') return;
+            console.log('Setting thumbnailURL to testImage.src');
+            image.src = thumbnailURL;
+            validThumbnail = true;
+        };
+
+        function replaceImageURL() {
+            console.log('replaceImageURL');
+            thumbnailURL = thumbnailChildSrc();
+            if(!thumbnailURL) console.log('thumbnailURL is undefined, ytmusic sucks');
+
+            testForWorkingLink(); // we save this no matter what, because f*ck the way ytm handles everything, see src/functions/utils/videoSongSwitcher.js for spaghetti
+
+            if(visualizer.image.type === 'Custom') image.src = visualizer.image.customURL;
+        }
+
+        function testForWorkingLink() {
+            thumbnailURL = ytimgBuilder(currentVideoID());
+            if(!thumbnailURL) return console.log('thumbnailURL is undefined, ytimgBuilder failed');
+            testImage.src = thumbnailURL;
+            console.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
+        }
+
+        function currentVideoURLHolder() {
             return document.getElementsByClassName('ytp-title-link yt-uix-sessionlink')[0];
+        }
+
+        function currentVideoID() {
+            const urlResults = currentVideoURLHolder().href.match(/(?:v=)([^&]*)/i);
+            if(urlResults === null || urlResults.length < 2) return undefined;
+            return urlResults[1];
+        }
+        const videoIDObserver = new MutationObserver((changes) => {
+            changes.forEach(change => {
+                if(change.attributeName === 'href' && currentVideoURLHolder().href != undefined) replaceImageURL();
+            });
+        });
+
+        function observeVideoID() {
+            videoIDObserver.observe(currentVideoURLHolder(), { attributes: true });
         }
 
         function thumbnailChildSrc() {
@@ -851,103 +939,6 @@ try {
             }
         }
 
-        let imgLoaded = false, lastSavedVideoURL, currentImageURL, widthRatio, heightRatio, quality = 'maxresdefault', loadedQuality;
-
-        image.onload = () => {
-            if(image.height < 100) { // very likely a 404
-                imgLoaded = false;
-                if(quality === 'maxresdefault') quality = 'sddefault';
-                else if(quality === 'sddefault') quality = 'hqdefault';
-                else if(quality === 'hqdefault') quality = 'mqdefault';
-                return replaceImageURL();
-            }
-            heightRatio = image.height / image.width;
-            widthRatio = image.width / image.height;
-            imgLoaded = true;
-            loadedQuality = quality;
-            console.log('Image loaded successfully');
-            quality = 'maxresdefault';
-        };
-
-        image.onerror = (err) => { // thumbnails return a very small image on 404 so this is mostly for customs
-            console.error(err);
-            if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
-            else {
-                console.log('Visualizer Image couldn\'t be loaded.');
-                return;
-            }
-            visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
-            replaceImageURL();
-        };
-
-        const observer = new MutationObserver(changes => {
-            changes.forEach(change => {
-                if(change.attributeName === 'href' && currentVideoURL().href != undefined) replaceImageURL();
-            });
-        });
-        setTimeout(() => observer.observe(currentVideoURL(), { attributes: true }), 1000);
-
-        function thumbnailEvent() {
-            if(visualizer.image.type === 'Custom') {
-                console.warn('Thumbnail event called with custom image');
-                return;
-            }
-            currentImageURL = thumbnailChildSrc();
-            if(!currentImageURL) {
-                console.log('thumbnailChildSrc is undefined');
-                return;
-            }
-
-            if(currentImageURL.indexOf('data') !== 0) {
-                console.log('Current image URL is valid');
-                if(image.src === currentImageURL) {
-                    console.log('but is already thumbnail');
-                    return;
-                }
-                console.log('Setting it to image source');
-                lastSavedVideoURL = currentVideoURL().href;
-                return finalize();
-            }
-
-            console.log('Current image URL is data, cannot be image source');
-
-            if(lastSavedVideoURL !== currentVideoURL().href) {
-                lastSavedVideoURL = currentVideoURL().href;
-                console.log(`Changed lastSavedVideoURL to: ${lastSavedVideoURL}`);
-            }
-
-            if(!lastSavedVideoURL) {
-                console.log('lastSavedVideoURL is empty, currentVideoURL.href is likely undefined');
-                return;
-            }
-
-            imgLoaded = false;
-            currentImageURL = `https://i.ytimg.com/vi/${lastSavedVideoURL.split('v=')[1]}/${quality}.jpg`;
-            console.log(`Trying to load with quality: ${quality}`);
-            finalize();
-        }
-
-        function customEvent() {
-            if(currentImageURL === visualizer.image.customURL) {
-                console.log('Custom Image change: URL is the same');
-                return;
-            }
-            currentImageURL = visualizer.image.customURL;
-            finalize();
-        }
-
-        function finalize() {
-            console.log(`Changed currentImageURL to: ${currentImageURL}`);
-            imgLoaded = false;
-            image.src = currentImageURL;
-        }
-
-        function replaceImageURL() {
-            if(visualizer.circleEnabled === false) return;
-            if(visualizer.image.type === 'Thumbnail') thumbnailEvent();
-            else if(visualizer.image.type === 'Custom') customEvent();
-        }
-
         const PI2 = Math.PI * 2;
         function drawVisImage() {
             visualizer.ctx.save();
@@ -956,18 +947,18 @@ try {
             visualizer.ctx.closePath();
             visualizer.ctx.clip();
 
-            let radiusMultX = visualizer.values.radius,
-                radiusMultY = 1; // default visualizer.values for 1:1 aspect ratio
+            const radiusMultX = visualizer.values.radius * 1.175,
+                radiusMultY = widthRatio; // default visualizer.values for 1:1 aspect ratio
 
-            if(loadedQuality !== 'maxresdefault' && visualizer.image.type !== 'Custom') { // enlarge image to cut off "cinematic bars"
-                radiusMultX *= 1.33;
-                radiusMultY = widthRatio;
-            }
-            else if(heightRatio > 1) { // vertical img handling
-                radiusMultX *= heightRatio;
-                radiusMultY = widthRatio;
-            }
-            else radiusMultY *= widthRatio; // horizontal img handling
+            // if(loadedQuality !== 'maxresdefault' && visualizer.image.type !== 'Custom') { // enlarge image to cut off "cinematic bars"
+            //     radiusMultX *= 1.33;
+            //     radiusMultY = widthRatio;
+            // }
+            // else if(heightRatio > 1) { // vertical img handling
+            //     radiusMultX *= heightRatio;
+            //     radiusMultY = widthRatio;
+            // }
+            // else radiusMultY *= widthRatio; // horizontal img handling
 
             visualizer.ctx.drawImage(
                 image,
@@ -1417,7 +1408,7 @@ try {
                 });
             });
             playerObserver.observe(elements.player, { attributes: true });
-
+            observeVideoID();
             getVideo();
         }
 
@@ -1547,7 +1538,7 @@ try {
             fixLayout: undefined
         };
 
-        const layoutOverrides = 'ytmusic-player {\r\n    width: 75%; /* we should make this customizable, so visualizer can be BIG */\r\n}\r\n\r\nytmusic-tab-renderer {\r\n    flex: unset;\r\n}\r\n\r\ntp-yt-paper-tabs {\r\n    flex: none;\r\n}\r\n\r\n#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nytmusic-tab-renderer[page-type="MUSIC_PAGE_TYPE_TRACK_LYRICS"] {\r\n    display: flex;\r\n    align-items: center;\r\n}\r\n\r\n.description.ytmusic-description-shelf-renderer {\r\n    display: unset; /* we can center lyrics now, yippie! (WHY THO) */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}';
+        const layoutOverrides = '#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}';
 
         let layoutCss;
         function fixLayout(turnOn) {
@@ -1568,15 +1559,12 @@ try {
 
             functions.fixLayout = setInterval(() => {
                 if(elements.player.style.margin !== '0px') elements.player.style.margin = '0px';
-            // if(elements.player.playerUiState_ === 'MINIPLAYER') elements.player.style.removeProperty('width');
-            // else elements.player.style.width = '75%';
             }, 1000);
-            elements.player.style.flex = 'unset';
+            elements.player.style.flex = '0.75';
             elements.playerPageDiv.style.padding = '0px var(--ytmusic-player-page-horizontal-padding)';
             elements.mainPanel.style.alignItems = 'center';
             elements.mainPanel.style.justifyContent = 'center';
             elements.playlist.style.justifyContent = 'center';
-            // layoutCss = injectStyle(layoutOverrides);
             if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
         }
 
@@ -1645,23 +1633,28 @@ try {
         // import { elements } from '../../globals/elements';
 
         async function removeUpgradeButton(turnOn) {
+        // if bro has premium how about we don't remove their library button
+            if(elements.bigGuideItems.children.length < 4) return;
+
             if(!turnOn) {
-                elements.bigGuide.lastElementChild.style.display = 'inline-block';
-                elements.miniGuide.lastElementChild.style.display = 'inline-block';
+                elements.bigGuideItems.lastElementChild.style.removeProperty('display');
+                try { elements.miniGuideItems.lastElementChild.style.removeProperty('display'); }
+                catch {}
                 return;
             }
 
-            elements.bigGuide.lastElementChild.style.display = 'none';
+            elements.bigGuideItems.lastElementChild.style.display = 'none';
 
-            if(!elements.miniGuide) {
+            if(!elements.miniGuideItems) {
                 const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
                 if(guides.length < 3) return;
-                elements.miniGuide = guides[2].children[2];
+                elements.miniGuideItems = guides[2].children[2];
             }
 
-            elements.miniGuide.lastElementChild.style.display = 'none';
+            elements.miniGuideItems.lastElementChild.style.display = 'none';
         }
 
+        // // Old code that set the upgrade button to a digital clock in navbar
         // let currentTime;
         // clearInterval(functions.clockFunction);
         // if(mode === 'Original') {
@@ -1802,32 +1795,68 @@ try {
             }
         }
 
-        let clone;
-        function videoSongSwitcher(turnOn) {
-            const avSwitch = document.getElementById('av-id');
-            if(!turnOn) {
-                elements.player.removeAttribute('has-av-switcher');
-                elements.playerPage.removeAttribute('has-av-switcher');
-                avSwitch.style.display = 'none';
-                if(clone) clone.style.display = 'none';
-                return;
-            }
-            elements.player.setAttribute('has-av-switcher', true);
-            elements.playerPage.setAttribute('has-av-switcher', true);
-            avSwitch.style.display = 'none';
-            if(clone) return clone.style.display = 'block';
+        /**
+     * @name videoSongSwitcher
+     */
 
-            try {
-                if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
-                const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
-                navbar.children[1].style.justifyContent = 'space-around';
-                clone = avSwitch.cloneNode(true);
-                navbar.children[1].append(clone);
-                clone.style.display = 'block';
+        let clone, avSwitch, forceSongImageInterval;
+        const videoModeOberserver = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => { if(mutation.type === 'attributes') handleMutation(mutation); });
+        });
+
+        function handleMutation(mutation) {
+            if(mutation.attributeName === 'playback-mode' && mutation.target.getAttribute('playback-mode') !== 'ATV_PREFERRED') mutation.target.setAttribute('playback-mode', 'ATV_PREFERRED');
+            if(mutation.attributeName === 'video-mode' && mutation.target.getAttribute('video-mode') !== null) mutation.target.removeAttribute('video-mode');
+        }
+
+        function videoSongSwitcher(mode) {
+            console.log('videoSongSwitcher');
+            avSwitch = document.getElementById('av-id');
+            if(!avSwitch) return console.error('videoSongSwitcher: avSwitch not found');
+
+            if(mode === 'disabled') {
+            // todo later
+                getRidOfSwitch();
+                videoModeOberserver.disconnect();
+                clearInterval(forceSongImageInterval);
             }
-            catch (err) {
-                console.error(err);
+            else if(mode === 'ogSwitch') {
+                videoModeOberserver.disconnect();
+                clearInterval(forceSongImageInterval);
+                elements.player.setAttribute('has-av-switcher', true);
+                elements.playerPage.setAttribute('has-av-switcher', true);
+                avSwitch.style.display = 'none';
+                if(clone) return clone.style.display = 'block';
+                try {
+                    if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
+                    const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
+                    navbar.children[1].style.justifyContent = 'space-around';
+                    clone = avSwitch.cloneNode(true);
+                    navbar.children[1].append(clone);
+                    clone.style.display = 'block';
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
+            else if(mode === 'forceSong') {
+                getRidOfSwitch();
+                forceSongImageInterval = setInterval(() => {
+                    console.log('forceSongImageInterval');
+                    if(validThumbnail === true && elements.songImage.src !== thumbnailURL) elements.songImage.src = thumbnailURL;
+                }, 1000);
+                elements.player.removeAttribute('video-mode');
+                elements.player.setAttribute('playback-mode', 'ATV_PREFERRED'); // song mode
+                videoModeOberserver.observe(elements.player, { attributes: true });
+            }
+        }
+
+        function getRidOfSwitch() {
+            console.log('getRidOfSwitch');
+            elements.player.removeAttribute('has-av-switcher');
+            elements.playerPage.removeAttribute('has-av-switcher');
+            avSwitch.style.display = 'none';
+            if(clone) clone.style.display = 'none';
         }
 
         // Collection of functions that are called windowLoad or onSave
@@ -1857,6 +1886,8 @@ try {
                 elements.mainPanel = await document.getElementById('main-panel');
                 const playlistFinder = await document.getElementsByClassName('side-panel style-scope ytmusic-player-page');
                 elements.playlist = playlistFinder[0];
+                elements.songImage = await document.getElementById('song-image');
+                elements.songImage ? elements.songImage = elements.songImage.firstElementChild.firstElementChild : null;
 
                 // Injecting animations for background and clock gradients
                 injectStyle(keyframes);
@@ -1864,14 +1895,14 @@ try {
                 setupVisualizer();
 
                 // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
-                // If shit breaks just put back everything below in a timeout
+                // If stuff breaks just put back everything below in a timeout
                 try {
                     const guides = await document.getElementsByTagName('ytmusic-guide-section-renderer');
-                    elements.bigGuide = guides[0].children[2];
-                    elements.miniGuide = guides[2].children[2];
+                    elements.bigGuideItems = guides[0].children[2];
+                    elements.miniGuideItems = guides[2].children[2];
                 }
                 catch {
-                    if(!elements.miniGuide) console.warn('Could not find miniGuide!');
+                    if(!elements.miniGuideItems) console.warn('Could not find miniGuideItems!');
                 }
 
                 // Adds a settings button on the navbar
@@ -1881,14 +1912,17 @@ try {
                 for(const fn in toCallOnEvents) {
                     try {
                         toCallOnEvents[fn](ytmpConfig.get(fn));
+                        console.log(`Loaded ${fn} on setup.`);
                     }
                     catch (error) {
+                        console.error(`Failed to call ${fn} on setup:`);
                         console.error(error);
                     }
                 }
-                console.log('ytmPlus: Setup finished.');
+                console.log('ytmPlus(windowLoad): Setup finished.');
             }
             catch (error) {
+                console.error('ytmPlus(windowLoad): Setup failed.');
                 console.error(error);
             }
         }
