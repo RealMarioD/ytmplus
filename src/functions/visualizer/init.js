@@ -69,6 +69,7 @@ export function startVisualizer() {
 
         replaceImageURL();
         requestAnimationFrame(renderFrame);
+        console.log('Visualizer started.');
     }
     catch (error) {
         console.error(error);

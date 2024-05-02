@@ -3,8 +3,9 @@ import { functions } from '../../globals/functions';
 import { injectStyle } from '../backend/injectStyle';
 import layoutOverrides from '../../css/layoutOverrides.css';
 
-let layoutCss;
+let layoutCss, moviePlayer;
 export function fixLayout(turnOn) {
+    if(!moviePlayer) moviePlayer = document.getElementById('movie_player');
     if(!turnOn) {
         clearInterval(functions.fixLayout);
         elements.player.style.removeProperty('flex');
@@ -13,6 +14,7 @@ export function fixLayout(turnOn) {
         elements.playerPageDiv.style.removeProperty('padding');
         elements.mainPanel.style.removeProperty('align-items');
         elements.mainPanel.style.removeProperty('justify-content');
+        moviePlayer.style.removeProperty('background');
         try {
             layoutCss = layoutCss.remove();
         }
@@ -28,5 +30,6 @@ export function fixLayout(turnOn) {
     elements.mainPanel.style.alignItems = 'center';
     elements.mainPanel.style.justifyContent = 'center';
     elements.playlist.style.justifyContent = 'center';
+    moviePlayer.style.background = 'rgba(0,0,0,0.001)';
     if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
 }

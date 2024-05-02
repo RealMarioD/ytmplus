@@ -5,3 +5,7 @@
 html {
     scrollbar-color: unset;
 }
+
+ytmusic-player {
+    aspect-ratio: 1;
+}

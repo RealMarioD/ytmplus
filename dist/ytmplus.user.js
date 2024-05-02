@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-gamma.2
+// @version      3.0.0-gamma.3
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,7 +15,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-gamma.2';
+const vNumber = 'v3.0.0-gamma.3';
 try {
     (function() {
         'use strict';
@@ -1526,10 +1526,11 @@ try {
             fixLayout: undefined
         };
 
-        const layoutOverrides = '#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}';
+        const layoutOverrides = '#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}\r\n\r\nytmusic-player {\r\n    aspect-ratio: 1;\r\n}';
 
-        let layoutCss;
+        let layoutCss, moviePlayer;
         function fixLayout(turnOn) {
+            if(!moviePlayer) moviePlayer = document.getElementById('movie_player');
             if(!turnOn) {
                 clearInterval(functions.fixLayout);
                 elements.player.style.removeProperty('flex');
@@ -1538,6 +1539,7 @@ try {
                 elements.playerPageDiv.style.removeProperty('padding');
                 elements.mainPanel.style.removeProperty('align-items');
                 elements.mainPanel.style.removeProperty('justify-content');
+                moviePlayer.style.removeProperty('background');
                 try {
                     layoutCss = layoutCss.remove();
                 }
@@ -1553,6 +1555,7 @@ try {
             elements.mainPanel.style.alignItems = 'center';
             elements.mainPanel.style.justifyContent = 'center';
             elements.playlist.style.justifyContent = 'center';
+            moviePlayer.style.background = 'rgba(0,0,0,0.001)';
             if(!layoutCss) layoutCss = injectStyle(layoutOverrides);
         }
 
