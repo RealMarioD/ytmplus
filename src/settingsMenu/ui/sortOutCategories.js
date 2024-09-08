@@ -51,7 +51,7 @@ export async function sortOutCategories(wrapper) {
         currentSettings.appendChild(configVars); // Move category to currentSettings and wait to be visible
     }
     // indeed, lastOpenCategory is string, did you know you can use a string for an array's index?
-    if(ytmpConfig.get('lastOpenCategory') !== '-1') changeCategoryButton[ytmpConfig.get('lastOpenCategory')].click();
+    if(ytmpConfig.get('lastOpenCategory') > '-1') changeCategoryButton[ytmpConfig.get('lastOpenCategory')].click();
 
     return resetLink;
 }

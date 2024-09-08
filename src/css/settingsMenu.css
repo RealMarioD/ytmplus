@@ -431,6 +431,13 @@ svg text {
     text-align: center;
 }
 
+#warning_button_holder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 90%;
+}
+
 .warning_buttons {
     transition: 100ms linear;
 }

@@ -48,8 +48,10 @@ export function videoSongSwitcher(mode) {
     else if(mode === 'forceSong') {
         getRidOfSwitch();
         forceSongImageInterval = setInterval(() => {
-            console.log('forceSongImageInterval');
-            if(validThumbnail === true && elements.songImage.src !== thumbnailURL) elements.songImage.src = thumbnailURL;
+            if(validThumbnail === true && elements.songImage.src !== thumbnailURL) {
+                console.log('forceSongImageInterval');
+                elements.songImage.src = thumbnailURL;
+            }
         }, 1000);
         elements.player.removeAttribute('video-mode');
         elements.player.setAttribute('playback-mode', 'ATV_PREFERRED'); // song mode

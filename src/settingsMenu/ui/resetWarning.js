@@ -6,7 +6,8 @@ export async function createResetWarning(frame, resetLink) {
     const resetWarning = await injectElement('div', 'reset_warning', frame, undefined, 'display: none');
     const warningText = await injectElement('span', 'warning_text', resetWarning);
     warningText.innerText = 'WAIT!\nRESET EVERYTHING TO DEFAULT?';
-    const yesResetButton = await injectElement('input', 'yes_reset_button', resetWarning, 'warning_buttons');
+    const buttonHolder = await injectElement('div', 'warning_button_holder', resetWarning);
+    const yesResetButton = await injectElement('input', 'yes_reset_button', buttonHolder, 'warning_buttons');
     yesResetButton.type = 'button';
     yesResetButton.value = 'Yes, reset';
     yesResetButton.addEventListener('click', () => {
@@ -14,7 +15,7 @@ export async function createResetWarning(frame, resetLink) {
         ytmpConfig.save();
         resetWarning.style.display = 'none';
     });
-    const noGoBackButton = await injectElement('input', 'no_goback_button', resetWarning, 'warning_buttons');
+    const noGoBackButton = await injectElement('input', 'no_goback_button', buttonHolder, 'warning_buttons');
     noGoBackButton.type = 'button';
     noGoBackButton.value = 'No, go back';
     noGoBackButton.addEventListener('click', () => {
