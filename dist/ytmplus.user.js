@@ -1238,12 +1238,8 @@ try {
 
         function preShake() {
             visualizer.ctx.save();
-            const movement = visualizer.values.halfHeight * 0.01 * visualizer.shake.multiplier;
-            let dx = movement, dy = movement;
-            if(~~(Math.random() * 2) === 0) dx *= 1;
-            else dx *= -1;
-            if(~~(Math.random() * 2) === 0) dy *= 1;
-            else dy *= -1;
+            const { halfHeight, shake: { multiplier } } = visualizer.values;
+            let [dx, dy] = [halfHeight * 0.01 * multiplier, halfHeight * 0.01 * multiplier].map(v => (Math.random() < 0.5 ? v : -v) * (Math.random() < 0.5 ? 1 : -1));
             visualizer.ctx.translate(dx, dy);
         }
 
@@ -1347,37 +1343,25 @@ try {
         let lastFrameTime = 0;
 
         // NEVER REMOVE TIME FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
+        
         function renderFrame(time) {
-        // Don't do anything if True Pause energy saver is on and playback is paused
-            if((visualizer.energySaver.type === 'True Pause' || visualizer.energySaver.type === 'Both') && visualizer.video.paused === true) return requestAnimationFrame(renderFrame);
+            const { energySaver, video, analyser, rgb, place, canvas, ctx, audioData, normalizedAudioData, circleEnabled, canvases, values } = visualizer;
+            
+            if ((energySaver.type === 'True Pause' || energySaver.type === 'Both') && video.paused || t - lastFrameTime < energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
 
-            // If render would be faster than max fps (60 by default if energy saver is off) come back later
-            if(time - lastFrameTime < visualizer.energySaver._frameMinTime) return requestAnimationFrame(renderFrame);
+            lastFrameTime = t;
+            ctx.clearRect(0, 0, values.WIDTH, values.HEIGHT);
 
-            lastFrameTime = time;
+            if (place === 'Disabled') return;
 
-            visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
+            analyser.getByteFrequencyData(audioData);
+            audioData.forEach((v, i) => normalizedAudioData[i] = v / 255);
 
-            // Kill everything if disabled, can be turned back by simply calling requestAnimationFrame(renderFrame)
-            if(visualizer.place === 'Disabled') return;
+            if (rgb.enabled) { rgb._data.push(rgb._data[0]); rgb._data.shift(); }
 
-            // Get audio data
-            visualizer.analyser.getByteFrequencyData(visualizer.audioData);
-
-            // Normalize audio data to 0 - 1
-            for(let i = 0; i < visualizer.audioData.length; i++) visualizer.normalizedAudioData[i] = visualizer.audioData[i] / 255;
-
-            // Cheap color cycle effect, speed scales with fps so probably not the best
-            if(visualizer.rgb.enabled === true) {
-                visualizer.rgb._data.push(visualizer.rgb._data[0]);
-                visualizer.rgb._data.shift();
-            }
-
-            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
-            else visualizerNavbar(visualizer.ctx);
-
+            (circleEnabled && canvas.id !== canvases.navbar.id ? visualizerCircle : visualizerNavbar)(ctx);
             requestAnimationFrame(renderFrame);
-        }
+         }
 
         async function setupVisualizer() {
         // Injecting visualizer visualizer.canvases
