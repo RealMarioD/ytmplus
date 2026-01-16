@@ -6,9 +6,77 @@ export function getFMT(fps) {
     visualizer.energySaver._frameMinTime = (1000 / 60) * (60 / fps) - (1000 / 60) * 0.5;
 }
 
+/**
+ * Pre-calculates logarithmic mapping indices and interpolation factors
+ * Called once during initialization to avoid expensive calculations every frame
+ */
+export function initLogMapping() {
+    const outputLength = visualizer.audioData.length;
+    const minFreq = visualizer.minHertz || 20;
+    const maxFreq = visualizer.maxHertz || 20000;
+    
+    // Create logarithmic scale
+    const logMin = Math.log(minFreq);
+    const logMax = Math.log(maxFreq);
+    const logRange = logMax - logMin;
+    
+    // Pre-allocate arrays for mapping data
+    visualizer.logMapping = {
+        index1: new Uint16Array(outputLength),
+        index2: new Uint16Array(outputLength),
+        fraction: new Float32Array(outputLength),
+        logMin: logMin,
+        logMax: logMax,
+        logRange: logRange,
+        minFreq: minFreq,
+        maxFreq: maxFreq
+    };
+    
+    // Pre-calculate all mapping values
+    for(let i = 0; i < outputLength; i++) {
+        const t = i / outputLength;
+        const logFreq = logMin + t * logRange;
+        const freq = Math.exp(logFreq);
+        
+        const binIndexFloat = (freq / (visualizer.audioContext.sampleRate / 2)) * visualizer.bufferLength;
+        
+        const binIndex1 = Math.floor(binIndexFloat);
+        const binIndex2 = Math.ceil(binIndexFloat);
+        
+        visualizer.logMapping.index1[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex1));
+        visualizer.logMapping.index2[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex2));
+        visualizer.logMapping.fraction[i] = binIndexFloat - binIndex1;
+    }
+}
+
+/**
+ * Converts a frequency (Hz) to an index in the logarithmically-mapped array
+ * Used for features like bass bounce that need to work with specific frequency ranges
+ */
+export function freqToLogIndex(freq) {
+    const mapping = visualizer.logMapping;
+    
+    // Clamp frequency to valid range
+    if(freq <= mapping.minFreq) return 0;
+    if(freq >= mapping.maxFreq) return visualizer.audioData.length - 1;
+    
+    // Calculate position in logarithmic scale
+    const logFreq = Math.log(freq);
+    const t = (logFreq - mapping.logMin) / mapping.logRange;
+    
+    // Convert to array index
+    return Math.floor(t * visualizer.audioData.length);
+}
+
 export function calculateBassBounceBars() {
-    visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
-    visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
+    // Use logarithmic indices if log mapping is initialized, otherwise use linear calculation
+    if(visualizer.logMapping) {
+        visualizer.bassBounce._barStart = freqToLogIndex(visualizer.bassBounce.minHertz);
+        visualizer.bassBounce._barEnd = freqToLogIndex(visualizer.bassBounce.maxHertz);
+    } else {
+        visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
+        visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
+    }
     if(visualizer.bassBounce._barEnd === 0) visualizer.bassBounce._barEnd++;
 }
 
@@ -23,6 +91,9 @@ export function getBufferData() {
     visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
     visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
     visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+    
+    // Initialize logarithmic mapping lookup tables
+    initLogMapping();
 }
 
 /**
