@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-gamma.4
+// @version      3.0.0-delta.1
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,7 +15,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-gamma.4';
+const vNumber = 'v3.0.0-delta.1';
 try {
     (function() {
         'use strict';
@@ -310,7 +310,7 @@ try {
             },
             siteBackgroundColor: {
                 type: 'color',
-                default: '#AA0000',
+                default: '#400000',
                 subCheckbox: 'siteBackgroundChange'
             },
             siteBackgroundGradientEnabled: {
@@ -320,7 +320,7 @@ try {
             },
             siteBackgroundGradientColor: {
                 type: 'color',
-                default: '#0000AA',
+                default: '#000040',
                 subCheckbox: 'siteBackgroundChange'
             },
             siteBackgroundGradientAngle: {
@@ -378,7 +378,7 @@ try {
             visualizerStartsFrom: {
                 type: 'customSelect',
                 rawOptions: ['Left', 'Center', 'Right', 'Edges'],
-                default: 'Edges'
+                default: 'Center'
             },
             visualizerColor: {
                 type: 'color',
@@ -390,12 +390,12 @@ try {
             },
             visualizerFade: {
                 type: 'checkbox',
-                default: true
+                default: false
             },
             visualizerFft: {
                 type: 'customSelect',
                 rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-                default: '8192',
+                default: '4096',
                 setTitle: true
             },
             visualizerEnergySaverType: {
@@ -410,7 +410,7 @@ try {
             visualizerRotate: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-                default: 'Reactive (Bass)',
+                default: 'Disabled',
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerRotateDirection: {
@@ -427,7 +427,7 @@ try {
             },
             visualizerShakeEnabled: {
                 type: 'checkbox',
-                default: true,
+                default: false,
                 subCheckbox: 'visualizerCircleEnabled'
             },
             visualizerBassBounceEnabled: {
@@ -477,7 +477,7 @@ try {
                 type: 'int',
                 min: 1,
                 max: 8192,
-                default: 512
+                default: 256
             },
             visualizerMinDecibels: {
                 type: 'int',
@@ -507,7 +507,7 @@ try {
                 type: 'int',
                 min: 1,
                 max: 44100,
-                default: 4000
+                default: 20000
             },
             visualizerBassBounceThreshold: {
                 type: 'float',
@@ -519,7 +519,7 @@ try {
                 type: 'float',
                 min: 0,
                 max: 44100,
-                default: 10
+                default: 0
             },
             visualizerBassBounceMaxHertz: {
                 type: 'float',
@@ -966,9 +966,78 @@ try {
             visualizer.energySaver._frameMinTime = (1000 / 60) * (60 / fps) - (1000 / 60) * 0.5;
         }
 
+        /**
+     * Pre-calculates logarithmic mapping indices and interpolation factors
+     * Called once during initialization to avoid expensive calculations every frame
+     */
+        function initLogMapping() {
+            const outputLength = visualizer.audioData.length;
+            const minFreq = visualizer.minHertz || 20;
+            const maxFreq = visualizer.maxHertz || 20000;
+
+            // Create logarithmic scale
+            const logMin = Math.log(minFreq);
+            const logMax = Math.log(maxFreq);
+            const logRange = logMax - logMin;
+
+            // Pre-allocate arrays for mapping data
+            visualizer.logMapping = {
+                index1: new Uint16Array(outputLength),
+                index2: new Uint16Array(outputLength),
+                fraction: new Float32Array(outputLength),
+                logMin: logMin,
+                logMax: logMax,
+                logRange: logRange,
+                minFreq: minFreq,
+                maxFreq: maxFreq
+            };
+
+            // Pre-calculate all mapping values
+            for(let i = 0; i < outputLength; i++) {
+                const t = i / outputLength;
+                const logFreq = logMin + t * logRange;
+                const freq = Math.exp(logFreq);
+
+                const binIndexFloat = (freq / (visualizer.audioContext.sampleRate / 2)) * visualizer.bufferLength;
+
+                const binIndex1 = Math.floor(binIndexFloat);
+                const binIndex2 = Math.ceil(binIndexFloat);
+
+                visualizer.logMapping.index1[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex1));
+                visualizer.logMapping.index2[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex2));
+                visualizer.logMapping.fraction[i] = binIndexFloat - binIndex1;
+            }
+        }
+
+        /**
+     * Converts a frequency (Hz) to an index in the logarithmically-mapped array
+     * Used for features like bass bounce that need to work with specific frequency ranges
+     */
+        function freqToLogIndex(freq) {
+            const mapping = visualizer.logMapping;
+
+            // Clamp frequency to valid range
+            if(freq <= mapping.minFreq) return 0;
+            if(freq >= mapping.maxFreq) return visualizer.audioData.length - 1;
+
+            // Calculate position in logarithmic scale
+            const logFreq = Math.log(freq);
+            const t = (logFreq - mapping.logMin) / mapping.logRange;
+
+            // Convert to array index
+            return Math.floor(t * visualizer.audioData.length);
+        }
+
         function calculateBassBounceBars() {
-            visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
-            visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
+        // Use logarithmic indices if log mapping is initialized, otherwise use linear calculation
+            if(visualizer.logMapping) {
+                visualizer.bassBounce._barStart = freqToLogIndex(visualizer.bassBounce.minHertz);
+                visualizer.bassBounce._barEnd = freqToLogIndex(visualizer.bassBounce.maxHertz);
+            }
+            else {
+                visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
+                visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
+            }
             if(visualizer.bassBounce._barEnd === 0) visualizer.bassBounce._barEnd++;
         }
 
@@ -983,6 +1052,9 @@ try {
             visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
             visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
             visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+
+            // Initialize logarithmic mapping lookup tables
+            initLogMapping();
         }
 
         /**
@@ -1346,6 +1418,24 @@ try {
 
         let lastFrameTime = 0;
 
+        /**
+     * Fast logarithmic mapping using pre-calculated indices
+     * Only does data lookup and interpolation - no math operations
+     */
+        function applyLogMapping() {
+            const mapping = visualizer.logMapping;
+            const audioData = visualizer.audioData;
+            const normalized = visualizer.normalizedAudioData;
+            const len = audioData.length;
+
+            // Fast loop with pre-calculated values
+            for(let i = 0; i < len; i++) {
+                const v1 = audioData[mapping.index1[i]];
+                const v2 = audioData[mapping.index2[i]];
+                normalized[i] = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+            }
+        }
+
         // NEVER REMOVE TIME FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
         function renderFrame(time) {
         // Don't do anything if True Pause energy saver is on and playback is paused
@@ -1364,8 +1454,8 @@ try {
             // Get audio data
             visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-            // Normalize audio data to 0 - 1
-            for(let i = 0; i < visualizer.audioData.length; i++) visualizer.normalizedAudioData[i] = visualizer.audioData[i] / 255;
+            // Apply logarithmic mapping and normalize audio data to 0 - 1
+            applyLogMapping();
 
             // Cheap color cycle effect, speed scales with fps so probably not the best
             if(visualizer.rgb.enabled === true) {
