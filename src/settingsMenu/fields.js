@@ -153,7 +153,7 @@ export const configFields = {
     },
     siteBackgroundColor: {
         type: 'color',
-        default: '#AA0000',
+        default: '#400000',
         subCheckbox: 'siteBackgroundChange'
     },
     siteBackgroundGradientEnabled: {
@@ -163,7 +163,7 @@ export const configFields = {
     },
     siteBackgroundGradientColor: {
         type: 'color',
-        default: '#0000AA',
+        default: '#000040',
         subCheckbox: 'siteBackgroundChange'
     },
     siteBackgroundGradientAngle: {
@@ -221,7 +221,7 @@ export const configFields = {
     visualizerStartsFrom: {
         type: 'customSelect',
         rawOptions: ['Left', 'Center', 'Right', 'Edges'],
-        default: 'Edges'
+        default: 'Center'
     },
     visualizerColor: {
         type: 'color',
@@ -233,12 +233,12 @@ export const configFields = {
     },
     visualizerFade: {
         type: 'checkbox',
-        default: true
+        default: false
     },
     visualizerFft: {
         type: 'customSelect',
         rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
-        default: '8192',
+        default: '4096',
         setTitle: true
     },
     visualizerEnergySaverType: {
@@ -253,7 +253,7 @@ export const configFields = {
     visualizerRotate: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
-        default: 'Reactive (Bass)',
+        default: 'Disabled',
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerRotateDirection: {
@@ -270,7 +270,7 @@ export const configFields = {
     },
     visualizerShakeEnabled: {
         type: 'checkbox',
-        default: true,
+        default: false,
         subCheckbox: 'visualizerCircleEnabled'
     },
     visualizerBassBounceEnabled: {
@@ -320,7 +320,7 @@ export const configFields = {
         type: 'int',
         min: 1,
         max: 8192,
-        default: 512
+        default: 256
     },
     visualizerMinDecibels: {
         type: 'int',
@@ -350,7 +350,7 @@ export const configFields = {
         type: 'int',
         min: 1,
         max: 44100,
-        default: 4000
+        default: 20000
     },
     visualizerBassBounceThreshold: {
         type: 'float',
@@ -362,7 +362,7 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 44100,
-        default: 10
+        default: 0
     },
     visualizerBassBounceMaxHertz: {
         type: 'float',
