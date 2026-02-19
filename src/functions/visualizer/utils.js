@@ -14,12 +14,12 @@ export function initLogMapping() {
     const outputLength = visualizer.audioData.length;
     const minFreq = visualizer.minHertz || 20;
     const maxFreq = visualizer.maxHertz || 20000;
-    
+
     // Create logarithmic scale
     const logMin = Math.log(minFreq);
     const logMax = Math.log(maxFreq);
     const logRange = logMax - logMin;
-    
+
     // Pre-allocate arrays for mapping data
     visualizer.logMapping = {
         index1: new Uint16Array(outputLength),
@@ -31,18 +31,18 @@ export function initLogMapping() {
         minFreq: minFreq,
         maxFreq: maxFreq
     };
-    
+
     // Pre-calculate all mapping values
     for(let i = 0; i < outputLength; i++) {
         const t = i / outputLength;
         const logFreq = logMin + t * logRange;
         const freq = Math.exp(logFreq);
-        
+
         const binIndexFloat = (freq / (visualizer.audioContext.sampleRate / 2)) * visualizer.bufferLength;
-        
+
         const binIndex1 = Math.floor(binIndexFloat);
         const binIndex2 = Math.ceil(binIndexFloat);
-        
+
         visualizer.logMapping.index1[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex1));
         visualizer.logMapping.index2[i] = Math.max(0, Math.min(visualizer.bufferLength - 1, binIndex2));
         visualizer.logMapping.fraction[i] = binIndexFloat - binIndex1;
@@ -55,15 +55,15 @@ export function initLogMapping() {
  */
 export function freqToLogIndex(freq) {
     const mapping = visualizer.logMapping;
-    
+
     // Clamp frequency to valid range
     if(freq <= mapping.minFreq) return 0;
     if(freq >= mapping.maxFreq) return visualizer.audioData.length - 1;
-    
+
     // Calculate position in logarithmic scale
     const logFreq = Math.log(freq);
     const t = (logFreq - mapping.logMin) / mapping.logRange;
-    
+
     // Convert to array index
     return Math.floor(t * visualizer.audioData.length);
 }
@@ -73,7 +73,8 @@ export function calculateBassBounceBars() {
     if(visualizer.logMapping) {
         visualizer.bassBounce._barStart = freqToLogIndex(visualizer.bassBounce.minHertz);
         visualizer.bassBounce._barEnd = freqToLogIndex(visualizer.bassBounce.maxHertz);
-    } else {
+    }
+    else {
         visualizer.bassBounce._barStart = ~~(visualizer.bassBounce.minHertz / visualizer.audioDataStep);
         visualizer.bassBounce._barEnd = ~~(visualizer.bassBounce.maxHertz / visualizer.audioDataStep);
     }
@@ -91,7 +92,7 @@ export function getBufferData() {
     visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
     visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
     visualizer.audioData = new Uint8Array(visualizer.bufferLength);
-    
+
     // Initialize logarithmic mapping lookup tables
     initLogMapping();
 }
@@ -123,8 +124,8 @@ export function initValues() {
         if(key !== 'bassBounce') continue;
 
         switch(visualizer.bassBounce.calculation) {
-            default: case 'average': calcFunction = averageOfArray; break;
-            case 'median': calcFunction = medianOfArray; break;
+            default: case 'average': bassCalcFunction = averageOfArray; break;
+            case 'median': bassCalcFunction = medianOfArray; break;
         }
 
         // Last things to do (everything here runs only once)
@@ -229,17 +230,20 @@ export function visualizerResizeFix() {
     }
 }
 
-let calcFunction;
+let bassCalcFunction;
 
-export function averageOfArray(numbers) {
+export function averageOfArray(values) {
+    if(values.length === 0) throw new Error('Array is empty');
+
     let result = 0;
-    for(let i = 0; i < numbers.length; i++) result += numbers[i];
-    return result / numbers.length;
+    for(let i = 0; i < values.length; i++) result += values[i];
+    return result / values.length;
 }
 
 function medianOfArray(values) {
     if(values.length === 0) throw new Error('Array is empty');
 
+    // so [...values] creates a copy of values, so we don't sort the original array which would frick up visualizer data
     values = [...values].sort((a, b) => a - b);
     const half = Math.floor(values.length / 2);
 
@@ -266,7 +270,7 @@ export function calculateBass() {
 
     const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-    visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
+    visualizer.values.bassSmoothRadius = bassCalcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
     if(visualizer.bassBounce.enabled === true) {
         const n = visualizer.bassBounce.fallSmoothing;

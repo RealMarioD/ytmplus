@@ -78,13 +78,6 @@
     background: #00CAFE;
 }
 
-#goToKofi {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 #supportMePls img {
     height: 100%;
 }

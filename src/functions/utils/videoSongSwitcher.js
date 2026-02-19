@@ -4,6 +4,7 @@
 
 import { elements } from '../../globals/elements';
 import { thumbnailURL, validThumbnail } from '../visualizer/image';
+import { logger } from '../backend/logger';
 
 let clone, avSwitch, forceSongImageInterval;
 const videoModeOberserver = new MutationObserver((mutations) => {
@@ -16,9 +17,9 @@ function handleMutation(mutation) {
 }
 
 export function videoSongSwitcher(mode) {
-    console.log('videoSongSwitcher');
+    logger.debug('videoSongSwitcher');
     avSwitch = document.getElementById('av-id');
-    if(!avSwitch) return console.error('videoSongSwitcher: avSwitch not found');
+    if(!avSwitch) return logger.error('videoSongSwitcher: avSwitch not found');
 
     if(mode === 'disabled') {
         // todo later
@@ -42,14 +43,14 @@ export function videoSongSwitcher(mode) {
             clone.style.display = 'block';
         }
         catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
     else if(mode === 'forceSong') {
         getRidOfSwitch();
         forceSongImageInterval = setInterval(() => {
             if(validThumbnail === true && elements.songImage.src !== thumbnailURL) {
-                console.log('forceSongImageInterval');
+                logger.debug('forceSongImageInterval');
                 elements.songImage.src = thumbnailURL;
             }
         }, 1000);
@@ -60,7 +61,7 @@ export function videoSongSwitcher(mode) {
 }
 
 function getRidOfSwitch() {
-    console.log('getRidOfSwitch');
+    logger.debug('getRidOfSwitch');
     elements.player.removeAttribute('has-av-switcher');
     elements.playerPage.removeAttribute('has-av-switcher');
     avSwitch.style.display = 'none';

@@ -1,5 +1,6 @@
 import { elements } from '../../globals/elements';
 import { ytmpConfig } from '../../ytmpConfig';
+import { logger } from '../backend/logger';
 
 export function siteBackgroundChange(turnOn) {
     if(turnOn === false) {
@@ -17,8 +18,8 @@ export function siteBackgroundChange(turnOn) {
     animateBackground(elements.playerPage.style, false, animation);
 
     const browsePages = document.getElementsByTagName('ytmusic-browse-response');
-    if(browsePages.length === 0) return console.error('BackgroundError: No browsePage');
-    if(browsePages[0].children.length === 0) return console.error('BackgroundError: No browsePage children');
+    if(browsePages.length === 0) return logger.error('BackgroundError: No browsePage');
+    if(browsePages[0].children.length === 0) return logger.error('BackgroundError: No browsePage children');
     const maybeBackground = browsePages[0].children[0];
     if(maybeBackground.id === 'background') maybeBackground.remove();
 }

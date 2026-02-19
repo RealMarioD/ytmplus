@@ -1,4 +1,5 @@
 import { functions } from '../../globals/functions';
+import { logger } from '../backend/logger';
 
 export function skipDisliked(turnOn) {
     musicTitleObserver.disconnect();
@@ -7,7 +8,7 @@ export function skipDisliked(turnOn) {
 
 // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
 function checkDislike() {
-    console.log('Checking dislike in 3 seconds...');
+    logger.log('Checking dislike in 3 seconds...');
     clearTimeout(functions.skipDislikedFunction);
 
     // If we don't time this out, we get the ability to skip at least 20 songs in a matter of seconds before it realizes it's not supposed to skip
@@ -15,12 +16,12 @@ function checkDislike() {
     // maybe timeout could be customizable too
     functions.skipDislikedFunction = setTimeout(async () => {
         const likeButton = await document.getElementById('like-button-renderer');
-        if(!likeButton) return console.log('Could not find like button, skipping check');
+        if(!likeButton) return logger.log('Could not find like button, skipping check');
         if(likeButton.children[0].ariaPressed == 'true') {
-            console.log('Song is disliked, skipping');
+            logger.log('Song is disliked, skipping');
             return document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
         }
-        console.log('Song is not disliked, not skipping');
+        logger.log('Song is not disliked, not skipping');
     }, 3000);
 }
 

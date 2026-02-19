@@ -21,7 +21,7 @@ export default {
             include: 'src/settingsMenu/ui/ytmpTitle.svg',
         }),
         strip({
-            functions: [ 'console.log', 'console.warn' ]
+            functions: [ 'logger.log', 'logger.debug' ]
         }),
         lint(),
         announceVersion(false)

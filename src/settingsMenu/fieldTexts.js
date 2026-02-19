@@ -66,6 +66,8 @@ export const fieldTexts = {
     visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
         options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
     },
+    visualizerLogarithmicMapping: { english: 'Logarithmic Mapping', hungarian: 'Logaritmikus Leképezés' },
+    visualizerExponentialScaling: { english: 'Exponential Scaling', hungarian: 'Exponenciális Skálázás' },
     visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
     visualizerShakeEnabled: { english: 'Shake Effect' },
     visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
@@ -109,6 +111,7 @@ export const fieldTexts = {
     visualizerRenderScale: { english: 'Render Scale' },
     visualizerShakeThreshold: { english: 'Shake Threshold' },
     visualizerShakeMultiplier: { english: 'Shake Multiplier' },
+    visualizerExponentialScalingFactor: { english: 'Exponential Scaling Factor', hungarian: 'Exponenciális Skálázás Faktor' },
     backendSection: { english: 'You are not supposed to see this.' },
     lastOpenCategory: { english: 'You are not supposed to see this.' },
     shortcut: { english: 'You are not supposed to see this.' },

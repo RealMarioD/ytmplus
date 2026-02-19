@@ -8,6 +8,9 @@ export const visualizer = {
     rotateDirection: undefined,
     move: undefined,
     renderScale: undefined,
+    logarithmicMapping: undefined,
+    exponentialScaling: undefined,
+    exponentialScalingFactor: undefined,
     shake: {
         enabled: undefined,
         threshold: undefined,
@@ -44,7 +47,10 @@ export const visualizer = {
         minRadius: undefined,
         maxRadius: undefined,
         _barStart: undefined,
-        _barEnd: undefined
+        _barEnd: undefined,
+        _adaptiveThreshold: 0,
+        _bassHistory: [],
+        _historySize: 120
     },
     canvases: {
         navbar: undefined,

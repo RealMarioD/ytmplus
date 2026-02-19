@@ -13,14 +13,6 @@ export async function createTitlebar(wrapper, frame) {
         ytmpConfig.shrunk = false;
     });
 
-    // Support button
-    const kofi = await injectElement('div', 'supportMePls', titlebar, 'titlebarButtons');
-    const kofiA = await injectElement('a', 'goToKofi', kofi);
-    kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
-    kofiA.href = 'https://ko-fi.com/realmariod';
-    kofiA.title = 'Buy me a Coffee!';
-    kofiA.target = '_blank';
-
     // Hide categories button
     const hideCategoriesBtn = await injectElement('input', 'hideCategories', titlebar, 'titlebarButtons');
     hideCategoriesBtn.type = 'button';

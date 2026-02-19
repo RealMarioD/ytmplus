@@ -1,3 +1,5 @@
+import { logger } from "./logger";
+
 export function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
     const node = document.createElement(type);
     if(id) node.id = id;
@@ -9,7 +11,7 @@ export function injectElement(type, id, wrapperElm, customClass, customStyle, pr
     else if(customClass) node.classList.add(customClass);
     if(customStyle) node.style = customStyle;
     if(!wrapperElm) {
-        console.error('injectElement: Wrapper is undefined');
+        logger.error('injectElement: Wrapper is undefined');
         return;
     }
     if(prepend) wrapperElm.prepend(node);

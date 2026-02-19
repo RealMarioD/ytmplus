@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-delta.1
+// @version      3.0.0-delta.2
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,12 +15,27 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-delta.1';
+const vNumber = 'v3.0.0-delta.2';
 try {
     (function() {
         'use strict';
 
-        const settingsMenu = '/* Width calculations based on 4:3 aspect ratio */\r\n/* Small screen */\r\n@media screen and (min-height: 0px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n/* Medium screen */\r\n@media screen and (min-height: 768px) and (min-width: 1024px){\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n/* Large screen */\r\n@media screen and (min-height: 1080px) and (min-width: 1440px) {\r\n    #ytmPlusCfg {\r\n        height: 1080px;\r\n        font-size: 24px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 6%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.25em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#goToKofi {\r\n    height: 100%;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: 94%;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 0.75em;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: auto;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 0.7em;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n#warning_button_holder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 90%;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n/** don\'t be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    height: 2.5em;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
+        const settingsMenu = '/* Width calculations based on 4:3 aspect ratio */\r\n/* Small screen */\r\n@media screen and (min-height: 0px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n/* Medium screen */\r\n@media screen and (min-height: 768px) and (min-width: 1024px){\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n/* Large screen */\r\n@media screen and (min-height: 1080px) and (min-width: 1440px) {\r\n    #ytmPlusCfg {\r\n        height: 1080px;\r\n        font-size: 24px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 6%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.25em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: 94%;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 0.75em;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: auto;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 0.7em;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n#warning_button_holder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 90%;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n/** don\'t be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    height: 2.5em;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
+
+        class logger {
+            static log(message) {
+                console.log('%c[YTMPLUS] INFO:', 'background: #60A; color: #FFF', message);
+            }
+            static warn(message) {
+                console.warn('%c[YTMPLUS] WARNING:', 'background: #FA2; color: #000', message);
+            }
+            static error(message) {
+                console.error(`%c[YTMPLUS] ERROR: ${message}`, 'background: #A00; color: #FFF', message);
+            }
+            static debug(message) {
+                console.debug('%c[YTMPLUS] DEBUG:', 'background: #666; color: #FFF', message);
+            }
+        }
 
         function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
             const node = document.createElement(type);
@@ -33,7 +48,7 @@ try {
             else if(customClass) node.classList.add(customClass);
             if(customStyle) node.style = customStyle;
             if(!wrapperElm) {
-                console.error('injectElement: Wrapper is undefined');
+                logger.error('injectElement: Wrapper is undefined');
                 return;
             }
             if(prepend) wrapperElm.prepend(node);
@@ -109,6 +124,8 @@ try {
             visualizerEnergySaverType: { english: 'Energy Saver', hungarian: 'Energiatakarékos mód',
                 options: { english: ['Disabled', 'Limit FPS', 'Pause Everything', 'Both'], hungarian: ['Kikapcsolva', 'FPS Limiter', 'Mindent Megállít', 'Mindkettő'] }
             },
+            visualizerLogarithmicMapping: { english: 'Logarithmic Mapping', hungarian: 'Logaritmikus Leképezés' },
+            visualizerExponentialScaling: { english: 'Exponential Scaling', hungarian: 'Exponenciális Skálázás' },
             visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
             visualizerShakeEnabled: { english: 'Shake Effect' },
             visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
@@ -152,6 +169,7 @@ try {
             visualizerRenderScale: { english: 'Render Scale' },
             visualizerShakeThreshold: { english: 'Shake Threshold' },
             visualizerShakeMultiplier: { english: 'Shake Multiplier' },
+            visualizerExponentialScalingFactor: { english: 'Exponential Scaling Factor', hungarian: 'Exponenciális Skálázás Faktor' },
             backendSection: { english: 'You are not supposed to see this.' },
             lastOpenCategory: { english: 'You are not supposed to see this.' },
             shortcut: { english: 'You are not supposed to see this.' },
@@ -169,9 +187,10 @@ try {
             }
 
             for(const field in configFields) {
-                if(fieldTexts[field] === undefined)
+                if(fieldTexts[field] === undefined) {
+                    logger.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
                     continue;
-
+                }
 
                 if(configFields[field].type === 'customSelect') {
                     if(configFields[field].rawOptions !== undefined) {
@@ -403,6 +422,14 @@ try {
                 rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
                 default: 'Disabled'
             },
+            visualizerLogarithmicMapping: {
+                type: 'checkbox',
+                default: true
+            },
+            visualizerExponentialScaling: {
+                type: 'checkbox',
+                default: true
+            },
             visualizerCircleEnabled: {
                 type: 'checkbox',
                 default: true,
@@ -584,6 +611,12 @@ try {
                 max: 100,
                 default: 0.4
             },
+            visualizerExponentialScalingFactor: {
+                type: 'float',
+                min: 1,
+                max: 5,
+                default: 1.5
+            },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
                 type: 'hidden',
@@ -757,6 +790,9 @@ try {
             rotateDirection: undefined,
             move: undefined,
             renderScale: undefined,
+            logarithmicMapping: undefined,
+            exponentialScaling: undefined,
+            exponentialScalingFactor: undefined,
             shake: {
                 enabled: undefined,
                 threshold: undefined,
@@ -793,7 +829,10 @@ try {
                 minRadius: undefined,
                 maxRadius: undefined,
                 _barStart: undefined,
-                _barEnd: undefined
+                _barEnd: undefined,
+                _adaptiveThreshold: 0,
+                _bassHistory: [],
+                _historySize: 120
             },
             canvases: {
                 navbar: undefined,
@@ -867,11 +906,12 @@ try {
             quality = 'maxresdefault';
         };
         image.onerror = (err) => { // we will most likely only get this is for custom images
-            console.error(err);
+            logger.error(err);
             if(visualizer.image.type === 'Custom') ;
-            else
+            else {
+                logger.error('Visualizer Image couldn\'t be loaded. See above.');
                 return;
-
+            }
             visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
             replaceImageURL();
         };
@@ -891,6 +931,7 @@ try {
 
         function replaceImageURL() {
             thumbnailURL = thumbnailChildSrc();
+            if(!thumbnailURL) logger.error('thumbnailURL is undefined, ytmusic sucks');
 
             testForWorkingLink(); // we save this no matter what, because f*ck the way ytm handles everything, see src/functions/utils/videoSongSwitcher.js for spaghetti
 
@@ -899,7 +940,7 @@ try {
 
         function testForWorkingLink() {
             thumbnailURL = ytimgBuilder(currentVideoID());
-            if(!thumbnailURL) return (void 0);
+            if(!thumbnailURL) return logger.error('thumbnailURL is undefined, ytimgBuilder failed');
             testImage.src = thumbnailURL;
         }
 
@@ -1084,8 +1125,8 @@ try {
                 if(key !== 'bassBounce') continue;
 
                 switch(visualizer.bassBounce.calculation) {
-                    default: case 'average': calcFunction = averageOfArray; break;
-                    case 'median': calcFunction = medianOfArray; break;
+                    default: case 'average': bassCalcFunction = averageOfArray; break;
+                    case 'median': bassCalcFunction = medianOfArray; break;
                 }
 
                 // Last things to do (everything here runs only once)
@@ -1128,6 +1169,7 @@ try {
             visualizer.canvas = canvas;
             visualizer.ctx.clearRect(0, 0, visualizer.values.WIDTH, visualizer.values.HEIGHT);
             visualizer.ctx = visualizer.canvas.getContext('2d');
+            console.log(`Canvas set to: ${visualizer.canvas.id}`);
         }
 
         function visualizerResizeFix() {
@@ -1189,17 +1231,20 @@ try {
             }
         }
 
-        let calcFunction;
+        let bassCalcFunction;
 
-        function averageOfArray(numbers) {
+        function averageOfArray(values) {
+            if(values.length === 0) throw new Error('Array is empty');
+
             let result = 0;
-            for(let i = 0; i < numbers.length; i++) result += numbers[i];
-            return result / numbers.length;
+            for(let i = 0; i < values.length; i++) result += values[i];
+            return result / values.length;
         }
 
         function medianOfArray(values) {
             if(values.length === 0) throw new Error('Array is empty');
 
+            // so [...values] creates a copy of values, so we don't sort the original array which would frick up visualizer data
             values = [...values].sort((a, b) => a - b);
             const half = Math.floor(values.length / 2);
 
@@ -1226,7 +1271,7 @@ try {
 
             const maxAddedRadius = visualizer.values.maxRadius - visualizer.values.minRadius;
 
-            visualizer.values.bassSmoothRadius = calcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
+            visualizer.values.bassSmoothRadius = bassCalcFunction(visualizer.values.bass); // averageOfArray(visualizer.values.bass);
 
             if(visualizer.bassBounce.enabled === true) {
                 const n = visualizer.bassBounce.fallSmoothing;
@@ -1419,21 +1464,42 @@ try {
         let lastFrameTime = 0;
 
         /**
-     * Fast logarithmic mapping using pre-calculated indices
-     * Only does data lookup and interpolation - no math operations
+     * Process audio data with optional logarithmic mapping and exponential scaling
      */
-        function applyLogMapping() {
-            const mapping = visualizer.logMapping;
+        function processAudioData() {
             const audioData = visualizer.audioData;
             const normalized = visualizer.normalizedAudioData;
             const len = audioData.length;
 
-            // Fast loop with pre-calculated values
-            for(let i = 0; i < len; i++) {
-                const v1 = audioData[mapping.index1[i]];
-                const v2 = audioData[mapping.index2[i]];
-                normalized[i] = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+            if(visualizer.logarithmicMapping === true) {
+                const mapping = visualizer.logMapping;
+                // Logmapping with exponential scaling
+                if(visualizer.exponentialScaling === true) {
+                    const exponent = visualizer.exponentialScalingFactor;
+                    for(let i = 0; i < len; i++) {
+                        const v1 = audioData[mapping.index1[i]];
+                        const v2 = audioData[mapping.index2[i]];
+                        const linearValue = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+                        normalized[i] = Math.pow(linearValue, exponent);
+                    }
+                }
+                else { // Logmapping without exponential scaling
+                    for(let i = 0; i < len; i++) {
+                        const v1 = audioData[mapping.index1[i]];
+                        const v2 = audioData[mapping.index2[i]];
+                        normalized[i] = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+                    }
+                }
             }
+            else if(visualizer.exponentialScaling === true) {
+            // Linear mapping with exponential scaling
+                const exponent = visualizer.exponentialScalingFactor;
+                for(let i = 0; i < len; i++) {
+                    const linearValue = audioData[i] / 255;
+                    normalized[i] = Math.pow(linearValue, exponent);
+                }
+            }
+            else for(let i = 0; i < len; i++) normalized[i] = audioData[i] / 255; // Original linear mapping
         }
 
         // NEVER REMOVE TIME FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
@@ -1454,8 +1520,8 @@ try {
             // Get audio data
             visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-            // Apply logarithmic mapping and normalize audio data to 0 - 1
-            applyLogMapping();
+            // Process audio data (logarithmic mapping and/or exponential scaling)
+            processAudioData();
 
             // Cheap color cycle effect, speed scales with fps so probably not the best
             if(visualizer.rgb.enabled === true) {
@@ -1499,8 +1565,10 @@ try {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
                 startVisualizer();
             }
-            else
+            else {
+                logger.warn('Query "video" not found, retrying in 100ms.');
                 setTimeout(getVideo, 100);
+            }
         }
 
         function startVisualizer() {
@@ -1532,7 +1600,7 @@ try {
                 requestAnimationFrame(renderFrame);
             }
             catch (error) {
-                console.error(error);
+                logger.error(error);
             }
         }
 
@@ -1792,8 +1860,8 @@ try {
             animateBackground(elements.playerPage.style, false, animation);
 
             const browsePages = document.getElementsByTagName('ytmusic-browse-response');
-            if(browsePages.length === 0) return console.error('BackgroundError: No browsePage');
-            if(browsePages[0].children.length === 0) return console.error('BackgroundError: No browsePage children');
+            if(browsePages.length === 0) return logger.error('BackgroundError: No browsePage');
+            if(browsePages[0].children.length === 0) return logger.error('BackgroundError: No browsePage children');
             const maybeBackground = browsePages[0].children[0];
             if(maybeBackground.id === 'background') maybeBackground.remove();
         }
@@ -1885,7 +1953,7 @@ try {
 
         function videoSongSwitcher(mode) {
             avSwitch = document.getElementById('av-id');
-            if(!avSwitch) return console.error('videoSongSwitcher: avSwitch not found');
+            if(!avSwitch) return logger.error('videoSongSwitcher: avSwitch not found');
 
             if(mode === 'disabled') {
             // todo later
@@ -1909,7 +1977,7 @@ try {
                     clone.style.display = 'block';
                 }
                 catch (err) {
-                    console.error(err);
+                    logger.error(err);
                 }
             }
             else if(mode === 'forceSong') {
@@ -1973,7 +2041,7 @@ try {
                     elements.miniGuideItems = guides[2].children[2];
                 }
                 catch {
-                    if(!elements.miniGuideItems) (void 0);
+                    if(!elements.miniGuideItems) logger.warn('Could not find miniGuideItems!');
                 }
 
                 // Adds a settings button on the navbar
@@ -1985,14 +2053,14 @@ try {
                         toCallOnEvents[fn](ytmpConfig.get(fn));
                     }
                     catch (error) {
-                        console.error(`Failed to call ${fn} on setup:`);
-                        console.error(error);
+                        logger.error(`Failed to call ${fn} on setup:`);
+                        logger.error(error);
                     }
                 }
             }
             catch (error) {
-                console.error('ytmPlus(windowLoad): Setup failed.');
-                console.error(error);
+                logger.error('Setup failed.');
+                logger.error(error);
             }
         }
 
@@ -2260,14 +2328,6 @@ try {
                 ytmpConfig.shrunk = false;
             });
 
-            // Support button
-            const kofi = await injectElement('div', 'supportMePls', titlebar, 'titlebarButtons');
-            const kofiA = await injectElement('a', 'goToKofi', kofi);
-            kofiA.innerHTML = '<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e111774d3a2f67c827cd25_Frame%205.png">';
-            kofiA.href = 'https://ko-fi.com/realmariod';
-            kofiA.title = 'Buy me a Coffee!';
-            kofiA.target = '_blank';
-
             // Hide categories button
             const hideCategoriesBtn = await injectElement('input', 'hideCategories', titlebar, 'titlebarButtons');
             hideCategoriesBtn.type = 'button';
@@ -2370,7 +2430,7 @@ try {
                     toCallOnEvents[fn](ytmpConfig.get(fn));
                 }
                 catch (error) {
-                    console.error(error);
+                    logger.error(error);
                 }
             }
 

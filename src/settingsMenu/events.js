@@ -6,6 +6,7 @@ import { setupAutosave } from './ui/autosave';
 import { fixPlacement } from './ui/movement';
 import { toCallOnEvents } from '../events/toCallOnEvents';
 import { changeWindowSize } from '../functions/utils/changeWindowSize';
+import { logger } from '../functions/backend/logger';
 
 export function openEvent(doc, win, frame) { // open function is mostly customizing settings UI
     // Quick hack for color fields
@@ -16,7 +17,7 @@ export function openEvent(doc, win, frame) { // open function is mostly customiz
         ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
     }
 
-    console.log(ytmpConfig);
+    logger.debug(ytmpConfig);
 
     manageUI(frame);
 
@@ -43,7 +44,7 @@ export function saveEvent() {
             toCallOnEvents[fn](ytmpConfig.get(fn));
         }
         catch (error) {
-            console.error(error);
+            logger.error(error);
         }
     }
 

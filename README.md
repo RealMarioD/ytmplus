@@ -1,6 +1,6 @@
-# V3 ~~Beta~~ Gamma
+# V3 ~~Beta~~ ~~Gamma~~ Delta (when did i skip alpha)
 
-I've been slowly working on the script in the background, and now I'm finally releasing an update, because the last release version seemed to be a bit broken.
+If you're updating, reset to defaults, found some better settings.
 
 If you encounter any bugs, [join the Discord server](https://discord.gg/68Waxa4Qxz) and message me please! (Or open an issue here, or DM me on Discord, or whatever you prefer.)
 
@@ -32,10 +32,6 @@ You can bring up the settings by clicking on the cog in the top left, or by pres
 - Fix the horrible layout on player page (somewhat)
 - Enabling hidden playback buttons
 - Changing or removing the "Upgrade" button in the top navigation bar
-
-# Support Me?
-
-[<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e11d5cf697cee7ca5b65d9_Button-p-800.png" width="384">](https://ko-fi.com/realmariod)
 
 # Discord
 

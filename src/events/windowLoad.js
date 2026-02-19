@@ -5,9 +5,10 @@ import { setupVisualizer } from '../functions/visualizer/init';
 import { createCogFrame } from '../settingsMenu/createCogFrame';
 import { toCallOnEvents } from '../events/toCallOnEvents';
 import { ytmpConfig } from '../ytmpConfig';
+import { logger } from '../functions/backend/logger';
 
 export async function setup() {
-    console.log('ytmPlus: Setup started.');
+    logger.log('ytmPlus: Setup started.');
     try {
         elements.player = await document.getElementById('player');
         elements.playerPage = await document.getElementById('player-page');
@@ -32,7 +33,7 @@ export async function setup() {
             elements.miniGuideItems = guides[2].children[2];
         }
         catch {
-            if(!elements.miniGuideItems) console.warn('Could not find miniGuideItems!');
+            if(!elements.miniGuideItems) logger.warn('Could not find miniGuideItems!');
         }
 
         // Adds a settings button on the navbar
@@ -42,17 +43,17 @@ export async function setup() {
         for(const fn in toCallOnEvents) {
             try {
                 toCallOnEvents[fn](ytmpConfig.get(fn));
-                console.log(`Loaded ${fn} on setup.`);
+                logger.log(`Loaded ${fn} on setup.`);
             }
             catch (error) {
-                console.error(`Failed to call ${fn} on setup:`);
-                console.error(error);
+                logger.error(`Failed to call ${fn} on setup:`);
+                logger.error(error);
             }
         }
-        console.log('ytmPlus(windowLoad): Setup finished.');
+        logger.log('Setup finished.');
     }
     catch (error) {
-        console.error('ytmPlus(windowLoad): Setup failed.');
-        console.error(error);
+        logger.error('Setup failed.');
+        logger.error(error);
     }
 }

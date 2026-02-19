@@ -4,6 +4,7 @@ import { injectElement } from '../backend/injectElement';
 import { observeVideoID, replaceImageURL } from './image';
 import { renderFrame } from './renderer';
 import { getBufferData, initValues, visualizerResizeFix } from './utils';
+import { logger } from '../backend/logger';
 
 export async function setupVisualizer() {
     // Injecting visualizer visualizer.canvases
@@ -33,11 +34,11 @@ export function getVideo() {
     visualizer.video = document.querySelector('video');
     if(visualizer.video) {
         // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
-        console.log('Found video.');
+        logger.log('Found video.');
         startVisualizer();
     }
     else {
-        console.warn('Query "video" not found, retrying in 100ms.');
+        logger.warn('Query "video" not found, retrying in 100ms.');
         setTimeout(getVideo, 100);
     }
 }
@@ -69,9 +70,9 @@ export function startVisualizer() {
 
         replaceImageURL();
         requestAnimationFrame(renderFrame);
-        console.log('Visualizer started.');
+        logger.log('Visualizer started.');
     }
     catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 }

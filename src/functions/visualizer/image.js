@@ -4,6 +4,7 @@
 // - Save the image URL to a variable, thumbnail and custom image should be saved to different variables
 
 import { visualizer } from '../../globals/visualizer';
+import { logger } from '../backend/logger';
 
 let quality = 'maxresdefault', widthRatio;
 export let validThumbnail = false, imgLoaded = false, thumbnailURL;
@@ -24,14 +25,14 @@ image.onload = () => {
     }
     widthRatio = image.width / image.height;
     imgLoaded = true;
-    console.log('Image loaded successfully');
+    logger.log('Image loaded successfully');
     quality = 'maxresdefault';
 };
 image.onerror = (err) => { // we will most likely only get this is for custom images
-    console.error(err);
-    if(visualizer.image.type === 'Custom') console.log('Custom Image URL is not an image');
+    logger.error(err);
+    if(visualizer.image.type === 'Custom') logger.log('Custom Image URL is not an image');
     else {
-        console.log('Visualizer Image couldn\'t be loaded. See above.');
+        logger.error('Visualizer Image couldn\'t be loaded. See above.');
         return;
     }
     visualizer.image.customURL = 'https://imgur.com/Nkj0d6D.png';
@@ -46,17 +47,17 @@ testImage.onload = () => {
         else if(quality === 'hqdefault') quality = 'mqdefault';
         return testForWorkingLink();
     }
-    console.log('Test Image loaded successfully');
+    logger.log('Test Image loaded successfully');
     if(visualizer.image.type !== 'Thumbnail') return;
-    console.log('Setting thumbnailURL to testImage.src');
+    logger.log('Setting thumbnailURL to testImage.src');
     image.src = thumbnailURL;
     validThumbnail = true;
 };
 
 export function replaceImageURL() {
-    console.log('replaceImageURL');
+    logger.debug('replaceImageURL');
     thumbnailURL = thumbnailChildSrc();
-    if(!thumbnailURL) console.log('thumbnailURL is undefined, ytmusic sucks');
+    if(!thumbnailURL) logger.error('thumbnailURL is undefined, ytmusic sucks');
 
     testForWorkingLink(); // we save this no matter what, because f*ck the way ytm handles everything, see src/functions/utils/videoSongSwitcher.js for spaghetti
 
@@ -65,9 +66,9 @@ export function replaceImageURL() {
 
 function testForWorkingLink() {
     thumbnailURL = ytimgBuilder(currentVideoID());
-    if(!thumbnailURL) return console.log('thumbnailURL is undefined, ytimgBuilder failed');
+    if(!thumbnailURL) return logger.error('thumbnailURL is undefined, ytimgBuilder failed');
     testImage.src = thumbnailURL;
-    console.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
+    logger.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
 }
 
 export function currentVideoURLHolder() {

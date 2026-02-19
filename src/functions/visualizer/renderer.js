@@ -5,21 +5,42 @@ import { visualizerNavbar } from './navbar.js';
 let lastFrameTime = 0;
 
 /**
- * Fast logarithmic mapping using pre-calculated indices
- * Only does data lookup and interpolation - no math operations
+ * Process audio data with optional logarithmic mapping and exponential scaling
  */
-function applyLogMapping() {
-    const mapping = visualizer.logMapping;
+function processAudioData() {
     const audioData = visualizer.audioData;
     const normalized = visualizer.normalizedAudioData;
     const len = audioData.length;
-    
-    // Fast loop with pre-calculated values
-    for(let i = 0; i < len; i++) {
-        const v1 = audioData[mapping.index1[i]];
-        const v2 = audioData[mapping.index2[i]];
-        normalized[i] = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+
+    if(visualizer.logarithmicMapping === true) {
+        const mapping = visualizer.logMapping;
+        // Logmapping with exponential scaling
+        if(visualizer.exponentialScaling === true) {
+            const exponent = visualizer.exponentialScalingFactor;
+            for(let i = 0; i < len; i++) {
+                const v1 = audioData[mapping.index1[i]];
+                const v2 = audioData[mapping.index2[i]];
+                const linearValue = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+                normalized[i] = Math.pow(linearValue, exponent);
+            }
+        }
+        else { // Logmapping without exponential scaling
+            for(let i = 0; i < len; i++) {
+                const v1 = audioData[mapping.index1[i]];
+                const v2 = audioData[mapping.index2[i]];
+                normalized[i] = (v1 + (v2 - v1) * mapping.fraction[i]) / 255;
+            }
+        }
     }
+    else if(visualizer.exponentialScaling === true) {
+        // Linear mapping with exponential scaling
+        const exponent = visualizer.exponentialScalingFactor;
+        for(let i = 0; i < len; i++) {
+            const linearValue = audioData[i] / 255;
+            normalized[i] = Math.pow(linearValue, exponent);
+        }
+    }
+    else for(let i = 0; i < len; i++) normalized[i] = audioData[i] / 255; // Original linear mapping
 }
 
 // NEVER REMOVE TIME FROM HERE DESPITE THE FACT THE **WE** NEVER CALL IT, BROWSERS DO (OR SOMETHING LIKE THAT)
@@ -40,8 +61,8 @@ export function renderFrame(time) {
     // Get audio data
     visualizer.analyser.getByteFrequencyData(visualizer.audioData);
 
-    // Apply logarithmic mapping and normalize audio data to 0 - 1
-    applyLogMapping();
+    // Process audio data (logarithmic mapping and/or exponential scaling)
+    processAudioData();
 
     // Cheap color cycle effect, speed scales with fps so probably not the best
     if(visualizer.rgb.enabled === true) {

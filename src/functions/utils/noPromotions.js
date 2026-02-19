@@ -1,4 +1,5 @@
 import { functions } from '../../globals/functions.js';
+import { logger } from '../backend/logger.js';
 
 export function noPromotions(turnOn) {
     clearInterval(functions.noPromotions);
@@ -7,7 +8,7 @@ export function noPromotions(turnOn) {
         const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
         if(popup.length > 0) {
             popup[0].remove();
-            console.log('Removed a promotion.');
+            logger.log('Removed a promotion.');
         }
     }, 1000);
 }

@@ -1,3 +1,4 @@
+import { logger } from '../functions/backend/logger.js';
 import { fieldTexts } from './fieldTexts.js';
 
 export function fixupFields() {
@@ -12,7 +13,7 @@ export function fixupFields() {
 
     for(const field in configFields) {
         if(fieldTexts[field] === undefined) {
-            console.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
+            logger.warn(`"${field}" is undefined in fieldTexts! Only do this for hidden fields! (still might be a bad idea ithink not sure)`);
             continue;
         }
 
@@ -246,6 +247,14 @@ export const configFields = {
         rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
         default: 'Disabled'
     },
+    visualizerLogarithmicMapping: {
+        type: 'checkbox',
+        default: true
+    },
+    visualizerExponentialScaling: {
+        type: 'checkbox',
+        default: true
+    },
     visualizerCircleEnabled: {
         type: 'checkbox',
         default: true,
@@ -426,6 +435,12 @@ export const configFields = {
         min: 0,
         max: 100,
         default: 0.4
+    },
+    visualizerExponentialScalingFactor: {
+        type: 'float',
+        min: 1,
+        max: 5,
+        default: 1.5
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,
