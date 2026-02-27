@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0-delta.2
+// @version      3.0.0
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,7 +15,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0-delta.2';
+const vNumber = 'v3.0.0';
 try {
     (function() {
         'use strict';
@@ -2438,6 +2438,8 @@ try {
 
             window.dispatchEvent(new Event('resize'));
         }
+
+        window.trustedTypes.createPolicy('default', { createHTML: (string) => string });
 
         ytmpConfig.onOpen = openEvent;
         ytmpConfig.onSave = saveEvent;
