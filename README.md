@@ -1,6 +1,13 @@
-# V3 ~~Beta~~ ~~Gamma~~ Delta (when did i skip alpha)
+# UPDATE THE SCRIPT!
 
-If you're updating, reset to defaults, found some better settings.
+YT Music changed some CSP rules, so the script stopped working.
+[Fixed with a single line of code lol](https://github.com/Tampermonkey/tampermonkey/issues/1334#issuecomment-927305521)
+
+# Let it be released
+
+Dropping the alpha beta gamma bs, it's been too long and I don't work as much on the script as I used to, just wanna do numbers again man.
+
+If you are updating from a previous YTM+ install, I recommend resetting to defaults, found some better settings for the visualizer.
 
 If you encounter any bugs, [join the Discord server](https://discord.gg/68Waxa4Qxz) and message me please! (Or open an issue here, or DM me on Discord, or whatever you prefer.)
 

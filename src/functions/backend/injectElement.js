@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import { logger } from './logger';
 
 export function injectElement(type, id, wrapperElm, customClass, customStyle, prepend) {
     const node = document.createElement(type);

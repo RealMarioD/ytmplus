@@ -5,6 +5,8 @@ import { closeEvent, openEvent, saveEvent } from './settingsMenu/events';
 import { configFields } from './settingsMenu/fields';
 import { ytmpConfig } from './ytmpConfig';
 
+window.trustedTypes.createPolicy('default', { createHTML: (string) => string });
+
 ytmpConfig.onOpen = openEvent;
 ytmpConfig.onSave = saveEvent;
 ytmpConfig.onClose = closeEvent;
