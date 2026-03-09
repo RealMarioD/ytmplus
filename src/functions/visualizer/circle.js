@@ -1,15 +1,21 @@
 import { visualizer } from '../../globals/visualizer';
 import { drawVisImage, imgLoaded } from './image';
-import { calculateBass, getRotationValue, getBarColor } from './utils';
+import { calculateBass, getRotationValue } from './utils';
+import { getColorRenderer } from './colors';
 
-export function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-    const doWeShake = visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold;
+export function visualizerCircle(toRenderAudioData) {
+    // Cache frequently accessed properties
+    const startsFrom = visualizer.startsFrom;
+    const shakeEnabled = visualizer.shake.enabled;
+    const bassBounceEnabled = visualizer.bassBounce.enabled;
+
+    const doWeShake = shakeEnabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold;
     if(doWeShake === true) preShake();
 
-    if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
+    if(startsFrom === 'Left' || startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
     else visualizer.values.circleSize = 1; // 1(pi) = half;
 
-    if(visualizer.bassBounce.enabled === true || visualizer.shake.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
+    if(bassBounceEnabled === true || shakeEnabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
     getRotationValue();
 
@@ -17,56 +23,69 @@ export function visualizerCircle() { // Bitwise truncation (~~number) is used he
 
     const maxBarHeight = (visualizer.values.halfHeight) - (visualizer.values.maxRadius);
 
-    if(visualizer.startsFrom === 'Right') drawArcs(false, maxBarHeight);
-    else if(visualizer.startsFrom === 'Left') drawArcs(true, maxBarHeight);
-    else if(visualizer.startsFrom === 'Center') {
-        drawArcs(false, maxBarHeight);
-        drawArcs(true, maxBarHeight);
+    if(startsFrom === 'Right') drawArcs(toRenderAudioData, false, maxBarHeight);
+    else if(startsFrom === 'Left') drawArcs(toRenderAudioData, true, maxBarHeight);
+    else if(startsFrom === 'Center') {
+        drawArcs(toRenderAudioData, false, maxBarHeight);
+        drawArcs(toRenderAudioData, true, maxBarHeight);
     }
-    else if(visualizer.startsFrom === 'Edges') {
-        drawArcs(false, maxBarHeight);
-        drawArcs(false, maxBarHeight, 3);
+    else if(startsFrom === 'Edges') {
+        drawArcs(toRenderAudioData, false, maxBarHeight);
+        drawArcs(toRenderAudioData, false, maxBarHeight, 3);
     }
 
     if(doWeShake === true) postShake();
 }
 
-function drawArcs(backwards, maxBarHeight, startPoint = 1) {
-    visualizer.ctx.save();
-    visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
-    visualizer.ctx.rotate(visualizer.values.startingPoint * startPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
+function drawArcs(toRenderAudioData, backwards, maxBarHeight, startPoint = 1) {
+    // Cache frequently accessed properties (critical for performance in hot loop)
+    const ctx = visualizer.ctx;
+    const move = visualizer.move;
+    const radius = visualizer.values.radius;
+    const barWidth = visualizer.values.barWidth;
+    const barTotal = visualizer.values.barTotal;
 
-    for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-        getBarColor(i);
-        const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+    // Pre-compute movement mode (eliminates string comparisons in loop)
+    const moveOutside = move === 'Outside' || move === 'Both Sides';
+    const moveInside = move === 'Inside' || move === 'Both Sides';
 
-        if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + barHeight;
-        else visualizer.values.outerRadius = visualizer.values.radius;
+    // Get specialized color renderer (eliminates branching in loop)
+    const colorRenderer = getColorRenderer();
 
-        if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - barHeight;
-        else visualizer.values.innerRadius = visualizer.values.radius;
+    ctx.save();
+    ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
+    ctx.rotate(visualizer.values.startingPoint * startPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
-        if(visualizer.values.outerRadius < 0) visualizer.values.outerRadius = 0;
-        if(visualizer.values.innerRadius < 0) visualizer.values.innerRadius = 0;
+    for(let i = 0; i < toRenderAudioData.length; i++) {
+        colorRenderer(i);
+        const barHeight = toRenderAudioData[i] * maxBarHeight;
 
-        visualizer.ctx.beginPath();
-        visualizer.ctx.arc(0, 0, visualizer.values.innerRadius, -visualizer.values.barWidth, visualizer.values.barWidth);
-        visualizer.ctx.arc(0, 0, visualizer.values.outerRadius, visualizer.values.barWidth, -visualizer.values.barWidth, true);
-        visualizer.ctx.fill();
-        if(backwards === true) visualizer.ctx.rotate(-visualizer.values.barTotal); // rotate the coordinates by one bar
-        else visualizer.ctx.rotate(visualizer.values.barTotal);
+        // Use pre-computed booleans instead of string comparisons
+        let outerRadius = moveOutside ? radius + barHeight : radius;
+        let innerRadius = moveInside ? radius - barHeight : radius;
+
+        // Simple if-based clamping (faster than Math.max in hot loop)
+        if(outerRadius < 0) outerRadius = 0;
+        if(innerRadius < 0) innerRadius = 0;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
+        ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
+        ctx.fill();
+        if(backwards === true) ctx.rotate(-barTotal); // rotate the coordinates by one bar
+        else ctx.rotate(barTotal);
     }
-    visualizer.ctx.restore();
+    ctx.restore();
 }
 
 function preShake() {
+    // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance
     visualizer.ctx.save();
     const movement = visualizer.values.halfHeight * 0.01 * visualizer.shake.multiplier;
     let dx = movement, dy = movement;
-    if(~~(Math.random() * 2) === 0) dx *= 1;
-    else dx *= -1;
-    if(~~(Math.random() * 2) === 0) dy *= 1;
-    else dy *= -1;
+    if(~~(Math.random() * 2) === 0) dx = -movement;
+    if(~~(Math.random() * 2) === 0) dy = -movement;
+
     visualizer.ctx.translate(dx, dy);
 }
 

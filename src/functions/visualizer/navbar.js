@@ -1,5 +1,5 @@
 import { visualizer } from '../../globals/visualizer';
-import { getBarColor } from './utils';
+import { getColorRenderer } from './colors';
 
 export function visualizerNavbar() {
     let xPosOffset;
@@ -8,24 +8,25 @@ export function visualizerNavbar() {
     else xPosOffset = 0;
 
     const maxBarHeight = visualizer.values.HEIGHT;
+    const colorRenderer = getColorRenderer();
 
-    firstDraw(maxBarHeight, xPosOffset);
+    firstDraw(maxBarHeight, xPosOffset, colorRenderer);
 
     if(visualizer.startsFrom === 'Center') {
         xPosOffset = visualizer.values.halfWidth + visualizer.values.barSpace / 2; // Reset pos to center
-        secondDraw(maxBarHeight, xPosOffset);
+        secondDraw(maxBarHeight, xPosOffset, colorRenderer);
     }
     else if(visualizer.startsFrom === 'Edges') {
         xPosOffset = visualizer.values.barWidth + (visualizer.values.barSpace / 2); // Reset pos to right + offset for perfect center
-        secondDraw(maxBarHeight, xPosOffset);
+        secondDraw(maxBarHeight, xPosOffset, colorRenderer);
     }
 }
 
-function firstDraw(maxBarHeight, xPosOffset) {
-    for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-        const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+function firstDraw(maxBarHeight, xPosOffset, colorRenderer) {
+    for(let i = 0; i < visualizer.toRenderAudioData.length; i++) {
+        const barHeight = visualizer.toRenderAudioData[i] * maxBarHeight;
 
-        getBarColor(i);
+        colorRenderer(i);
 
         // To this day I don't get the Y and height values
         if(visualizer.startsFrom === 'Left') {
@@ -66,11 +67,11 @@ function firstDraw(maxBarHeight, xPosOffset) {
     }
 }
 
-function secondDraw(maxBarHeight, xPosOffset) {
-    for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-        const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+function secondDraw(maxBarHeight, xPosOffset, colorRenderer) {
+    for(let i = 0; i < visualizer.toRenderAudioData.length; i++) {
+        const barHeight = visualizer.toRenderAudioData[i] * maxBarHeight;
 
-        getBarColor(i);
+        colorRenderer(i);
 
         if(visualizer.startsFrom === 'Center') {
             if(xPosOffset > visualizer.values.WIDTH) break;

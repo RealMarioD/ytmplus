@@ -6,7 +6,7 @@ import { elements } from '../../globals/elements';
 import { thumbnailURL, validThumbnail } from '../visualizer/image';
 import { logger } from '../backend/logger';
 
-let clone, avSwitch, forceSongImageInterval;
+let clone, avSwitch, forceSongImageInterval, navbar;
 const videoModeOberserver = new MutationObserver((mutations) => {
     mutations.forEach(mutation => { if(mutation.type === 'attributes') handleMutation(mutation); });
 });
@@ -36,7 +36,7 @@ export function videoSongSwitcher(mode) {
         if(clone) return clone.style.display = 'block';
         try {
             if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
-            const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
+            navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
             navbar.children[1].style.justifyContent = 'space-around';
             clone = avSwitch.cloneNode(true);
             navbar.children[1].append(clone);
@@ -66,4 +66,10 @@ function getRidOfSwitch() {
     elements.playerPage.removeAttribute('has-av-switcher');
     avSwitch.style.display = 'none';
     if(clone) clone.style.display = 'none';
+    try {
+        navbar.children[1].style.justifyContent = '';
+    }
+    catch (error) {
+        return; // its fine lol
+    }
 }

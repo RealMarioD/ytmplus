@@ -70,8 +70,12 @@
     background-color: #a1a1a1;
 }
 
-#titlebar_x:hover {
+#titlebar_x {
     background-color: rgb(170, 25, 25);
+}
+
+#titlebar_x:hover {
+    background-color: rgb(255, 25, 25);
 }
 
 #supportMePls:hover {

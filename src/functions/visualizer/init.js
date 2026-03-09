@@ -3,7 +3,7 @@ import { visualizer } from '../../globals/visualizer';
 import { injectElement } from '../backend/injectElement';
 import { observeVideoID, replaceImageURL } from './image';
 import { renderFrame } from './renderer';
-import { getBufferData, initValues, visualizerResizeFix } from './utils';
+import { initValues, visualizerResizeFix } from './utils';
 import { logger } from '../backend/logger';
 
 export async function setupVisualizer() {
@@ -62,7 +62,6 @@ export function startVisualizer() {
         visualizer.src.connect(visualizer.analyser);
         visualizer.analyser.connect(visualizer.audioContext.destination);
 
-        getBufferData();
         initValues();
 
         window.removeEventListener('resize', visualizerResizeFix);

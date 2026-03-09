@@ -101,7 +101,7 @@ export const configFields = {
     videoSongSwitcher: {
         type: 'customSelect',
         rawOptions: ['disabled', 'ogSwitch', 'forceSong'],
-        default: 'forceSong'
+        default: 'ogSwitch'
     },
     removeAlbumCover: {
         type: 'checkbox',
@@ -123,30 +123,30 @@ export const configFields = {
     navbarBackgroundColor: {
         type: 'color',
         default: '#aa0000',
-        subCheckbox: 'navbarBackgroundChange'
+        subCheckbox: ['navbarBackgroundChange']
     },
     navbarBackgroundGradientEnabled: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'navbarBackgroundChange'
+        subCheckbox: ['navbarBackgroundChange']
     },
     navbarBackgroundGradientColor: {
         type: 'color',
         default: '#0000aa',
-        subCheckbox: 'navbarBackgroundChange'
+        subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
     },
     navbarBackgroundGradientAngle: {
         type: 'int',
         min: -360,
         max: 360,
         default: 45,
-        subCheckbox: 'navbarBackgroundChange'
+        subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
     },
     navbarBackgroundGradientAnimation: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
-        subCheckbox: 'navbarBackgroundChange'
+        subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
     },
     siteBackgroundChange: {
         type: 'checkbox',
@@ -155,30 +155,30 @@ export const configFields = {
     siteBackgroundColor: {
         type: 'color',
         default: '#400000',
-        subCheckbox: 'siteBackgroundChange'
+        subCheckbox: ['siteBackgroundChange']
     },
     siteBackgroundGradientEnabled: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'siteBackgroundChange'
+        subCheckbox: ['siteBackgroundChange']
     },
     siteBackgroundGradientColor: {
         type: 'color',
         default: '#000040',
-        subCheckbox: 'siteBackgroundChange'
+        subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
     },
     siteBackgroundGradientAngle: {
         type: 'int',
         min: -360,
         max: 360,
         default: 45,
-        subCheckbox: 'siteBackgroundChange'
+        subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
     },
     siteBackgroundGradientAnimation: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
         default: 'Horizontal',
-        subCheckbox: 'siteBackgroundChange'
+        subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
     },
     // changeUpgradeButton: {
     //     type: 'customSelect',
@@ -222,86 +222,104 @@ export const configFields = {
     visualizerStartsFrom: {
         type: 'customSelect',
         rawOptions: ['Left', 'Center', 'Right', 'Edges'],
-        default: 'Center'
+        default: 'Center',
+        subOption: '!visualizerPlace.0'
+    },
+    visualizerColorMode: {
+        type: 'customSelect',
+        rawOptions: ['static', 'rgb', 'rainbow'],
+        default: 'rgb',
+        subOption: '!visualizerPlace.0'
     },
     visualizerColor: {
-        type: 'color',
-        default: '#C800C8'
-    },
-    visualizerRgbEnabled: {
-        type: 'checkbox',
-        default: true
+        type: 'customColorRgb',
+        default: '128|0|128',
+        subOption: ['!visualizerPlace.0', 'visualizerColorMode.0']
     },
     visualizerFade: {
         type: 'checkbox',
-        default: false
+        default: false,
+        subOption: '!visualizerPlace.0'
     },
     visualizerFft: {
         type: 'customSelect',
         rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
         default: '4096',
-        setTitle: true
+        setTitle: true,
+        subOption: '!visualizerPlace.0'
     },
     visualizerEnergySaverType: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
-        default: 'Disabled'
+        default: 'Disabled',
+        subOption: '!visualizerPlace.0'
     },
     visualizerLogarithmicMapping: {
         type: 'checkbox',
-        default: true
+        default: true,
+        subOption: '!visualizerPlace.0'
     },
     visualizerExponentialScaling: {
         type: 'checkbox',
-        default: true
+        default: true,
+        subOption: '!visualizerPlace.0'
     },
     visualizerCircleEnabled: {
         type: 'checkbox',
         default: true,
+        subOption: '!visualizerPlace.0'
     },
     visualizerRotate: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
         default: 'Disabled',
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: 'visualizerCircleEnabled',
+        subOption: '!visualizerPlace.0'
     },
     visualizerRotateDirection: {
         type: 'customSelect',
         rawOptions: ['Clockwise', 'Counter-Clockwise'],
         default: 'Counter-Clockwise',
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: ['visualizerCircleEnabled', '!visualizerRotate.0'],
+        subOption: '!visualizerPlace.0'
     },
     visualizerMove: {
         type: 'customSelect',
         rawOptions: ['Inside', 'Outside', 'Both Sides'],
         default: 'Outside',
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: 'visualizerCircleEnabled',
+        subOption: '!visualizerPlace.0'
     },
     visualizerShakeEnabled: {
         type: 'checkbox',
         default: false,
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: 'visualizerCircleEnabled',
+        subOption: ['visualizerPlace.0', 'visualizerRotate.2']
     },
     visualizerBassBounceEnabled: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: 'visualizerCircleEnabled',
+        subOption: '!visualizerPlace.0'
     },
     visualizerBassBounceSmooth: {
         type: 'checkbox',
         default: true,
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: ['visualizerCircleEnabled', 'visualizerBassBounceEnabled'],
+        subOption: '!visualizerPlace.0'
     },
     visualizerImageType: {
         type: 'customSelect',
         rawOptions: ['Disabled', 'Thumbnail', 'Custom'],
         default: 'Thumbnail',
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: 'visualizerCircleEnabled',
+        subOption: '!visualizerPlace.0'
     },
     visualizerImageCustomURL: {
         type: 'textarea',
         default: 'https://imgur.com/HSTpR8R.png',
-        subCheckbox: 'visualizerCircleEnabled'
+        subCheckbox: ['visualizerCircleEnabled'],
+        subOption: ['!visualizerPlace.0', 'visualizerImageType.2']
     },
     attention1: {
         section: fieldTexts.attention1Section,
@@ -341,7 +359,7 @@ export const configFields = {
         type: 'int',
         min: -100,
         max: 0,
-        default: 0
+        default: -20
     },
     visualizerSmoothing: {
         type: 'float',
@@ -353,25 +371,25 @@ export const configFields = {
         type: 'int',
         min: 0,
         max: 44100,
-        default: 0
+        default: 20
     },
     visualizerMaxHertz: {
         type: 'int',
         min: 1,
         max: 44100,
-        default: 20000
+        default: 14000
     },
     visualizerBassBounceThreshold: {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.45
+        default: 0.6
     },
     visualizerBassBounceMinHertz: {
         type: 'float',
         min: 0,
         max: 44100,
-        default: 0
+        default: 40
     },
     visualizerBassBounceMaxHertz: {
         type: 'float',
@@ -392,13 +410,13 @@ export const configFields = {
         type: 'int',
         min: 1,
         max: 10,
-        default: 5
+        default: 10
     },
     visualizerBassBounceGrowSmoothing: {
         type: 'int',
         min: 1,
         max: 10,
-        default: 3
+        default: 5
     },
     visualizerBassBounceMinRadius: {
         type: 'float',
@@ -428,7 +446,7 @@ export const configFields = {
         type: 'float',
         min: 0,
         max: 1,
-        default: 0.5
+        default: 0.7
     },
     visualizerShakeMultiplier: {
         type: 'float',
@@ -440,7 +458,7 @@ export const configFields = {
         type: 'float',
         min: 1,
         max: 5,
-        default: 1.5
+        default: 2.5
     },
     lastOpenCategory: {
         section: fieldTexts.backendSection,

@@ -56,8 +56,10 @@ export const fieldTexts = {
     visualizerStartsFrom: { english: 'Bars are placed from:', hungarian: 'Sávok elhelyezése innen:',
         options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
     },
+    visualizerColorMode: { english: 'Visualizer Color Mode', hungarian: 'Vizualizáló Szín Mód',
+        options: { english: ['Single Color', 'RGB', 'Rainbow'], hungarian: ['Egy Szín', 'RGB', 'Szivárvány'] }
+    },
     visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
-    visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
     visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
     visualizerFft: { english: 'Audio Samples', hungarian: 'Hang Minták',
         options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] },
@@ -69,7 +71,7 @@ export const fieldTexts = {
     visualizerLogarithmicMapping: { english: 'Logarithmic Mapping', hungarian: 'Logaritmikus Leképezés' },
     visualizerExponentialScaling: { english: 'Exponential Scaling', hungarian: 'Exponenciális Skálázás' },
     visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
-    visualizerShakeEnabled: { english: 'Shake Effect' },
+    visualizerShakeEnabled: { english: 'Shake Effect', hungarian: 'Rázás Effekt' },
     visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
         options: { english: ['Disabled', 'Enabled', 'Reactive', 'Reactive (Bass)'], hungarian: ['Kikapcsolva', 'Engedélyezve', 'Reaktív', 'Reaktív (Basszus)'] }
     },

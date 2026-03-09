@@ -23,8 +23,6 @@ export async function setup() {
         // Injecting animations for background and clock gradients
         injectStyle(keyframes);
 
-        setupVisualizer();
-
         // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
         // If stuff breaks just put back everything below in a timeout
         try {
@@ -50,6 +48,9 @@ export async function setup() {
                 logger.error(error);
             }
         }
+
+        setupVisualizer();
+
         logger.log('Setup finished.');
     }
     catch (error) {

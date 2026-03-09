@@ -20,7 +20,7 @@ try {
     (function() {
         'use strict';
 
-        const settingsMenu = '/* Width calculations based on 4:3 aspect ratio */\r\n/* Small screen */\r\n@media screen and (min-height: 0px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n/* Medium screen */\r\n@media screen and (min-height: 768px) and (min-width: 1024px){\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n/* Large screen */\r\n@media screen and (min-height: 1080px) and (min-width: 1440px) {\r\n    #ytmPlusCfg {\r\n        height: 1080px;\r\n        font-size: 24px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 6%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.25em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: 94%;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 0.75em;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: auto;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 0.7em;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n#warning_button_holder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 90%;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n/** don\'t be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    height: 2.5em;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
+        const settingsMenu = '/* Width calculations based on 4:3 aspect ratio */\r\n/* Small screen */\r\n@media screen and (min-height: 0px) {\r\n    #ytmPlusCfg {\r\n        height: 512px;\r\n        font-size: 12px;\r\n    }\r\n}\r\n\r\n/* Medium screen */\r\n@media screen and (min-height: 768px) and (min-width: 1024px){\r\n    #ytmPlusCfg {\r\n        height: 768px;\r\n        font-size: 18px;\r\n    }\r\n}\r\n\r\n/* Large screen */\r\n@media screen and (min-height: 1080px) and (min-width: 1440px) {\r\n    #ytmPlusCfg {\r\n        height: 1080px;\r\n        font-size: 24px;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg {\r\n    background-color: rgba(0, 0, 0, 0.925);\r\n    box-shadow: 20px 20px 40px rgba(10, 10, 10, 0.8);\r\n    border: 0;\r\n    border-radius: 1em;\r\n    z-index: 9000;\r\n    /* GM_config sets a lot of things to element, we can only change it in JS no? */\r\n}\r\n\r\n#ytmPlusCfg * {\r\n    font-family: monospace;\r\n    color: #EEEEEE;\r\n}\r\n\r\n#ytmPlusCfg_wrapper {\r\n    display: flex;\r\n    height: inherit;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg_titlebar {\r\n    display: flex;\r\n    flex-direction: row-reverse;\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    width: 100%;\r\n    height: 6%;\r\n    align-items: center;\r\n}\r\n\r\n.titlebarButtons {\r\n    font-size: 1.25em;\r\n    padding: 0;\r\n    height: 100%;\r\n    aspect-ratio: 1;\r\n    border-radius: 0;\r\n    border-left: 1px solid rgba(0, 0, 0, 0.925);\r\n    background-color: rgb(66, 66, 66, 0.925);\r\n    transition: 100ms linear;\r\n}\r\n\r\n.titlebarButtons:hover {\r\n    background-color: #a1a1a1;\r\n}\r\n\r\n#titlebar_x {\r\n    background-color: rgb(170, 25, 25);\r\n}\r\n\r\n#titlebar_x:hover {\r\n    background-color: rgb(255, 25, 25);\r\n}\r\n\r\n#supportMePls:hover {\r\n    background: #00CAFE;\r\n}\r\n\r\n#supportMePls img {\r\n    height: 100%;\r\n}\r\n\r\n#titlebar_draggable {\r\n    width: 100%;\r\n    height: 100%;\r\n    cursor: move;\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: flex-start;\r\n    align-items: center;\r\n}\r\n\r\n#titlebar_icon {\r\n    height: 80%;\r\n    margin: 0 0.675%;\r\n}\r\n\r\n#sideBySide {\r\n    display: flex;\r\n    flex-direction: column;\r\n    flex-wrap: wrap;\r\n    width: 100%;\r\n    height: 94%;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#categorySelect {\r\n    width: 40%;\r\n    justify-content: space-evenly;\r\n    display: flex;\r\n    flex-direction: row;\r\n    height: 100%;\r\n    flex-wrap: wrap;\r\n    align-content: space-evenly;\r\n}\r\n\r\n#ytmPlusCfg #ytmPlusCfg_header { /* Old UI logo */\r\n    background: -webkit-linear-gradient(-45deg, rgb(170, 25, 25), rgb(25, 25, 170));\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background-clip: text;\r\n    -webkit-background-clip: text;\r\n    -webkit-text-fill-color: transparent;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_header {\r\n    font-size: 1em;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton {\r\n    background-image: linear-gradient(90deg, rgb(50, 25 ,170), rgb(170, 25, 50));\r\n    background-size: 200% 100%;\r\n    background-position: 0% 0%;\r\n    border: 0;\r\n    border-radius: 0.75em;\r\n    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;\r\n    width: 95%;\r\n    padding: 3.25%;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    transition: 200ms linear;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:hover {\r\n    background-position: 50% 0%;\r\n}\r\n\r\n#ytmPlusCfg .changeCategoryButton:disabled {\r\n    background-position: 100% 0%;\r\n}\r\n\r\n#ytmPlusCfg .reset_holder {\r\n    text-align: center;\r\n}\r\n\r\n#ytmPlusCfg .reset {\r\n    font-size: 1em;\r\n    color: rgba(255, 255, 255, 0.8);\r\n    cursor: pointer;\r\n    text-decoration: underline;\r\n}\r\n\r\n#ytmpDivider {\r\n    background: #aaaaaa;\r\n    width: 0.1%;\r\n    height: 100%;\r\n}\r\n\r\n#currentSettings {\r\n    width: 60%;\r\n    height: 100%;\r\n    overflow-y: scroll;\r\n    justify-content: flex-start;\r\n    display: flex;\r\n    flex-direction: column;\r\n}\r\n\r\n#ytmPlusCfg .section_header_holder {\r\n    margin-top: 0;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    align-content: flex-start;\r\n    justify-content: center;\r\n    width: 100%;\r\n}\r\n\r\n#ytmPlusCfg .config_var {\r\n    text-align: left;\r\n    height: auto;\r\n    width: 95%;\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    border-bottom: solid 1px #6666;\r\n    margin: 0;\r\n}\r\n\r\n#ytmPlusCfg .field_label {\r\n    width: 70%;\r\n    font-size: 1.23em;\r\n    display: flex;\r\n    align-items: center;\r\n    margin-right: 0;\r\n    padding: 2% 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"] {\r\n    color: #89befe;\r\n    background: #62666F;\r\n    display: flex;\r\n    align-items: center;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    margin: 0;\r\n    padding: 0;\r\n    appearance: none;\r\n    -webkit-appearance: none;\r\n    border: none;\r\n    cursor: pointer;\r\n}\r\n\r\n/* #ytmPlusCfg input[type="color"]:before {\r\n    content: "CHANGE";\r\n    padding: 0 7.5%;\r\n} */\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch-wrapper {\r\n    padding: 0;\r\n}\r\n\r\n#ytmPlusCfg input[type="color"]::-webkit-color-swatch {\r\n    /* border: 1px solid #fff; */\r\n    border-radius: 0.75em\r\n}\r\n\r\n#ytmPlusCfg input[type="checkbox"] {\r\n    display: flex;\r\n    align-items: center;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 10%;\r\n    height: 1.5em;\r\n    -webkit-appearance: none;\r\n    appearance: none;\r\n    background-color: #313338;\r\n    outline: none;\r\n    cursor: pointer;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:before {\r\n    font-size: 1em;\r\n    content: "";\r\n    width: 1.5em;\r\n    height: 1.5em;\r\n    border-radius: 0.75em;\r\n    background: #62666F;\r\n    color: #313338;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    letter-spacing: 1px;\r\n    transition: 0.3s;\r\n}\r\n\r\ninput[type="checkbox"]:checked {\r\n    background: linear-gradient(135deg, #4135be, #497ebe);\r\n}\r\n\r\ninput[type="checkbox"]:checked:before {\r\n    content: "";\r\n    background: linear-gradient(135deg, #8276ff, #8abfff);\r\n    color: #89befe;\r\n    margin-left: auto;\r\n}\r\n\r\ninput[type="checkbox"]:hover {\r\n    background: linear-gradient(135deg, #313338, #52565F);\r\n}\r\n\r\ninput[type="checkbox"]:checked:hover {\r\n    background: linear-gradient(135deg, #5145ae, #598ece);\r\n}\r\n\r\n#ytmPlusCfg input[type="text"] {\r\n    width: 15%;\r\n    height: 75%;\r\n    padding: 0 2.5%;\r\n}\r\n\r\ninput {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 9px;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea {\r\n    background-color: rgba(66, 66, 66, 0.8);\r\n    width: 100%;\r\n    height: 25%;\r\n    resize: none;\r\n    white-space: nowrap;\r\n    overflow-wrap: normal;\r\n    border: none;\r\n    border-radius: 0.75em;\r\n    padding: 1%;\r\n    scrollbar-width: none;\r\n    font-size: inherit;\r\n}\r\n\r\n#ytmPlusCfg textarea::-webkit-scrollbar {\r\n    display: none;\r\n    width: 0;\r\n    height: 0;\r\n}\r\n\r\n#ytmPlusCfg select {\r\n    background: #030303ee;\r\n    border: 0;\r\n    border-bottom: 1px solid;\r\n    border-radius: 0;\r\n    padding: 0;\r\n    font-size: inherit;\r\n    width: 30%;\r\n    height: 75%;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n#ytmPlusCfg select:hover {\r\n    background: #303030ee;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar {\r\n    width: 0.7em;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-track {\r\n    background: #313338;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb {\r\n    background: #62666F;\r\n}\r\n\r\n#ytmPlusCfg *::-webkit-scrollbar-thumb:hover {\r\n    background: #b4bbbf;\r\n}\r\n\r\n#header_svg {\r\n    width: 100%;\r\n    height: 90px;\r\n}\r\n\r\n#vnumber_header {\r\n    -webkit-text-fill-color: white;\r\n}\r\n\r\nsvg text {\r\n    font-size: 5em;\r\n    animation: stroke 10s infinite alternate linear;\r\n    stroke-width: 2;\r\n    stroke: #aa0000;\r\n}\r\n\r\n@keyframes stroke {\r\n    0% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: 25%;\r\n        stroke-dasharray: 10%;\r\n        stroke-width: 3;\r\n    }\r\n\r\n    100% {\r\n        fill: rgba(200, 0, 85, 0.25);\r\n        stroke: rgba(170, 0, 85, 1);\r\n        stroke-dashoffset: -25%;\r\n        stroke-dasharray: 10%;\r\n    }\r\n}\r\n\r\n@keyframes buttonBorder {\r\n    0% {\r\n        background-position: 0% center;\r\n    }\r\n\r\n    100% {\r\n        background-position: 200% center;\r\n    }\r\n}\r\n\r\n@-moz-document url-prefix() {\r\n    #currentSettings {\r\n        overflow: scroll;\r\n    }\r\n}\r\n\r\n#ytmPlusCfg #reset_warning {\r\n    border: 3px solid;\r\n    border-radius: 0.75em;\r\n    background: #333138;\r\n    position: absolute;\r\n    inset: 25% 0 0 25%;\r\n    width: 50%;\r\n    height: 50%;\r\n    display: flex;\r\n    flex-direction: row;\r\n    flex-wrap: wrap;\r\n    justify-content: space-evenly;\r\n    align-content: space-around;\r\n}\r\n\r\n#warning_text {\r\n    font-size: 1.5em;\r\n    width: fit-content;\r\n    text-align: center;\r\n}\r\n\r\n#warning_button_holder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 90%;\r\n}\r\n\r\n.warning_buttons {\r\n    transition: 100ms linear;\r\n}\r\n\r\n#yes_reset_button {\r\n    background-color: #f77;\r\n}\r\n\r\n#yes_reset_button:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n#no_goback_button {\r\n    background-color: #77f;\r\n}\r\n\r\n#no_goback_button:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#shortcutWindow {\r\n    z-index: 9999;\r\n    inset: 0;\r\n    position: absolute;\r\n    width: 100%;\r\n    height: 100vh;\r\n    background-color: #00000088;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    font-size: 48px;\r\n    color: white;\r\n}\r\n\r\n#shortcutText {\r\n    display: flex;\r\n    align-items: center;\r\n    text-align: center;\r\n    height: 15%;\r\n}\r\n\r\n#shortcutButtonHolder {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-evenly;\r\n    width: 8em;\r\n}\r\n\r\n/** don\'t be bamboozled, this is not the button in the settings menu, but the input that stores the shortcut */\r\n#shortcutButtonHolder input {\r\n    width: 4em;\r\n    color: white;\r\n    font-size: 0.5em;\r\n    transition: 100ms linear;\r\n}\r\n\r\n#saveShortcut {\r\n    background-color: #77f;\r\n}\r\n\r\n#saveShortcut:hover {\r\n    background-color: #00a;\r\n}\r\n\r\n#resetShortcut, #quitShortcut {\r\n    background-color: #f77;\r\n}\r\n\r\n#resetShortcut:hover, #quitShortcut:hover {\r\n    background-color: #a00;\r\n}\r\n\r\n.userButtons {\r\n    width: 30%;\r\n    height: 2.5em;\r\n    background-color: #77f;\r\n    transition: 100ms linear;\r\n}\r\n\r\n.userButtons:hover {\r\n    background-color: #00a;\r\n}';
 
         class logger {
             static log(message) {
@@ -30,7 +30,7 @@ try {
                 console.warn('%c[YTMPLUS] WARNING:', 'background: #FA2; color: #000', message);
             }
             static error(message) {
-                console.error(`%c[YTMPLUS] ERROR: ${message}`, 'background: #A00; color: #FFF', message);
+                console.error('%c[YTMPLUS] ERROR:', 'background: #A00; color: #FFF', message);
             }
             static debug(message) {
                 console.debug('%c[YTMPLUS] DEBUG:', 'background: #666; color: #FFF', message);
@@ -114,8 +114,10 @@ try {
             visualizerStartsFrom: { english: 'Bars are placed from:', hungarian: 'Sávok elhelyezése innen:',
                 options: { english: ['Left', 'Center', 'Right', 'Edges'], hungarian: ['Bal', 'Közép', 'Jobb', 'Szélek'] },
             },
+            visualizerColorMode: { english: 'Visualizer Color Mode', hungarian: 'Vizualizáló Szín Mód',
+                options: { english: ['Single Color', 'RGB', 'Rainbow'], hungarian: ['Egy Szín', 'RGB', 'Szivárvány'] }
+            },
             visualizerColor: { english: 'Visualizer Color', hungarian: 'Vizualizáló Színe' },
-            visualizerRgbEnabled: { english: 'RGB Mode', hungarian: 'RGB Mód' },
             visualizerFade: { english: 'Enable Bar Fade', hungarian: 'Sávok Áttűnésének Engedélyezése' },
             visualizerFft: { english: 'Audio Samples', hungarian: 'Hang Minták',
                 options: { english: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'] },
@@ -127,7 +129,7 @@ try {
             visualizerLogarithmicMapping: { english: 'Logarithmic Mapping', hungarian: 'Logaritmikus Leképezés' },
             visualizerExponentialScaling: { english: 'Exponential Scaling', hungarian: 'Exponenciális Skálázás' },
             visualizerCircleEnabled: { english: 'Circle Visualizer', hungarian: 'Kör Vizualizáló' },
-            visualizerShakeEnabled: { english: 'Shake Effect' },
+            visualizerShakeEnabled: { english: 'Shake Effect', hungarian: 'Rázás Effekt' },
             visualizerRotate: { english: 'Rotation', hungarian: 'Forgás',
                 options: { english: ['Disabled', 'Enabled', 'Reactive', 'Reactive (Bass)'], hungarian: ['Kikapcsolva', 'Engedélyezve', 'Reaktív', 'Reaktív (Basszus)'] }
             },
@@ -276,7 +278,7 @@ try {
             videoSongSwitcher: {
                 type: 'customSelect',
                 rawOptions: ['disabled', 'ogSwitch', 'forceSong'],
-                default: 'forceSong'
+                default: 'ogSwitch'
             },
             removeAlbumCover: {
                 type: 'checkbox',
@@ -298,30 +300,30 @@ try {
             navbarBackgroundColor: {
                 type: 'color',
                 default: '#aa0000',
-                subCheckbox: 'navbarBackgroundChange'
+                subCheckbox: ['navbarBackgroundChange']
             },
             navbarBackgroundGradientEnabled: {
                 type: 'checkbox',
                 default: true,
-                subCheckbox: 'navbarBackgroundChange'
+                subCheckbox: ['navbarBackgroundChange']
             },
             navbarBackgroundGradientColor: {
                 type: 'color',
                 default: '#0000aa',
-                subCheckbox: 'navbarBackgroundChange'
+                subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
             },
             navbarBackgroundGradientAngle: {
                 type: 'int',
                 min: -360,
                 max: 360,
                 default: 45,
-                subCheckbox: 'navbarBackgroundChange'
+                subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
             },
             navbarBackgroundGradientAnimation: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
                 default: 'Horizontal',
-                subCheckbox: 'navbarBackgroundChange'
+                subCheckbox: ['navbarBackgroundChange', 'navbarBackgroundGradientEnabled']
             },
             siteBackgroundChange: {
                 type: 'checkbox',
@@ -330,30 +332,30 @@ try {
             siteBackgroundColor: {
                 type: 'color',
                 default: '#400000',
-                subCheckbox: 'siteBackgroundChange'
+                subCheckbox: ['siteBackgroundChange']
             },
             siteBackgroundGradientEnabled: {
                 type: 'checkbox',
                 default: true,
-                subCheckbox: 'siteBackgroundChange'
+                subCheckbox: ['siteBackgroundChange']
             },
             siteBackgroundGradientColor: {
                 type: 'color',
                 default: '#000040',
-                subCheckbox: 'siteBackgroundChange'
+                subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
             },
             siteBackgroundGradientAngle: {
                 type: 'int',
                 min: -360,
                 max: 360,
                 default: 45,
-                subCheckbox: 'siteBackgroundChange'
+                subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
             },
             siteBackgroundGradientAnimation: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Horizontal', 'Vertical'],
                 default: 'Horizontal',
-                subCheckbox: 'siteBackgroundChange'
+                subCheckbox: ['siteBackgroundChange', 'siteBackgroundGradientEnabled']
             },
             // changeUpgradeButton: {
             //     type: 'customSelect',
@@ -397,86 +399,104 @@ try {
             visualizerStartsFrom: {
                 type: 'customSelect',
                 rawOptions: ['Left', 'Center', 'Right', 'Edges'],
-                default: 'Center'
+                default: 'Center',
+                subOption: '!visualizerPlace.0'
+            },
+            visualizerColorMode: {
+                type: 'customSelect',
+                rawOptions: ['static', 'rgb', 'rainbow'],
+                default: 'rgb',
+                subOption: '!visualizerPlace.0'
             },
             visualizerColor: {
-                type: 'color',
-                default: '#C800C8'
-            },
-            visualizerRgbEnabled: {
-                type: 'checkbox',
-                default: true
+                type: 'customColorRgb',
+                default: '128|0|128',
+                subOption: ['!visualizerPlace.0', 'visualizerColorMode.0']
             },
             visualizerFade: {
                 type: 'checkbox',
-                default: false
+                default: false,
+                subOption: '!visualizerPlace.0'
             },
             visualizerFft: {
                 type: 'customSelect',
                 rawOptions: ['32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384'],
                 default: '4096',
-                setTitle: true
+                setTitle: true,
+                subOption: '!visualizerPlace.0'
             },
             visualizerEnergySaverType: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Limit FPS', 'True Pause', 'Both'],
-                default: 'Disabled'
+                default: 'Disabled',
+                subOption: '!visualizerPlace.0'
             },
             visualizerLogarithmicMapping: {
                 type: 'checkbox',
-                default: true
+                default: true,
+                subOption: '!visualizerPlace.0'
             },
             visualizerExponentialScaling: {
                 type: 'checkbox',
-                default: true
+                default: true,
+                subOption: '!visualizerPlace.0'
             },
             visualizerCircleEnabled: {
                 type: 'checkbox',
                 default: true,
+                subOption: '!visualizerPlace.0'
             },
             visualizerRotate: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'On', 'Reactive', 'Reactive (Bass)'],
                 default: 'Disabled',
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: 'visualizerCircleEnabled',
+                subOption: '!visualizerPlace.0'
             },
             visualizerRotateDirection: {
                 type: 'customSelect',
                 rawOptions: ['Clockwise', 'Counter-Clockwise'],
                 default: 'Counter-Clockwise',
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: ['visualizerCircleEnabled', '!visualizerRotate.0'],
+                subOption: '!visualizerPlace.0'
             },
             visualizerMove: {
                 type: 'customSelect',
                 rawOptions: ['Inside', 'Outside', 'Both Sides'],
                 default: 'Outside',
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: 'visualizerCircleEnabled',
+                subOption: '!visualizerPlace.0'
             },
             visualizerShakeEnabled: {
                 type: 'checkbox',
                 default: false,
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: 'visualizerCircleEnabled',
+                subOption: ['visualizerPlace.0', 'visualizerRotate.2']
             },
             visualizerBassBounceEnabled: {
                 type: 'checkbox',
                 default: true,
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: 'visualizerCircleEnabled',
+                subOption: '!visualizerPlace.0'
             },
             visualizerBassBounceSmooth: {
                 type: 'checkbox',
                 default: true,
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: ['visualizerCircleEnabled', 'visualizerBassBounceEnabled'],
+                subOption: '!visualizerPlace.0'
             },
             visualizerImageType: {
                 type: 'customSelect',
                 rawOptions: ['Disabled', 'Thumbnail', 'Custom'],
                 default: 'Thumbnail',
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: 'visualizerCircleEnabled',
+                subOption: '!visualizerPlace.0'
             },
             visualizerImageCustomURL: {
                 type: 'textarea',
                 default: 'https://imgur.com/HSTpR8R.png',
-                subCheckbox: 'visualizerCircleEnabled'
+                subCheckbox: ['visualizerCircleEnabled'],
+                subOption: ['!visualizerPlace.0', 'visualizerImageType.2']
             },
             attention1: {
                 section: fieldTexts.attention1Section,
@@ -516,7 +536,7 @@ try {
                 type: 'int',
                 min: -100,
                 max: 0,
-                default: 0
+                default: -20
             },
             visualizerSmoothing: {
                 type: 'float',
@@ -528,25 +548,25 @@ try {
                 type: 'int',
                 min: 0,
                 max: 44100,
-                default: 0
+                default: 20
             },
             visualizerMaxHertz: {
                 type: 'int',
                 min: 1,
                 max: 44100,
-                default: 20000
+                default: 14000
             },
             visualizerBassBounceThreshold: {
                 type: 'float',
                 min: 0,
                 max: 1,
-                default: 0.45
+                default: 0.6
             },
             visualizerBassBounceMinHertz: {
                 type: 'float',
                 min: 0,
                 max: 44100,
-                default: 0
+                default: 40
             },
             visualizerBassBounceMaxHertz: {
                 type: 'float',
@@ -567,13 +587,13 @@ try {
                 type: 'int',
                 min: 1,
                 max: 10,
-                default: 5
+                default: 10
             },
             visualizerBassBounceGrowSmoothing: {
                 type: 'int',
                 min: 1,
                 max: 10,
-                default: 3
+                default: 5
             },
             visualizerBassBounceMinRadius: {
                 type: 'float',
@@ -603,7 +623,7 @@ try {
                 type: 'float',
                 min: 0,
                 max: 1,
-                default: 0.5
+                default: 0.7
             },
             visualizerShakeMultiplier: {
                 type: 'float',
@@ -615,7 +635,7 @@ try {
                 type: 'float',
                 min: 1,
                 max: 5,
-                default: 1.5
+                default: 2.5
             },
             lastOpenCategory: {
                 section: fieldTexts.backendSection,
@@ -728,6 +748,94 @@ try {
             }
         };
 
+        // Helper functions for customColorRgb
+        function hexToRgb(hex) {
+        // Remove # if present
+            hex = hex.replace('#', '');
+
+            // Parse hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            return [r, g, b];
+        }
+
+        function rgbToHex(rgb) {
+        // rgb is an array [r, g, b]
+            if(!Array.isArray(rgb) || rgb.length !== 3) return '#000000';
+
+            const r = rgb[0];
+            const g = rgb[1];
+            const b = rgb[2];
+
+            // Convert to hex
+            const toHex = (n) => {
+                const hex = n.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        const customColorRgb = {
+            default: '#000000',
+            toNode: function() {
+                const configId = 'ytmPlusCfg';
+                const field = this.settings,
+                    id = this.id,
+                    create = this.create,
+                    retNode = create('div', {
+                        className: 'config_var',
+                        id: configId + '_' + id + '_var',
+                        title: field.title || ''
+                    });
+
+                retNode.appendChild(create('label', {
+                    innerHTML: field.label,
+                    id: configId + '_' + id + '_field_label',
+                    for: configId + '_field_' + id,
+                    className: 'field_label'
+                }));
+
+                // Convert RGB array to hex for the input
+                let hexValue = this.value;
+                if(Array.isArray(this.value)) hexValue = rgbToHex(this.value);
+
+                const props = {
+                    id: configId + '_field_' + id,
+                    type: 'color', // Will be changed to 'color' in openEvent
+                    value: hexValue
+                };
+
+                field.value = this.value;
+
+                retNode.appendChild(create('input', props));
+                return retNode;
+            },
+            toValue: function() {
+                logger.debug('customColorRgb toValue called');
+                if(this.wrapper) {
+                    const input = this.wrapper.querySelector('input');
+                    if(input && input.value) {
+                    // Convert hex to RGB
+                        return hexToRgb(input.value);
+                    }
+                }
+                return this.value || this.default;
+            },
+            reset: function() {
+                if(this.wrapper) {
+                    const input = this.wrapper.querySelector('input');
+                    if(input) {
+                        let hexValue = this.default;
+                        if(Array.isArray(this.default)) hexValue = rgbToHex(this.default);
+                        input.value = hexValue;
+                    }
+                }
+            }
+        };
+
         const ytmpConfig = new GM_configStruct({
             id: 'ytmPlusCfg',
             title: 'ytmPlus',
@@ -741,7 +849,8 @@ try {
             frame: injectElement('div', 'ytmPlusCfg', document.body, undefined, 'display: flex'),
             types: {
                 customButton: customButton,
-                customSelect: customSelect
+                customSelect: customSelect,
+                customColorRgb: customColorRgb
             }
         });
 
@@ -783,6 +892,7 @@ try {
         const visualizer = {
             place: undefined,
             startsFrom: undefined,
+            colorMode: undefined,
             color: undefined,
             fade: undefined,
             circleEnabled: undefined,
@@ -793,6 +903,8 @@ try {
             logarithmicMapping: undefined,
             exponentialScaling: undefined,
             exponentialScalingFactor: undefined,
+            minHertz: undefined,
+            maxHertz: undefined,
             shake: {
                 enabled: undefined,
                 threshold: undefined,
@@ -809,7 +921,6 @@ try {
                 customURL: undefined
             },
             rgb: {
-                enabled: undefined,
                 red: undefined,
                 green: undefined,
                 blue: undefined,
@@ -868,8 +979,6 @@ try {
             src: undefined,
             canvas: undefined,
             ctx: undefined,
-            minHertz: undefined,
-            maxHertz: undefined,
             removedBeginning: undefined,
             removedEnding: undefined,
             colorDivergence: undefined,
@@ -879,7 +988,9 @@ try {
             audioData: undefined,
             audioDataStep: undefined,
             audioDataLength: undefined,
-            resizeInterval: undefined
+            toRenderAudioData: [],
+            resizeInterval: undefined,
+            logMapping: undefined
         };
 
         // Complete redo of image.js
@@ -903,11 +1014,12 @@ try {
             }
             widthRatio = image.width / image.height;
             imgLoaded = true;
+            logger.log('Image loaded successfully');
             quality = 'maxresdefault';
         };
         image.onerror = (err) => { // we will most likely only get this is for custom images
             logger.error(err);
-            if(visualizer.image.type === 'Custom') ;
+            if(visualizer.image.type === 'Custom') logger.log('Custom Image URL is not an image');
             else {
                 logger.error('Visualizer Image couldn\'t be loaded. See above.');
                 return;
@@ -924,12 +1036,15 @@ try {
                 else if(quality === 'hqdefault') quality = 'mqdefault';
                 return testForWorkingLink();
             }
+            logger.log('Test Image loaded successfully');
             if(visualizer.image.type !== 'Thumbnail') return;
+            logger.log('Setting thumbnailURL to testImage.src');
             image.src = thumbnailURL;
             validThumbnail = true;
         };
 
         function replaceImageURL() {
+            logger.debug('replaceImageURL');
             thumbnailURL = thumbnailChildSrc();
             if(!thumbnailURL) logger.error('thumbnailURL is undefined, ytmusic sucks');
 
@@ -942,6 +1057,7 @@ try {
             thumbnailURL = ytimgBuilder(currentVideoID());
             if(!thumbnailURL) return logger.error('thumbnailURL is undefined, ytimgBuilder failed');
             testImage.src = thumbnailURL;
+            logger.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
         }
 
         function currentVideoURLHolder() {
@@ -1083,19 +1199,22 @@ try {
         }
 
         function getBufferData() {
-            visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
-            visualizer.minHertz = ytmpConfig.get('visualizerMinHertz');
-            visualizer.maxHertz = ytmpConfig.get('visualizerMaxHertz');
-            visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
-            visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
-            // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
-            visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
-            visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
-            visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
-            visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+            logger.debug('Initializing audio buffer and related parameters...');
 
             // Initialize logarithmic mapping lookup tables
             initLogMapping();
+
+            if(visualizer.logarithmicMapping === true) {
+                logger.debug('Calcing cutting indices with logarithmic mapping.');
+                visualizer.removedBeginning = freqToLogIndex(visualizer.minHertz);
+                visualizer.removedEnding = freqToLogIndex(visualizer.maxHertz);
+            }
+            else {
+                logger.debug('Calcing cutting indices with linear mapping.');
+                visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
+                visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
+            }
+            visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
         }
 
         /**
@@ -1104,25 +1223,43 @@ try {
      * (bassBounce is the last thing it checks so any visualizer.values that should be initialised/changed upon saving should be set above bassBounce)
      */
         function initValues() {
+            visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
+            visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
+            visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
+            // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
+            visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+
             for(const key in visualizer) {
                 let gmName;
 
                 if(typeof visualizer[key] !== 'object') {
                     gmName = 'visualizer' + key[0].toUpperCase() + key.slice(1, key.length); // e.g.: visualizer + P + lace
+                    logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
                     visualizer[key] = ytmpConfig.get(gmName);
+                    logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
+                    continue;
+                }
+
+                if(Array.isArray(visualizer[key])) {
+                    logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
+                    visualizer[key] = ytmpConfig.get('visualizer' + key[0].toUpperCase() + key.slice(1, key.length));
+                    logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
                     continue;
                 }
 
                 for(const key2 in visualizer[key]) {
                     if(key2[0] === '_') continue;
                     gmName = 'visualizer' +
-               key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
-               key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
-
+                    key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
+                    key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
+                    logger.debug(`Setting visualizer.${key}.${key2} to GM_config ${gmName}...`);
                     visualizer[key][key2] = ytmpConfig.get(gmName);
+                    logger.debug(`visualizer.${key}.${key2} set to ${visualizer[key][key2]}`);
                 }
 
                 if(key !== 'bassBounce') continue;
+
+                getBufferData();
 
                 switch(visualizer.bassBounce.calculation) {
                     default: case 'average': bassCalcFunction = averageOfArray; break;
@@ -1138,8 +1275,8 @@ try {
                 }
 
                 visualizer.colorDivergence = visualizer.audioDataLength / visualizer.rgb.samples;
-                if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
-
+                // if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
+                getRGB();
                 if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
                 else getFMT(60);
 
@@ -1219,13 +1356,13 @@ try {
                     visualizer.values.maxRadius = visualizer.values.radius;
                 }
 
-                visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
+                visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.toRenderAudioData.length - 2 + visualizer.values.circleSize);
                 visualizer.values.barTotalHalf = visualizer.values.barTotal / 2;
-                visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
+                visualizer.values.barWidth = visualizer.values.barTotal;
             }
             else {
-                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.audioDataLength;
-                else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.audioDataLength;
+                if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.toRenderAudioData.length;
+                else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.toRenderAudioData.length;
                 visualizer.values.barSpace = visualizer.values.barTotal * 0.05;
                 visualizer.values.barWidth = visualizer.values.barTotal * 0.95;
             }
@@ -1252,19 +1389,20 @@ try {
             return (values[half - 1] + values[half]) / 2;
         }
 
-        function getBarColor(i) {
-            if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
-            i -= visualizer.removedBeginning;
-            if(visualizer.rgb.enabled === true) {
-            // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
-                const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
+        // export function getBarColor(i) {
+        //     if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
+        //     i -= visualizer.removedBeginning;
+        //     if(visualizer.rgb.enabled === true) {
+        //         // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+        //         const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
 
-                if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
-                else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
-            }
-            else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
-            else visualizer.ctx.fillStyle = visualizer.color;
-        }
+        //         if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.toRenderAudioData[i] < 128 ? visualizer.toRenderAudioData[i] * 2 / 255 : 1.0})`;
+        //         else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
+        //     }
+        //     else if(visualizer.fade === true)
+        //         visualizer.ctx.fillStyle = `rgba(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]}, ${visualizer.toRenderAudioData[i] < 128 ? visualizer.toRenderAudioData[i] * 2 / 255 : 1.0})`;
+        //     else visualizer.ctx.fillStyle = `rgb(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]})`;
+        // }
 
         function calculateBass() {
             visualizer.values.bass = visualizer.normalizedAudioData.slice(visualizer.bassBounce._barStart, visualizer.bassBounce._barEnd);
@@ -1296,14 +1434,93 @@ try {
             }
         }
 
-        function visualizerCircle() { // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance.
-            const doWeShake = visualizer.shake.enabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold;
+        /**
+     * Returns a specialized color renderer function based on current visualizer settings.
+     * This eliminates branching in the hot rendering loop for better performance.
+     * @returns {Function|null} Specialized color function, or null if static color (set once before loop)
+     */
+        function getColorRenderer() {
+            const mode = visualizer.colorMode;
+            const fadeEnabled = visualizer.fade;
+            const debugEnabled = visualizer.bassBounce.debug;
+
+            // Determine the base renderer first
+            let baseRenderer;
+            switch(mode) {
+                case 'rainbow':
+                    baseRenderer = fadeEnabled === true ? getBarColorRainbowFade : getBarColorRainbow;
+                    break;
+                case 'rgb':
+                    baseRenderer = fadeEnabled === true ? getBarColorRgbFade : getBarColorRgb;
+                    break;
+                case 'static':
+                default:
+                    baseRenderer = fadeEnabled === true ? getBarColorFade : staticColorRenderer; // No need to set color every bar if static, will be set once before loop
+                    visualizer.ctx.fillStyle = `rgb(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]})`;
+                    break;
+            }
+            // Wrap with debug check if needed (reuses specialized renderers, no branching)
+            if(debugEnabled) {
+                const barStart = visualizer.bassBounce._barStart;
+                const barEnd = visualizer.bassBounce._barEnd;
+                const ctx = visualizer.ctx;
+                return (i) => {
+                    if(i >= barStart && i <= barEnd)
+                        ctx.fillStyle = '#FFF';
+                    else if(baseRenderer !== null)
+                        baseRenderer(i);
+
+                // If baseRenderer is null, static color was already set before loop
+                };
+            }
+
+            return baseRenderer;
+        }
+
+        // dont do nothing, just a placeholder to avoid if checks in render loops when static color is used
+        function staticColorRenderer() { return; }
+
+        function getBarColorRgb(i) {
+            if(i !== 0) return;
+            const color = visualizer.rgb._data[i];
+            visualizer.ctx.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
+        }
+
+        function getBarColorRgbFade(i) {
+            const color = visualizer.rgb._data[0];
+            const alpha = visualizer.toRenderAudioData[i];
+            visualizer.ctx.fillStyle = `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`;
+        }
+
+        function getBarColorRainbowFade(i) {
+            const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
+            const alpha = visualizer.toRenderAudioData[i];
+            visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${alpha})`;
+        }
+
+        function getBarColorRainbow(i) {
+            const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
+            visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
+        }
+
+        function getBarColorFade(i) {
+            const alpha = visualizer.toRenderAudioData[i];
+            visualizer.ctx.fillStyle = `rgba(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]}, ${alpha})`;
+        }
+
+        function visualizerCircle(toRenderAudioData) {
+        // Cache frequently accessed properties
+            const startsFrom = visualizer.startsFrom;
+            const shakeEnabled = visualizer.shake.enabled;
+            const bassBounceEnabled = visualizer.bassBounce.enabled;
+
+            const doWeShake = shakeEnabled === true && visualizer.values.bassSmoothRadius > visualizer.shake.threshold;
             if(doWeShake === true) preShake();
 
-            if(visualizer.startsFrom === 'Left' || visualizer.startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
+            if(startsFrom === 'Left' || startsFrom === 'Right') visualizer.values.circleSize = 2; // 2(pi) = full
             else visualizer.values.circleSize = 1; // 1(pi) = half;
 
-            if(visualizer.bassBounce.enabled === true || visualizer.shake.enabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
+            if(bassBounceEnabled === true || shakeEnabled === true || visualizer.rotate === 'Reactive (Bass)') calculateBass();
 
             getRotationValue();
 
@@ -1311,56 +1528,69 @@ try {
 
             const maxBarHeight = (visualizer.values.halfHeight) - (visualizer.values.maxRadius);
 
-            if(visualizer.startsFrom === 'Right') drawArcs(false, maxBarHeight);
-            else if(visualizer.startsFrom === 'Left') drawArcs(true, maxBarHeight);
-            else if(visualizer.startsFrom === 'Center') {
-                drawArcs(false, maxBarHeight);
-                drawArcs(true, maxBarHeight);
+            if(startsFrom === 'Right') drawArcs(toRenderAudioData, false, maxBarHeight);
+            else if(startsFrom === 'Left') drawArcs(toRenderAudioData, true, maxBarHeight);
+            else if(startsFrom === 'Center') {
+                drawArcs(toRenderAudioData, false, maxBarHeight);
+                drawArcs(toRenderAudioData, true, maxBarHeight);
             }
-            else if(visualizer.startsFrom === 'Edges') {
-                drawArcs(false, maxBarHeight);
-                drawArcs(false, maxBarHeight, 3);
+            else if(startsFrom === 'Edges') {
+                drawArcs(toRenderAudioData, false, maxBarHeight);
+                drawArcs(toRenderAudioData, false, maxBarHeight, 3);
             }
 
             if(doWeShake === true) postShake();
         }
 
-        function drawArcs(backwards, maxBarHeight, startPoint = 1) {
-            visualizer.ctx.save();
-            visualizer.ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
-            visualizer.ctx.rotate(visualizer.values.startingPoint * startPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
+        function drawArcs(toRenderAudioData, backwards, maxBarHeight, startPoint = 1) {
+        // Cache frequently accessed properties (critical for performance in hot loop)
+            const ctx = visualizer.ctx;
+            const move = visualizer.move;
+            const radius = visualizer.values.radius;
+            const barWidth = visualizer.values.barWidth;
+            const barTotal = visualizer.values.barTotal;
 
-            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-                getBarColor(i);
-                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+            // Pre-compute movement mode (eliminates string comparisons in loop)
+            const moveOutside = move === 'Outside' || move === 'Both Sides';
+            const moveInside = move === 'Inside' || move === 'Both Sides';
 
-                if(visualizer.move === 'Outside' || visualizer.move === 'Both Sides') visualizer.values.outerRadius = visualizer.values.radius + barHeight;
-                else visualizer.values.outerRadius = visualizer.values.radius;
+            // Get specialized color renderer (eliminates branching in loop)
+            const colorRenderer = getColorRenderer();
 
-                if(visualizer.move === 'Inside' || visualizer.move === 'Both Sides') visualizer.values.innerRadius = visualizer.values.radius - barHeight;
-                else visualizer.values.innerRadius = visualizer.values.radius;
+            ctx.save();
+            ctx.translate(visualizer.values.halfWidth, visualizer.values.halfHeight); // move to center of circle
+            ctx.rotate(visualizer.values.startingPoint * startPoint + (visualizer.values.barTotalHalf + visualizer.values.rotationValue)); // Set bar starting point to top + rotation
 
-                if(visualizer.values.outerRadius < 0) visualizer.values.outerRadius = 0;
-                if(visualizer.values.innerRadius < 0) visualizer.values.innerRadius = 0;
+            for(let i = 0; i < toRenderAudioData.length; i++) {
+                colorRenderer(i);
+                const barHeight = toRenderAudioData[i] * maxBarHeight;
 
-                visualizer.ctx.beginPath();
-                visualizer.ctx.arc(0, 0, visualizer.values.innerRadius, -visualizer.values.barWidth, visualizer.values.barWidth);
-                visualizer.ctx.arc(0, 0, visualizer.values.outerRadius, visualizer.values.barWidth, -visualizer.values.barWidth, true);
-                visualizer.ctx.fill();
-                if(backwards === true) visualizer.ctx.rotate(-visualizer.values.barTotal); // rotate the coordinates by one bar
-                else visualizer.ctx.rotate(visualizer.values.barTotal);
+                // Use pre-computed booleans instead of string comparisons
+                let outerRadius = moveOutside ? radius + barHeight : radius;
+                let innerRadius = moveInside ? radius - barHeight : radius;
+
+                // Simple if-based clamping (faster than Math.max in hot loop)
+                if(outerRadius < 0) outerRadius = 0;
+                if(innerRadius < 0) innerRadius = 0;
+
+                ctx.beginPath();
+                ctx.arc(0, 0, innerRadius, -barWidth, barWidth);
+                ctx.arc(0, 0, outerRadius, barWidth, -barWidth, true);
+                ctx.fill();
+                if(backwards === true) ctx.rotate(-barTotal); // rotate the coordinates by one bar
+                else ctx.rotate(barTotal);
             }
-            visualizer.ctx.restore();
+            ctx.restore();
         }
 
         function preShake() {
+        // Bitwise truncation (~~number) is used here instead of Math.floor() to squish out more performance
             visualizer.ctx.save();
             const movement = visualizer.values.halfHeight * 0.01 * visualizer.shake.multiplier;
             let dx = movement, dy = movement;
-            if(~~(Math.random() * 2) === 0) dx *= 1;
-            else dx *= -1;
-            if(~~(Math.random() * 2) === 0) dy *= 1;
-            else dy *= -1;
+            if(~~(Math.random() * 2) === 0) dx = -movement;
+            if(~~(Math.random() * 2) === 0) dy = -movement;
+
             visualizer.ctx.translate(dx, dy);
         }
 
@@ -1375,24 +1605,25 @@ try {
             else xPosOffset = 0;
 
             const maxBarHeight = visualizer.values.HEIGHT;
+            const colorRenderer = getColorRenderer();
 
-            firstDraw(maxBarHeight, xPosOffset);
+            firstDraw(maxBarHeight, xPosOffset, colorRenderer);
 
             if(visualizer.startsFrom === 'Center') {
                 xPosOffset = visualizer.values.halfWidth + visualizer.values.barSpace / 2; // Reset pos to center
-                secondDraw(maxBarHeight, xPosOffset);
+                secondDraw(maxBarHeight, xPosOffset, colorRenderer);
             }
             else if(visualizer.startsFrom === 'Edges') {
                 xPosOffset = visualizer.values.barWidth + (visualizer.values.barSpace / 2); // Reset pos to right + offset for perfect center
-                secondDraw(maxBarHeight, xPosOffset);
+                secondDraw(maxBarHeight, xPosOffset, colorRenderer);
             }
         }
 
-        function firstDraw(maxBarHeight, xPosOffset) {
-            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+        function firstDraw(maxBarHeight, xPosOffset, colorRenderer) {
+            for(let i = 0; i < visualizer.toRenderAudioData.length; i++) {
+                const barHeight = visualizer.toRenderAudioData[i] * maxBarHeight;
 
-                getBarColor(i);
+                colorRenderer(i);
 
                 // To this day I don't get the Y and height values
                 if(visualizer.startsFrom === 'Left') {
@@ -1433,11 +1664,11 @@ try {
             }
         }
 
-        function secondDraw(maxBarHeight, xPosOffset) {
-            for(let i = visualizer.removedBeginning; i < visualizer.removedEnding; i++) {
-                const barHeight = visualizer.normalizedAudioData[i] * maxBarHeight;
+        function secondDraw(maxBarHeight, xPosOffset, colorRenderer) {
+            for(let i = 0; i < visualizer.toRenderAudioData.length; i++) {
+                const barHeight = visualizer.toRenderAudioData[i] * maxBarHeight;
 
-                getBarColor(i);
+                colorRenderer(i);
 
                 if(visualizer.startsFrom === 'Center') {
                     if(xPosOffset > visualizer.values.WIDTH) break;
@@ -1524,13 +1755,18 @@ try {
             processAudioData();
 
             // Cheap color cycle effect, speed scales with fps so probably not the best
-            if(visualizer.rgb.enabled === true) {
+            if(visualizer.colorMode !== 'static') {
                 visualizer.rgb._data.push(visualizer.rgb._data[0]);
                 visualizer.rgb._data.shift();
             }
 
-            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
-            else visualizerNavbar(visualizer.ctx);
+            const toRenderAudioData = visualizer.toRenderAudioData = visualizer.normalizedAudioData.slice(visualizer.removedBeginning, visualizer.removedEnding); // Get the part of audio data we want to render (after cutting frequencies)
+
+            if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(toRenderAudioData);
+            else visualizerNavbar();
+
+            // if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
+            // else visualizerNavbar(visualizer.ctx);
 
             requestAnimationFrame(renderFrame);
         }
@@ -1563,6 +1799,7 @@ try {
             visualizer.video = document.querySelector('video');
             if(visualizer.video) {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
+                logger.log('Found video.');
                 startVisualizer();
             }
             else {
@@ -1590,7 +1827,6 @@ try {
                 visualizer.src.connect(visualizer.analyser);
                 visualizer.analyser.connect(visualizer.audioContext.destination);
 
-                getBufferData();
                 initValues();
 
                 window.removeEventListener('resize', visualizerResizeFix);
@@ -1598,6 +1834,7 @@ try {
 
                 replaceImageURL();
                 requestAnimationFrame(renderFrame);
+                logger.log('Visualizer started.');
             }
             catch (error) {
                 logger.error(error);
@@ -1748,6 +1985,7 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
+                logger.debug('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -1756,8 +1994,10 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0)
+                if(popup.length > 0) {
                     popup[0].remove();
+                    logger.log('Removed a promotion.');
+                }
             }, 1000);
         }
 
@@ -1890,6 +2130,7 @@ try {
 
         // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
         function checkDislike() {
+            logger.log('Checking dislike in 3 seconds...');
             clearTimeout(functions.skipDislikedFunction);
 
             // If we don't time this out, we get the ability to skip at least 20 songs in a matter of seconds before it realizes it's not supposed to skip
@@ -1897,9 +2138,12 @@ try {
             // maybe timeout could be customizable too
             functions.skipDislikedFunction = setTimeout(async () => {
                 const likeButton = await document.getElementById('like-button-renderer');
-                if(!likeButton) return (void 0);
-                if(likeButton.children[0].ariaPressed == 'true')
+                if(!likeButton) return logger.log('Could not find like button, skipping check');
+                if(likeButton.children[0].ariaPressed == 'true') {
+                    logger.log('Song is disliked, skipping');
                     return document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
+                }
+                logger.log('Song is not disliked, not skipping');
             }, 3000);
         }
 
@@ -1941,7 +2185,7 @@ try {
      * @name videoSongSwitcher
      */
 
-        let clone, avSwitch, forceSongImageInterval;
+        let clone, avSwitch, forceSongImageInterval, navbar;
         const videoModeOberserver = new MutationObserver((mutations) => {
             mutations.forEach(mutation => { if(mutation.type === 'attributes') handleMutation(mutation); });
         });
@@ -1952,6 +2196,7 @@ try {
         }
 
         function videoSongSwitcher(mode) {
+            logger.debug('videoSongSwitcher');
             avSwitch = document.getElementById('av-id');
             if(!avSwitch) return logger.error('videoSongSwitcher: avSwitch not found');
 
@@ -1970,7 +2215,7 @@ try {
                 if(clone) return clone.style.display = 'block';
                 try {
                     if(avSwitch.parentNode.tagName == 'YTMUSIC-NAV-BAR') return;
-                    const navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
+                    navbar = document.getElementsByTagName('ytmusic-nav-bar')[0];
                     navbar.children[1].style.justifyContent = 'space-around';
                     clone = avSwitch.cloneNode(true);
                     navbar.children[1].append(clone);
@@ -1983,8 +2228,10 @@ try {
             else if(mode === 'forceSong') {
                 getRidOfSwitch();
                 forceSongImageInterval = setInterval(() => {
-                    if(validThumbnail === true && elements.songImage.src !== thumbnailURL)
+                    if(validThumbnail === true && elements.songImage.src !== thumbnailURL) {
+                        logger.debug('forceSongImageInterval');
                         elements.songImage.src = thumbnailURL;
+                    }
                 }, 1000);
                 elements.player.removeAttribute('video-mode');
                 elements.player.setAttribute('playback-mode', 'ATV_PREFERRED'); // song mode
@@ -1993,10 +2240,17 @@ try {
         }
 
         function getRidOfSwitch() {
+            logger.debug('getRidOfSwitch');
             elements.player.removeAttribute('has-av-switcher');
             elements.playerPage.removeAttribute('has-av-switcher');
             avSwitch.style.display = 'none';
             if(clone) clone.style.display = 'none';
+            try {
+                navbar.children[1].style.justifyContent = '';
+            }
+            catch (error) {
+                return; // its fine lol
+            }
         }
 
         // Collection of functions that are called windowLoad or onSave
@@ -2017,6 +2271,7 @@ try {
         };
 
         async function setup() {
+            logger.log('ytmPlus: Setup started.');
             try {
                 elements.player = await document.getElementById('player');
                 elements.playerPage = await document.getElementById('player-page');
@@ -2030,8 +2285,6 @@ try {
 
                 // Injecting animations for background and clock gradients
                 injectStyle(keyframes);
-
-                setupVisualizer();
 
                 // Note: Everything below used to be timed out, now this whole setup function is timed out for safety lol
                 // If stuff breaks just put back everything below in a timeout
@@ -2051,12 +2304,17 @@ try {
                 for(const fn in toCallOnEvents) {
                     try {
                         toCallOnEvents[fn](ytmpConfig.get(fn));
+                        logger.log(`Loaded ${fn} on setup.`);
                     }
                     catch (error) {
                         logger.error(`Failed to call ${fn} on setup:`);
                         logger.error(error);
                     }
                 }
+
+                setupVisualizer();
+
+                logger.log('Setup finished.');
             }
             catch (error) {
                 logger.error('Setup failed.');
@@ -2208,38 +2466,136 @@ try {
             return resetLink;
         }
 
-        function sortSubs() {
-            for(const field in ytmpConfig.fields) {
-                const currentField = ytmpConfig.fields[field];
+        // Get all parent dependencies (supports both string and array format)
+        function getParentDependencies(field) {
+            const dependencies = [];
 
-                let sub = currentField.settings.subCheckbox || currentField.settings.subOption;
-                if(!sub) continue;
+            // Collect from both subCheckbox and subOption (can use both simultaneously!)
+            const subCheckbox = field.settings.subCheckbox;
+            const subOption = field.settings.subOption;
+
+            if(subCheckbox) {
+                const checkboxDeps = Array.isArray(subCheckbox) ? subCheckbox : [subCheckbox];
+                dependencies.push(...checkboxDeps);
+            }
+
+            if(subOption) {
+                const optionDeps = Array.isArray(subOption) ? subOption : [subOption];
+                dependencies.push(...optionDeps);
+            }
+
+            if(dependencies.length === 0) return [];
+
+            return dependencies.map(dep => {
+            // Check for negation prefix (!)
+                const inverted = dep.startsWith('!');
+                if(inverted) dep = dep.slice(1); // Remove the '!'
+
+                const parts = dep.split('.');
+                const parentField = ytmpConfig.fields[parts[0]];
+                const selectOption = parts.length === 2 ? parseInt(parts[1], 10) : null;
+                return { parentField, selectOption, inverted };
+            });
+        }
+
+        // Check if a specific parent field's current value meets the condition
+        function checkParentCondition(parentField, selectOption) {
+            if(!parentField) return false;
+
+            if(parentField.settings.type === 'checkbox')
+                return parentField.value === true;
+            else if(parentField.settings.type === 'customSelect')
+                return parentField.node.selectedIndex === selectOption;
+
+            return true;
+        }
+
+        // Recursively check if a field should be visible (ALL parent conditions must be met)
+        function isFieldVisible(field) {
+            const dependencies = getParentDependencies(field);
+
+            // No dependencies? Always visible
+            if(dependencies.length === 0) return true;
+
+            // Check ALL dependencies - if any fail, field is hidden
+            for(const { parentField, selectOption, inverted } of dependencies) {
+            // Check if parent is visible (recursive!)
+                if(!isFieldVisible(parentField)) return false;
+
+                // Parent is visible, check if specific condition is met
+                let conditionMet = checkParentCondition(parentField, selectOption);
+
+                // Invert the condition if '!' prefix was used
+                if(inverted) conditionMet = !conditionMet;
+
+                if(!conditionMet) return false;
+            }
+
+            return true;
+        }
+
+        // Update a field's visibility based on recursive check
+        function updateFieldVisibility(field) {
+            field.wrapper.style.display = isFieldVisible(field) ? 'flex' : 'none';
+        }
+
+        // Calculate nesting depth (how many levels deep this sub is)
+        function getFieldDepth(field) {
+            const dependencies = getParentDependencies(field);
+
+            // No dependencies = depth 0 (not a sub)
+            if(dependencies.length === 0) return 0;
+
+            // Find the maximum depth among all parents and add 1
+            let maxParentDepth = 0;
+            for(const { parentField } of dependencies) {
+                if(parentField) {
+                    const parentDepth = getFieldDepth(parentField);
+                    if(parentDepth > maxParentDepth)
+                        maxParentDepth = parentDepth;
+                }
+            }
+
+            return maxParentDepth + 1;
+        }
+
+        function sortSubs() {
+        // Collect all fields that have sub dependencies
+            const fieldsWithSubs = [];
+
+            for(const fieldKey in ytmpConfig.fields) {
+                const currentField = ytmpConfig.fields[fieldKey];
+                const hasSub = currentField.settings.subCheckbox || currentField.settings.subOption;
+
+                if(!hasSub) continue;
+
+                fieldsWithSubs.push(currentField);
+
+                // Calculate nesting depth and apply progressive padding
+                const depth = getFieldDepth(currentField);
+                const paddingPercent = 5 * depth; // 5% per level (sub=5%, sub-sub=10%, etc.)
 
                 const currentLabel = currentField.wrapper.firstElementChild;
-                currentLabel.style.paddingLeft = '5%';
-                currentLabel.style.width = '65%';
+                currentLabel.style.paddingLeft = `${paddingPercent}%`;
+                currentLabel.style.width = `${100 - paddingPercent - 30}%`; // Adjust width to compensate
 
-                let selectOption;
-                sub = sub.split('.');
-                const subToggle = ytmpConfig.fields[sub[0]];
-                if(sub.length === 2) selectOption = parseInt(sub[1], 10);
+                // Set initial visibility
+                updateFieldVisibility(currentField);
+            }
 
-                if(subToggle.settings.type === 'checkbox') {
-                    if(subToggle.value === true) currentField.wrapper.style.display = 'flex';
-                    else currentField.wrapper.style.display = 'none';
-                    subToggle.node.addEventListener('change', e => {
-                        if(e.target.checked === true) currentField.wrapper.style.display = 'flex';
-                        else currentField.wrapper.style.display = 'none';
-                    });
-                }
-                else if(subToggle.settings.type === 'select') {
-                    if(subToggle.node.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
-                    else currentField.wrapper.style.display = 'none';
-                    subToggle.node.addEventListener('change', e => {
-                        if(e.target.selectedIndex === selectOption) currentField.wrapper.style.display = 'flex';
-                        else currentField.wrapper.style.display = 'none';
-                    });
-                }
+            // Add change listeners to all checkbox/select fields
+            // When any field changes, update all dependent fields
+            for(const fieldKey in ytmpConfig.fields) {
+                const field = ytmpConfig.fields[fieldKey];
+
+                if(field.settings.type !== 'checkbox' && field.settings.type !== 'select' && field.settings.type !== 'customSelect')
+                    continue;
+
+
+                field.node.addEventListener('change', () => {
+                // Update all fields with dependencies (recursive visibility handles the rest)
+                    fieldsWithSubs.forEach(subField => updateFieldVisibility(subField));
+                });
             }
         }
 
@@ -2298,20 +2654,26 @@ try {
             else showThem(frame, hideCategoriesBtn);
         }
 
-        function hideThem(frame, hideCategoriesBtn) {
+        async function hideThem(frame, hideCategoriesBtn) {
             document.getElementById('categorySelect').style.display = 'none';
             document.getElementById('ytmpDivider').style.display = 'none';
             document.getElementById('currentSettings').style.width = '100%';
+            const oldLeft = frame.offsetLeft;
             frame.style.aspectRatio = '2.4 / 3';
+            const newWidth = frame.offsetWidth;
+            frame.style.left = (oldLeft + (frame.offsetWidth - newWidth)) + 'px'; // so it looks like it's shrinking towards the right edge instead of left edge
             ytmpConfig.shrunk = true;
             hideCategoriesBtn.value = '<<';
         }
 
-        function showThem(frame, hideCategoriesBtn) {
+        async function showThem(frame, hideCategoriesBtn) {
             document.getElementById('categorySelect').style.display = 'flex';
             document.getElementById('ytmpDivider').style.display = 'flex';
             document.getElementById('currentSettings').style.width = '60%';
+            const oldLeft = frame.offsetLeft;
             frame.style.aspectRatio = '4 / 3';
+            const newWidth = frame.offsetWidth;
+            frame.style.left = (oldLeft - (newWidth - frame.offsetWidth)) + 'px'; // same but reversed, so it looks like it's expanding towards the left edge
             ytmpConfig.shrunk = false;
             hideCategoriesBtn.value = '>>';
             setTimeout(() => fixPlacement(frame), 110); // we need to wait for transition to finish which is 100ms plud leeway
@@ -2404,6 +2766,8 @@ try {
                 if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
                 ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
             }
+
+            logger.debug(ytmpConfig);
 
             manageUI(frame);
 

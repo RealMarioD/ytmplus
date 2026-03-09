@@ -65,13 +65,18 @@ export function renderFrame(time) {
     processAudioData();
 
     // Cheap color cycle effect, speed scales with fps so probably not the best
-    if(visualizer.rgb.enabled === true) {
+    if(visualizer.colorMode !== 'static') {
         visualizer.rgb._data.push(visualizer.rgb._data[0]);
         visualizer.rgb._data.shift();
     }
 
-    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
-    else visualizerNavbar(visualizer.ctx);
+    const toRenderAudioData = visualizer.toRenderAudioData = visualizer.normalizedAudioData.slice(visualizer.removedBeginning, visualizer.removedEnding); // Get the part of audio data we want to render (after cutting frequencies)
+
+    if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(toRenderAudioData);
+    else visualizerNavbar(toRenderAudioData);
+
+    // if(visualizer.circleEnabled === true && visualizer.canvas.id !== visualizer.canvases.navbar.id) visualizerCircle(visualizer.ctx);
+    // else visualizerNavbar(visualizer.ctx);
 
     requestAnimationFrame(renderFrame);
 }

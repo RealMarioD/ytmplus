@@ -55,20 +55,26 @@ export function expandOrShrink(frame, hideCategoriesBtn) {
     else showThem(frame, hideCategoriesBtn);
 }
 
-function hideThem(frame, hideCategoriesBtn) {
+async function hideThem(frame, hideCategoriesBtn) {
     document.getElementById('categorySelect').style.display = 'none';
     document.getElementById('ytmpDivider').style.display = 'none';
     document.getElementById('currentSettings').style.width = '100%';
+    const oldLeft = frame.offsetLeft;
     frame.style.aspectRatio = '2.4 / 3';
+    const newWidth = frame.offsetWidth;
+    frame.style.left = (oldLeft + (frame.offsetWidth - newWidth)) + 'px'; // so it looks like it's shrinking towards the right edge instead of left edge
     ytmpConfig.shrunk = true;
     hideCategoriesBtn.value = '<<';
 }
 
-function showThem(frame, hideCategoriesBtn) {
+async function showThem(frame, hideCategoriesBtn) {
     document.getElementById('categorySelect').style.display = 'flex';
     document.getElementById('ytmpDivider').style.display = 'flex';
     document.getElementById('currentSettings').style.width = '60%';
+    const oldLeft = frame.offsetLeft;
     frame.style.aspectRatio = '4 / 3';
+    const newWidth = frame.offsetWidth;
+    frame.style.left = (oldLeft - (newWidth - frame.offsetWidth)) + 'px'; // same but reversed, so it looks like it's expanding towards the left edge
     ytmpConfig.shrunk = false;
     hideCategoriesBtn.value = '>>';
     setTimeout(() => fixPlacement(frame), 110); // we need to wait for transition to finish which is 100ms plud leeway

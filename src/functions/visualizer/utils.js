@@ -1,6 +1,7 @@
 import { elements } from '../../globals/elements';
 import { visualizer } from '../../globals/visualizer';
 import { ytmpConfig } from '../../ytmpConfig';
+import { logger } from '../backend/logger';
 
 export function getFMT(fps) {
     visualizer.energySaver._frameMinTime = (1000 / 60) * (60 / fps) - (1000 / 60) * 0.5;
@@ -82,19 +83,22 @@ export function calculateBassBounceBars() {
 }
 
 export function getBufferData() {
-    visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
-    visualizer.minHertz = ytmpConfig.get('visualizerMinHertz');
-    visualizer.maxHertz = ytmpConfig.get('visualizerMaxHertz');
-    visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
-    visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
-    // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
-    visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
-    visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
-    visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
-    visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+    logger.debug('Initializing audio buffer and related parameters...');
 
     // Initialize logarithmic mapping lookup tables
     initLogMapping();
+
+    if(visualizer.logarithmicMapping === true) {
+        logger.debug('Calcing cutting indices with logarithmic mapping.');
+        visualizer.removedBeginning = freqToLogIndex(visualizer.minHertz);
+        visualizer.removedEnding = freqToLogIndex(visualizer.maxHertz);
+    }
+    else {
+        logger.debug('Calcing cutting indices with linear mapping.');
+        visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
+        visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
+    }
+    visualizer.audioDataLength = visualizer.removedEnding - visualizer.removedBeginning;
 }
 
 /**
@@ -103,25 +107,43 @@ export function getBufferData() {
  * (bassBounce is the last thing it checks so any visualizer.values that should be initialised/changed upon saving should be set above bassBounce)
  */
 export function initValues() {
+    visualizer.analyser.fftSize = ytmpConfig.get('visualizerFft');
+    visualizer.bufferLength = visualizer.analyser.frequencyBinCount; // bufferLength is fftSize / 2, means how much data we will have in audioData
+    visualizer.audioDataStep = visualizer.audioContext.sampleRate / visualizer.analyser.fftSize; // 1 step = 1 audio data Hz range
+    // e.g.: FFT = 4096, sampleRate = 48000 | 48000 / 4096 = ~21.5Hz, audioData[0] would contain 0Hz -> 21.5Hz of audio
+    visualizer.audioData = new Uint8Array(visualizer.bufferLength);
+
     for(const key in visualizer) {
         let gmName;
 
         if(typeof visualizer[key] !== 'object') {
             gmName = 'visualizer' + key[0].toUpperCase() + key.slice(1, key.length); // e.g.: visualizer + P + lace
+            logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
             visualizer[key] = ytmpConfig.get(gmName);
+            logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
+            continue;
+        }
+
+        if(Array.isArray(visualizer[key])) {
+            logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
+            visualizer[key] = ytmpConfig.get('visualizer' + key[0].toUpperCase() + key.slice(1, key.length));
+            logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
             continue;
         }
 
         for(const key2 in visualizer[key]) {
             if(key2[0] === '_') continue;
             gmName = 'visualizer' +
-           key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
-           key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
-
+                key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
+                key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
+            logger.debug(`Setting visualizer.${key}.${key2} to GM_config ${gmName}...`);
             visualizer[key][key2] = ytmpConfig.get(gmName);
+            logger.debug(`visualizer.${key}.${key2} set to ${visualizer[key][key2]}`);
         }
 
         if(key !== 'bassBounce') continue;
+
+        getBufferData();
 
         switch(visualizer.bassBounce.calculation) {
             default: case 'average': bassCalcFunction = averageOfArray; break;
@@ -137,8 +159,8 @@ export function initValues() {
         }
 
         visualizer.colorDivergence = visualizer.audioDataLength / visualizer.rgb.samples;
-        if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
-
+        // if(visualizer.rgb.enabled === true && visualizer.rgb._data.length !== visualizer.rgb.samples) getRGB();
+        getRGB();
         if(visualizer.energySaver.type === 'Limit FPS' || visualizer.energySaver.type === 'Both') getFMT(visualizer.energySaver.fps);
         else getFMT(60);
 
@@ -218,13 +240,13 @@ export function visualizerResizeFix() {
             visualizer.values.maxRadius = visualizer.values.radius;
         }
 
-        visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.audioDataLength - 2 + visualizer.values.circleSize);
+        visualizer.values.barTotal = visualizer.values.circleSize * Math.PI / (visualizer.toRenderAudioData.length - 2 + visualizer.values.circleSize);
         visualizer.values.barTotalHalf = visualizer.values.barTotal / 2;
-        visualizer.values.barWidth = visualizer.values.barTotal * 0.45;
+        visualizer.values.barWidth = visualizer.values.barTotal;
     }
     else {
-        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.audioDataLength;
-        else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.audioDataLength;
+        if(visualizer.startsFrom === 'Center' || visualizer.startsFrom === 'Edges') visualizer.values.barTotal = visualizer.values.halfWidth / visualizer.toRenderAudioData.length;
+        else visualizer.values.barTotal = visualizer.values.WIDTH / visualizer.toRenderAudioData.length;
         visualizer.values.barSpace = visualizer.values.barTotal * 0.05;
         visualizer.values.barWidth = visualizer.values.barTotal * 0.95;
     }
@@ -251,19 +273,20 @@ function medianOfArray(values) {
     return (values[half - 1] + values[half]) / 2;
 }
 
-export function getBarColor(i) {
-    if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
-    i -= visualizer.removedBeginning;
-    if(visualizer.rgb.enabled === true) {
-        // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
-        const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
+// export function getBarColor(i) {
+//     if(visualizer.bassBounce.debug === true && i <= visualizer.bassBounce._barEnd && i >= visualizer.bassBounce._barStart) return visualizer.ctx.fillStyle = '#FFF';
+//     i -= visualizer.removedBeginning;
+//     if(visualizer.rgb.enabled === true) {
+//         // Limits iteration for rgb._data, so we don't go out of bounds but also use every color available
+//         const colors = visualizer.rgb._data[~~(i / visualizer.colorDivergence)];
 
-        if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.audioData[i] < 128 ? visualizer.audioData[i] * 2 / 255 : 1.0})`;
-        else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
-    }
-    else if(visualizer.fade === true) visualizer.ctx.fillStyle = visualizer.color + (visualizer.audioData[i] < 128 ? (visualizer.audioData[i] * 2).toString(16) : 'FF');
-    else visualizer.ctx.fillStyle = visualizer.color;
-}
+//         if(visualizer.fade === true) visualizer.ctx.fillStyle = `rgba(${colors.red}, ${colors.green}, ${colors.blue}, ${visualizer.toRenderAudioData[i] < 128 ? visualizer.toRenderAudioData[i] * 2 / 255 : 1.0})`;
+//         else visualizer.ctx.fillStyle = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
+//     }
+//     else if(visualizer.fade === true)
+//         visualizer.ctx.fillStyle = `rgba(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]}, ${visualizer.toRenderAudioData[i] < 128 ? visualizer.toRenderAudioData[i] * 2 / 255 : 1.0})`;
+//     else visualizer.ctx.fillStyle = `rgb(${visualizer.color[0]}, ${visualizer.color[1]}, ${visualizer.color[2]})`;
+// }
 
 export function calculateBass() {
     visualizer.values.bass = visualizer.normalizedAudioData.slice(visualizer.bassBounce._barStart, visualizer.bassBounce._barEnd);

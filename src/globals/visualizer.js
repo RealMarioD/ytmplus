@@ -1,6 +1,7 @@
 export const visualizer = {
     place: undefined,
     startsFrom: undefined,
+    colorMode: undefined,
     color: undefined,
     fade: undefined,
     circleEnabled: undefined,
@@ -11,6 +12,8 @@ export const visualizer = {
     logarithmicMapping: undefined,
     exponentialScaling: undefined,
     exponentialScalingFactor: undefined,
+    minHertz: undefined,
+    maxHertz: undefined,
     shake: {
         enabled: undefined,
         threshold: undefined,
@@ -27,7 +30,6 @@ export const visualizer = {
         customURL: undefined
     },
     rgb: {
-        enabled: undefined,
         red: undefined,
         green: undefined,
         blue: undefined,
@@ -86,8 +88,6 @@ export const visualizer = {
     src: undefined,
     canvas: undefined,
     ctx: undefined,
-    minHertz: undefined,
-    maxHertz: undefined,
     removedBeginning: undefined,
     removedEnding: undefined,
     colorDivergence: undefined,
@@ -97,5 +97,7 @@ export const visualizer = {
     audioData: undefined,
     audioDataStep: undefined,
     audioDataLength: undefined,
-    resizeInterval: undefined
+    toRenderAudioData: [],
+    resizeInterval: undefined,
+    logMapping: undefined
 };

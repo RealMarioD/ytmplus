@@ -20,9 +20,6 @@ export default {
         string({
             include: 'src/settingsMenu/ui/ytmpTitle.svg',
         }),
-        // strip({
-        //     functions: [ 'console.log', 'console.warn' ]
-        // }),
         lint(),
         announceVersion(true)
     ]
