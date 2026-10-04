@@ -9,3 +9,12 @@ html {
 ytmusic-player {
     aspect-ratio: 1;
 }
+
+/* these make clicking the progress bar a little easier on the new design, should not break old design */
+.ytMusicMiniPlayerProgressBarWrapper {
+    padding: 0;
+    height: 6px;
+}
+.ytMusicMiniPlayerProgressBarWrapper:hover > .ytMusicMiniPlayerProgressBar {
+    height: 6px;
+}
