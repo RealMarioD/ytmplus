@@ -18,6 +18,7 @@ const image = new Image();
 image.onload = () => {
     if(image.height < 100 && quality !== 'mqdefault') { // thumbnails return a very small image on 404
         imgLoaded = false;
+        logger.debug(`Quality ${quality} failed, trying next quality`);
         if(quality === 'maxresdefault') quality = 'sddefault';
         else if(quality === 'sddefault') quality = 'hqdefault';
         else if(quality === 'hqdefault') quality = 'mqdefault';
@@ -42,6 +43,7 @@ image.onerror = (err) => { // we will most likely only get this is for custom im
 const testImage = new Image();
 testImage.onload = () => {
     if(testImage.height < 100 && quality !== 'mqdefault') { // very likely a 404
+        logger.debug(`Quality ${quality} failed, trying next quality`);
         if(quality === 'maxresdefault') quality = 'sddefault';
         else if(quality === 'sddefault') quality = 'hqdefault';
         else if(quality === 'hqdefault') quality = 'mqdefault';
@@ -92,7 +94,8 @@ export function observeVideoID() {
 
 function thumbnailChildSrc() {
     try {
-        return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src;
+        // return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src; // old, why did I do className instead of id we will never know
+        return document.getElementById('song-image').firstElementChild.firstElementChild.src;
     }
     catch {
         return undefined;
