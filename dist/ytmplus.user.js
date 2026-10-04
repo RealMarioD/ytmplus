@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ytmPlus
-// @version      3.0.0
+// @version      3.0.1
 // @author       mario_d
 // @license      MIT
 // @namespace    http://tampermonkey.net/
@@ -15,7 +15,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // ==/UserScript==
-const vNumber = 'v3.0.0';
+const vNumber = 'v3.0.1';
 try {
     (function() {
         'use strict';
@@ -814,7 +814,6 @@ try {
                 return retNode;
             },
             toValue: function() {
-                logger.debug('customColorRgb toValue called');
                 if(this.wrapper) {
                     const input = this.wrapper.querySelector('input');
                     if(input && input.value) {
@@ -1014,12 +1013,11 @@ try {
             }
             widthRatio = image.width / image.height;
             imgLoaded = true;
-            logger.log('Image loaded successfully');
             quality = 'maxresdefault';
         };
         image.onerror = (err) => { // we will most likely only get this is for custom images
             logger.error(err);
-            if(visualizer.image.type === 'Custom') logger.log('Custom Image URL is not an image');
+            if(visualizer.image.type === 'Custom') ;
             else {
                 logger.error('Visualizer Image couldn\'t be loaded. See above.');
                 return;
@@ -1036,15 +1034,12 @@ try {
                 else if(quality === 'hqdefault') quality = 'mqdefault';
                 return testForWorkingLink();
             }
-            logger.log('Test Image loaded successfully');
             if(visualizer.image.type !== 'Thumbnail') return;
-            logger.log('Setting thumbnailURL to testImage.src');
             image.src = thumbnailURL;
             validThumbnail = true;
         };
 
         function replaceImageURL() {
-            logger.debug('replaceImageURL');
             thumbnailURL = thumbnailChildSrc();
             if(!thumbnailURL) logger.error('thumbnailURL is undefined, ytmusic sucks');
 
@@ -1057,7 +1052,6 @@ try {
             thumbnailURL = ytimgBuilder(currentVideoID());
             if(!thumbnailURL) return logger.error('thumbnailURL is undefined, ytimgBuilder failed');
             testImage.src = thumbnailURL;
-            logger.log(`testImage.src set to crafted thumbnailURL: ${thumbnailURL}`);
         }
 
         function currentVideoURLHolder() {
@@ -1081,7 +1075,8 @@ try {
 
         function thumbnailChildSrc() {
             try {
-                return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src;
+            // return document.getElementsByClassName('thumbnail style-scope ytmusic-player no-transition')[0].firstElementChild.src; // old, why did I do className instead of id we will never know
+                return document.getElementById('song-image').firstElementChild.firstElementChild.src;
             }
             catch {
                 return undefined;
@@ -1199,18 +1194,14 @@ try {
         }
 
         function getBufferData() {
-            logger.debug('Initializing audio buffer and related parameters...');
-
-            // Initialize logarithmic mapping lookup tables
+        // Initialize logarithmic mapping lookup tables
             initLogMapping();
 
             if(visualizer.logarithmicMapping === true) {
-                logger.debug('Calcing cutting indices with logarithmic mapping.');
                 visualizer.removedBeginning = freqToLogIndex(visualizer.minHertz);
                 visualizer.removedEnding = freqToLogIndex(visualizer.maxHertz);
             }
             else {
-                logger.debug('Calcing cutting indices with linear mapping.');
                 visualizer.removedBeginning = ~~(visualizer.minHertz / visualizer.audioDataStep);
                 visualizer.removedEnding = ~~(visualizer.maxHertz / visualizer.audioDataStep);
             }
@@ -1234,16 +1225,12 @@ try {
 
                 if(typeof visualizer[key] !== 'object') {
                     gmName = 'visualizer' + key[0].toUpperCase() + key.slice(1, key.length); // e.g.: visualizer + P + lace
-                    logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
                     visualizer[key] = ytmpConfig.get(gmName);
-                    logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
                     continue;
                 }
 
                 if(Array.isArray(visualizer[key])) {
-                    logger.debug(`Setting visualizer.${key} to GM_config ${gmName}`);
                     visualizer[key] = ytmpConfig.get('visualizer' + key[0].toUpperCase() + key.slice(1, key.length));
-                    logger.debug(`visualizer.${key} set to ${visualizer[key]}`);
                     continue;
                 }
 
@@ -1252,9 +1239,7 @@ try {
                     gmName = 'visualizer' +
                     key[0].toUpperCase() + key.slice(1, key.length) + // B + assBounce
                     key2[0].toUpperCase() + key2.slice(1, key2.length); // E + nabled
-                    logger.debug(`Setting visualizer.${key}.${key2} to GM_config ${gmName}...`);
                     visualizer[key][key2] = ytmpConfig.get(gmName);
-                    logger.debug(`visualizer.${key}.${key2} set to ${visualizer[key][key2]}`);
                 }
 
                 if(key !== 'bassBounce') continue;
@@ -1799,7 +1784,6 @@ try {
             visualizer.video = document.querySelector('video');
             if(visualizer.video) {
             // visualizer.video.style.position = 'static'; // i guess it fixes videos being offset when refreshing a video (??????)
-                logger.log('Found video.');
                 startVisualizer();
             }
             else {
@@ -1834,7 +1818,6 @@ try {
 
                 replaceImageURL();
                 requestAnimationFrame(renderFrame);
-                logger.log('Visualizer started.');
             }
             catch (error) {
                 logger.error(error);
@@ -1899,6 +1882,39 @@ try {
         }
 
         function extraPlaybackButtons(turnOn) {
+            const ytmusicApp = document.getElementsByTagName('ytmusic-app')[0];
+            if(!ytmusicApp) {
+                logger.error('ExtraPlaybackButtons failed: ytmusic-app is undefined');
+                return;
+            }
+            if(ytmusicApp.hasAttribute('is-miniplayer-enabled'))
+                newDesign(turnOn);
+            else
+                oldDesign(turnOn);
+        }
+
+        function newDesign(turnOn) {
+            const playerMainControls = document.getElementsByClassName('ytmusicPlayerControlsMainControls');
+            if(playerMainControls.length === 0) {
+                logger.error('ExtraPlaybackButtons failed: playerMainControls is undefined');
+                return;
+            }
+
+            const controls = playerMainControls[0].children;
+
+            if(!turnOn) {
+            // controls[1].hidden = true; // Playback Rate button, is broken, not my fault
+                controls[2].hidden = true;
+                controls[5].hidden = true;
+            }
+            else {
+            // controls[1].hidden = false;
+                controls[2].hidden = false;
+                controls[5].hidden = false;
+            }
+        }
+
+        function oldDesign(turnOn) {
             const playbackButtons = document.getElementsByClassName('left-controls-buttons style-scope ytmusic-player-bar')[0].children;
             const playbackRateButton = document.getElementsByTagName('ytmusic-playback-rate-renderer')[0];
             if(!turnOn) {
@@ -1921,7 +1937,7 @@ try {
             fixLayout: undefined
         };
 
-        const layoutOverrides = '#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}\r\n\r\nytmusic-player {\r\n    aspect-ratio: 1;\r\n}';
+        const layoutOverrides = '#contents.ytmusic-section-list-renderer>ytmusic-carousel-shelf-renderer.ytmusic-section-list-renderer:not(:last-child) {\r\n    margin-bottom: 0; /* remove random retarded padding on related list */\r\n}\r\n\r\nhtml {\r\n    scrollbar-color: unset;\r\n}\r\n\r\nytmusic-player {\r\n    aspect-ratio: 1;\r\n}\r\n\r\n/* these make clicking the progress bar a little easier on the new design, should not break old design */\r\n.ytMusicMiniPlayerProgressBarWrapper {\r\n    padding: 0;\r\n    height: 6px;\r\n}\r\n.ytMusicMiniPlayerProgressBarWrapper:hover > .ytMusicMiniPlayerProgressBar {\r\n    height: 6px;\r\n}';
 
         let layoutCss, moviePlayer;
         function fixLayout(turnOn) {
@@ -1985,7 +2001,6 @@ try {
             if(!turnOn) return;
             functions.noAfkFunction = setInterval(() => {
                 document.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: 143, which: 143 }));
-                logger.debug('Nudged the page so user is not AFK.');
             }, 15000);
         }
 
@@ -1994,10 +2009,8 @@ try {
             if(!turnOn) return;
             functions.noPromotions = setInterval(() => {
                 const popup = document.getElementsByTagName('ytmusic-mealbar-promo-renderer');
-                if(popup.length > 0) {
+                if(popup.length > 0)
                     popup[0].remove();
-                    logger.log('Removed a promotion.');
-                }
             }, 1000);
         }
 
@@ -2130,7 +2143,6 @@ try {
 
         // We skip after 5 seconds to let everything load and to not skip not disliked songs (huh?)
         function checkDislike() {
-            logger.log('Checking dislike in 3 seconds...');
             clearTimeout(functions.skipDislikedFunction);
 
             // If we don't time this out, we get the ability to skip at least 20 songs in a matter of seconds before it realizes it's not supposed to skip
@@ -2138,12 +2150,9 @@ try {
             // maybe timeout could be customizable too
             functions.skipDislikedFunction = setTimeout(async () => {
                 const likeButton = await document.getElementById('like-button-renderer');
-                if(!likeButton) return logger.log('Could not find like button, skipping check');
-                if(likeButton.children[0].ariaPressed == 'true') {
-                    logger.log('Song is disliked, skipping');
+                if(!likeButton) return (void 0);
+                if(likeButton.children[0].ariaPressed == 'true')
                     return document.getElementsByClassName('next-button style-scope ytmusic-player-bar')[0].click();
-                }
-                logger.log('Song is not disliked, not skipping');
             }, 3000);
         }
 
@@ -2196,7 +2205,6 @@ try {
         }
 
         function videoSongSwitcher(mode) {
-            logger.debug('videoSongSwitcher');
             avSwitch = document.getElementById('av-id');
             if(!avSwitch) return logger.error('videoSongSwitcher: avSwitch not found');
 
@@ -2228,10 +2236,8 @@ try {
             else if(mode === 'forceSong') {
                 getRidOfSwitch();
                 forceSongImageInterval = setInterval(() => {
-                    if(validThumbnail === true && elements.songImage.src !== thumbnailURL) {
-                        logger.debug('forceSongImageInterval');
+                    if(validThumbnail === true && elements.songImage.src !== thumbnailURL)
                         elements.songImage.src = thumbnailURL;
-                    }
                 }, 1000);
                 elements.player.removeAttribute('video-mode');
                 elements.player.setAttribute('playback-mode', 'ATV_PREFERRED'); // song mode
@@ -2240,7 +2246,6 @@ try {
         }
 
         function getRidOfSwitch() {
-            logger.debug('getRidOfSwitch');
             elements.player.removeAttribute('has-av-switcher');
             elements.playerPage.removeAttribute('has-av-switcher');
             avSwitch.style.display = 'none';
@@ -2271,7 +2276,6 @@ try {
         };
 
         async function setup() {
-            logger.log('ytmPlus: Setup started.');
             try {
                 elements.player = await document.getElementById('player');
                 elements.playerPage = await document.getElementById('player-page');
@@ -2304,7 +2308,6 @@ try {
                 for(const fn in toCallOnEvents) {
                     try {
                         toCallOnEvents[fn](ytmpConfig.get(fn));
-                        logger.log(`Loaded ${fn} on setup.`);
                     }
                     catch (error) {
                         logger.error(`Failed to call ${fn} on setup:`);
@@ -2313,8 +2316,6 @@ try {
                 }
 
                 setupVisualizer();
-
-                logger.log('Setup finished.');
             }
             catch (error) {
                 logger.error('Setup failed.');
@@ -2766,8 +2767,6 @@ try {
                 if(key === 'changeShortcut') configFields[key].label += ytmpConfig.get('shortcut').split('|')[1];
                 ytmpConfig.fields[key].node.selectIndex = ytmpConfig.get(key);
             }
-
-            logger.debug(ytmpConfig);
 
             manageUI(frame);
 
